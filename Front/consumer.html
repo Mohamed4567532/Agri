@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Consommateur - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">Espace Consommateur</h1>
+
+        <section class="section">
+            <h2>Produits Disponibles</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="form-control search-input" placeholder="Rechercher un produit...">
+                <select id="categoryFilter" class="form-control">
+                    <option value="all">Toutes les catégories</option>
+                </select>
+            </div>
+            <div class="grid grid-3" id="productsContainer"></div>
+        </section>
+
+        <section class="section">
+            <h2>Mes Commandes</h2>
+            <div class="table-container">
+                <div id="ordersList"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Actions</h2>
+            <div class="grid grid-2">
+                <button class="btn btn-secondary" onclick="showModal('complaintModal')">Porter une plainte</button>
+                <button class="btn btn-secondary" onclick="window.location.href='contact.html'">Nous contacter</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Contacter Fermier -->
+    <div id="contactFarmerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contacter le fermier</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="contactFarmerForm">
+                <input type="hidden" id="contactFarmerId">
+                <p><strong>Fermier:</strong> <span id="contactFarmerName"></span></p>
+                <div class="form-group">
+                    <label for="messageSubject">Sujet</label>
+                    <input type="text" id="messageSubject" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="messageContent">Message</label>
+                    <textarea id="messageContent" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Avis Vétérinaire -->
+    <div id="vetOpinionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Demander l'avis d'un vétérinaire</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="vetOpinionForm">
+                <input type="hidden" id="vetOpinionProductId">
+                <p><strong>Produit:</strong> <span id="vetOpinionProductTitle"></span></p>
+                <div class="form-group">
+                    <label for="vetQuestion">Votre question</label>
+                    <textarea id="vetQuestion" class="form-control" required placeholder="Posez votre question au vétérinaire..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Plainte -->
+    <div id="complaintModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Porter une plainte</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="complaintForm">
+                <div class="form-group">
+                    <label for="complaintOrderId">ID de la commande</label>
+                    <input type="text" id="complaintOrderId" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="complaintText">Détails de la plainte</label>
+                    <textarea id="complaintText" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Soumettre</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/consumer.js"></script>
+    <script>
+        // Charger les commandes au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            loadConsumerOrders();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+

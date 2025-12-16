@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques du Marché - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="farmer.html">Mes Produits</a></li>
+                <li><a href="consultation.html">Consultation Vétérinaire</a></li>
+                <li><a href="statistiques.html" class="active">Statistiques</a></li>
+                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">📊 Statistiques du Marché Tunisien</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+            Données créées par l'administrateur AgriSmart - Réservé aux agriculteurs
+        </p>
+
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; margin-top: 2rem;">
+            
+            <!-- Fruits -->
+            <div class="stat-card" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: #e74c3c;">🍎 Fruits</h3>
+                <canvas id="fruitsChart"></canvas>
+            </div>
+
+            <!-- Légumes -->
+            <div class="stat-card" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: #27ae60;">🥬 Légumes</h3>
+                <canvas id="legumesChart"></canvas>
+            </div>
+
+            <!-- Viande -->
+            <div class="stat-card" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: #8e44ad;">🥩 Viande</h3>
+                <canvas id="viandeChart"></canvas>
+            </div>
+
+            <!-- Huile -->
+            <div class="stat-card" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <h3 style="text-align: center; margin-bottom: 1rem; color: #f39c12;">🫒 Huile d'Olive</h3>
+                <canvas id="huileChart"></canvas>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/statistiques.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Vétérinaire - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="veterinarian.html" class="active">Mes Consultations</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">Espace Vétérinaire</h1>
+
+        <section class="section">
+            <h2>🔔 Consultations en Attente</h2>
+            <div class="table-container">
+                <div id="pendingConsultations"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>✅ Consultations Traitées</h2>
+            <div class="table-container">
+                <div id="completedConsultations"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Réponse Consultation -->
+    <div id="consultationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Répondre à la consultation</h2>
+                <button class="close">&times;</button>
+            </div>
+            <div id="consultationDetails" style="margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px;"></div>
+            <form id="responseForm">
+                <input type="hidden" id="consultationId">
+                <div class="form-group">
+                    <label for="vetResponse">Votre diagnostic / réponse</label>
+                    <textarea id="vetResponse" class="form-control" required rows="5" placeholder="Entrez votre diagnostic détaillé et vos recommandations..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="consultationStatus">Statut</label>
+                    <select id="consultationStatus" class="form-control" required>
+                        <option value="en_cours">En cours de traitement</option>
+                        <option value="terminée">Terminée</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer la réponse</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/vet.js"></script>
+</body>
+</html>
+
+
+
+
+

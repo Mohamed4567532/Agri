@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">Panneau d'Administration</h1>
+
+        <section class="section">
+            <h2>Statistiques</h2>
+            <div id="adminStats"></div>
+        </section>
+
+        <section class="section">
+            <h2>Utilisateurs en Attente d'Approbation</h2>
+            <div class="table-container">
+                <div id="pendingUsers"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Tous les Utilisateurs</h2>
+            <div style="margin-bottom: 1rem;">
+                <label for="userRoleFilter">Filtrer par rôle:</label>
+                <select id="userRoleFilter" class="form-control" style="width: 200px; display: inline-block; margin-left: 1rem;">
+                    <option value="all">Tous</option>
+                    <option value="farmer">Agriculteurs</option>
+                    <option value="consumer">Consommateurs</option>
+                    <option value="vet">Vétérinaires</option>
+                    <option value="admin">Administrateurs</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <div id="allUsers"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Tous les Produits</h2>
+            <div class="table-container">
+                <div id="allProducts"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Toutes les Commandes</h2>
+            <div class="table-container">
+                <div id="allOrders"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Plaintes</h2>
+            <div class="table-container">
+                <div id="complaintsList"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Contacter Utilisateur -->
+    <div id="adminContactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contacter l'utilisateur</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="adminContactForm">
+                <input type="hidden" id="adminContactUserId">
+                <p><strong>Utilisateur:</strong> <span id="adminContactUserName"></span></p>
+                <div class="form-group">
+                    <label for="adminMessageSubject">Sujet</label>
+                    <input type="text" id="adminMessageSubject" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminMessageContent">Message</label>
+                    <textarea id="adminMessageContent" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>
+

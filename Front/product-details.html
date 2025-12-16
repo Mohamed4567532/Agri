@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Produit - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="productDetails" style="max-width: 800px; margin: 2rem auto;">
+            <!-- Le contenu sera généré par JavaScript -->
+        </div>
+    </div>
+
+    <!-- Modal Acheter -->
+    <div id="buyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirmer l'achat</h2>
+                <button class="close">&times;</button>
+            </div>
+            <div id="buyModalContent"></div>
+            <button class="btn btn-primary" onclick="confirmBuy()" style="width: 100%; margin-top: 1rem;">Confirmer l'achat</button>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/products.js"></script>
+    <script>
+        let currentProductId = null;
+
+        // Charger les détails du produit
+        async function loadProductDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            
+            if (!productId) {
+                document.getElementById('productDetails').innerHTML = '<p>Produit introuvable.</p>';
+                return;
+            }
+
+            currentProductId = productId;
+            const product = await getProductById(productId);
+            
+            if (!product) {
+                document.getElementById('productDetails').innerHTML = '<p>Produit introuvable.</p>';
+                return;
+            }
+
+            const farmer = await getUserById(product.farmerId);
+            const user = getCurrentUser();
+
+            document.getElementById('productDetails').innerHTML = `
+                <div class="card">
+                    <img src="${product.image}" alt="${product.title}" class="card-img" style="height: 400px;" onerror="this.src='https://via.placeholder.com/800x400?text=Produit'">
+                    <h1 class="card-title">${product.title}</h1>
+                    <div class="card-price">${formatPrice(product.price)}</div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Catégorie:</strong> ${product.category}
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Description:</strong>
+                        <p>${product.description}</p>
+                    </div>
+                    ${farmer ? `
+                        <div style="margin-bottom: 1rem;">
+                            <strong>Vendeur:</strong> ${farmer.name}
+                        </div>
+                    ` : ''}
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                        ${user && user.role === 'consumer' ? `
+                            <button class="btn btn-primary" onclick="openBuyModal()">Acheter</button>
+                        ` : ''}
+                        ${user && user.role === 'consumer' ? `
+                            <button class="btn btn-secondary" onclick="requestVetOpinion('${product.id}')">Demander l'avis d'un vétérinaire</button>
+                        ` : ''}
+                        ${farmer ? `
+                            <button class="btn btn-secondary" onclick="contactFarmer('${product.farmerId}')">Contacter le fermier</button>
+                        ` : ''}
+                    </div>
+                    ${!user ? `
+                        <p style="margin-top: 1rem; color: var(--text-light);">
+                            <a href="login.html">Connectez-vous</a> pour acheter ou contacter le vendeur.
+                        </p>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        async function openBuyModal() {
+            const product = await getProductById(currentProductId);
+            if (!product) return;
+
+            document.getElementById('buyModalContent').innerHTML = `
+                <p><strong>Produit:</strong> ${product.title}</p>
+                <p><strong>Prix:</strong> ${formatPrice(product.price)}</p>
+            `;
+            showModal('buyModal');
+        }
+
+        async function confirmBuy() {
+            if (!currentProductId) return;
+            
+            const user = getCurrentUser();
+            if (!user || user.role !== 'consumer') {
+                showAlert('Vous devez être connecté en tant que consommateur pour acheter.', 'error');
+                return;
+            }
+
+            await buyProduct(currentProductId);
+            closeModal('buyModal');
+        }
+
+        // Fonctions depuis consumer.js
+        async function requestVetOpinion(productId) {
+            const product = await getProductById(productId);
+            if (!product) {
+                showAlert('Produit introuvable.', 'error');
+                return;
+            }
+
+            const user = getCurrentUser();
+            if (!user || user.role !== 'consumer') {
+                showAlert('Vous devez être connecté en tant que consommateur.', 'error');
+                return;
+            }
+
+            document.getElementById('vetOpinionProductId').value = productId;
+            document.getElementById('vetOpinionProductTitle').textContent = product.title;
+            showModal('vetOpinionModal');
+        }
+
+        async function contactFarmer(farmerId) {
+            const farmer = await getUserById(farmerId);
+            if (!farmer) {
+                showAlert('Fermier introuvable.', 'error');
+                return;
+            }
+
+            const user = getCurrentUser();
+            if (!user) {
+                showAlert('Vous devez être connecté pour contacter le fermier.', 'error');
+                return;
+            }
+
+            document.getElementById('contactFarmerId').value = farmerId;
+            document.getElementById('contactFarmerName').textContent = farmer.name;
+            showModal('contactFarmerModal');
+        }
+
+        async function submitVetOpinionRequest() {
+            const productId = document.getElementById('vetOpinionProductId').value;
+            const question = document.getElementById('vetQuestion').value;
+
+            if (!question) {
+                showAlert('Veuillez poser votre question.', 'error');
+                return;
+            }
+
+            try {
+                const newReport = {
+                    productId,
+                    consumerId: getCurrentUser().id,
+                    question,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
+
+                await apiCreateVetReport(newReport);
+                showAlert('Demande d\'avis envoyée au vétérinaire !', 'success');
+                closeModal('vetOpinionModal');
+                document.getElementById('vetOpinionForm').reset();
+            } catch (error) {
+                showAlert('Erreur lors de l\'envoi: ' + error.message, 'error');
+            }
+        }
+
+        async function sendMessageToFarmer() {
+            const farmerId = document.getElementById('contactFarmerId').value;
+            const subject = document.getElementById('messageSubject').value;
+            const message = document.getElementById('messageContent').value;
+
+            if (!subject || !message) {
+                showAlert('Veuillez remplir tous les champs.', 'error');
+                return;
+            }
+
+            try {
+                const newMessage = {
+                    fromId: getCurrentUser().id,
+                    toId: farmerId,
+                    subject,
+                    message,
+                    createdAt: new Date().toISOString()
+                };
+
+                await apiCreateMessage(newMessage);
+                showAlert('Message envoyé avec succès !', 'success');
+                closeModal('contactFarmerModal');
+                document.getElementById('contactFarmerForm').reset();
+            } catch (error) {
+                showAlert('Erreur lors de l\'envoi: ' + error.message, 'error');
+            }
+        }
+
+        async function buyProduct(productId) {
+            const product = await getProductById(productId);
+            if (!product) {
+                showAlert('Produit introuvable.', 'error');
+                return;
+            }
+
+            const user = getCurrentUser();
+            const order = {
+                productId: product.id,
+                consumerId: user.id,
+                farmerId: product.farmerId,
+                title: product.title,
+                price: product.price,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            await apiCreateOrder(order);
+            showAlert('Commande passée avec succès !', 'success');
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProductDetails();
+            updateNavbar();
+
+            const vetOpinionForm = document.getElementById('vetOpinionForm');
+            if (vetOpinionForm) {
+                vetOpinionForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    submitVetOpinionRequest();
+                });
+            }
+
+            const contactFarmerForm = document.getElementById('contactFarmerForm');
+            if (contactFarmerForm) {
+                contactFarmerForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    sendMessageToFarmer();
+                });
+            }
+        });
+    </script>
+
+    <!-- Modal Avis Vétérinaire -->
+    <div id="vetOpinionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Demander l'avis d'un vétérinaire</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="vetOpinionForm">
+                <input type="hidden" id="vetOpinionProductId">
+                <p><strong>Produit:</strong> <span id="vetOpinionProductTitle"></span></p>
+                <div class="form-group">
+                    <label for="vetQuestion">Votre question</label>
+                    <textarea id="vetQuestion" class="form-control" required placeholder="Posez votre question au vétérinaire..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Contacter Fermier -->
+    <div id="contactFarmerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Contacter le fermier</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="contactFarmerForm">
+                <input type="hidden" id="contactFarmerId">
+                <p><strong>Fermier:</strong> <span id="contactFarmerName"></span></p>
+                <div class="form-group">
+                    <label for="messageSubject">Sujet</label>
+                    <input type="text" id="messageSubject" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="messageContent">Message</label>
+                    <textarea id="messageContent" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

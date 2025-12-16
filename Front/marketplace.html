@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marché - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Connexion</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>Marché Agricole</h1>
+        <p>Découvrez les meilleurs produits agricoles tunisiens</p>
+    </section>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" class="form-control search-input" placeholder="Rechercher un produit...">
+            <select id="categoryFilter" class="form-control">
+                <option value="all">Toutes les catégories</option>
+            </select>
+        </div>
+
+        <div class="grid grid-3" id="productsContainer"></div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/products.js"></script>
+    <script>
+        // Initialiser les filtres et charger les produits
+        document.addEventListener('DOMContentLoaded', () => {
+            initProductFilters('productsContainer');
+            filterAndRenderProducts('productsContainer');
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+

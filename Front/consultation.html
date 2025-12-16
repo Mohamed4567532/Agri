@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Vétérinaire - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="farmer.html">Mes Produits</a></li>
+                <li><a href="consultation.html">Consultation Vétérinaire</a></li>
+                <li><a href="statistiques.html">Statistiques</a></li>
+                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">Consultation Vétérinaire</h1>
+
+        <section class="section">
+            <h2>Liste des Vétérinaires Disponibles</h2>
+            <div id="vetsList" class="cards-grid"></div>
+        </section>
+
+        <section class="section">
+            <h2>Mes Consultations</h2>
+            <div id="consultationsList" class="table-container"></div>
+        </section>
+    </div>
+
+    <!-- Modal Nouvelle Consultation -->
+    <div id="consultationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nouvelle Consultation</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="consultationForm" enctype="multipart/form-data">
+                <input type="hidden" id="selectedVetId" name="vetId">
+                
+                <div class="form-group">
+                    <label>Vétérinaire sélectionné:</label>
+                    <p id="vetNameDisplay" style="font-weight: bold; color: #27ae60;"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="sheepSelection">Sélectionnez vos moutons</label>
+                    <div id="sheepSelection" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                        <!-- Sera rempli dynamiquement -->
+                    </div>
+                    <small style="color: #666;">Cochez un ou plusieurs moutons pour la consultation</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="consultationDescription">Description du problème</label>
+                    <textarea id="consultationDescription" name="description" class="form-control" required rows="4" placeholder="Décrivez les symptômes ou le problème..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="consultationVideo">Vidéo (optionnel)</label>
+                    <input type="file" id="consultationVideo" name="video" class="form-control" accept="video/*">
+                    <small style="color: #666;">Format: MP4, AVI, MOV (Max 50MB)</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer la consultation</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/consultation.js"></script>
+</body>
+</html>
+

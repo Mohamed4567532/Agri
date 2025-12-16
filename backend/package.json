@@ -1,0 +1,24 @@
+{
+  "name": "agrismart-backend",
+  "version": "1.0.0",
+  "description": "Backend AgriSmart",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "add-user": "node scripts/addUser.js"
+  },
+  "keywords": [
+    "agriculture",
+    "api",
+    "nodejs"
+  ],
+  "author": "AgriSmart",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.0",
+    "multer": "^2.0.2"
+  }
+}

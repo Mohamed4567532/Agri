@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Fermier - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="farmer.html">Mes Produits</a></li>
+                <li><a href="consultation.html">Consultation Vétérinaire</a></li>
+                <li><a href="statistiques.html">Statistiques</a></li>
+                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="section-title">Espace Fermier</h1>
+
+        <section class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>Mes Produits</h2>
+                <button class="btn btn-primary" onclick="openAddProductModal()">+ Ajouter un produit</button>
+            </div>
+            <div class="table-container">
+                <div id="productsList"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Messages Reçus</h2>
+            <div class="table-container">
+                <div id="farmerMessages"></div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Actions Rapides</h2>
+            <div class="grid grid-2">
+                <button class="btn btn-secondary" onclick="showModal('appointmentModal')">Prendre rendez-vous avec un vétérinaire</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Ajouter/Modifier Produit -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter un produit</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="productForm" enctype="multipart/form-data">
+                <!-- Type de produit -->
+                <div class="form-group">
+                    <label for="productType">Type de produit</label>
+                    <select id="productType" name="type" class="form-control" required onchange="toggleProductFields()">
+                        <option value="">Sélectionnez un type</option>
+                        <option value="mouton">Mouton</option>
+                        <option value="huile">Huile d'olive</option>
+                    </select>
+                </div>
+
+                <!-- Champs pour MOUTON -->
+                <div id="sheepFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="sheepPrice">Prix (TND)</label>
+                        <input type="number" id="sheepPrice" name="price" class="form-control" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="sheepWeight">Poids (kg)</label>
+                        <input type="number" id="sheepWeight" name="weight" class="form-control" step="0.1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="hasCertificate" name="hasMedicalCertificate" onchange="toggleCertificateUpload()">
+                            Possède un certificat médical
+                        </label>
+                    </div>
+                    <div class="form-group" id="certificateUploadDiv" style="display: none;">
+                        <label for="certificatePDF">Certificat médical (PDF)</label>
+                        <input type="file" id="certificatePDF" name="medicalCertificatePDF" class="form-control" accept=".pdf">
+                        <small style="color: #666;">Format: PDF (Max 5MB)</small>
+                    </div>
+                </div>
+
+                <!-- Champs pour HUILE -->
+                <div id="oilFields" style="display: none;">
+                    <div class="form-group">
+                        <label for="oilType">Type d'huile</label>
+                        <select id="oilType" name="oilType" class="form-control">
+                            <option value="">Sélectionnez un type</option>
+                            <option value="la chemlali">La Chemlali</option>
+                            <option value="la chetoui">La Chetoui</option>
+                            <option value="oueslati">Oueslati</option>
+                            <option value="extra vierge">Extra Vierge</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="oilQuantity">Quantité (litres)</label>
+                        <input type="number" id="oilQuantity" name="quantity" class="form-control" step="0.1" min="0">
+                    </div>
+                </div>
+
+                <!-- Champs communs -->
+                <div class="form-group">
+                    <label for="productDescription">Description</label>
+                    <textarea id="productDescription" name="description" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="productImage">Image du produit</label>
+                    <input type="file" id="productImage" name="image" class="form-control" accept="image/*">
+                    <small style="color: #666;">Format: JPG, PNG, GIF (Max 5MB)</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Demande Vétérinaire -->
+    <div id="vetRequestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Envoyer au vétérinaire</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="vetRequestForm">
+                <input type="hidden" id="vetProductId">
+                <p><strong>Produit:</strong> <span id="vetProductTitle"></span></p>
+                <div class="form-group">
+                    <label for="vetNotes">Notes / Raison de l'analyse</label>
+                    <textarea id="vetNotes" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Rendez-vous -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Prendre rendez-vous</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="appointmentForm">
+                <div class="form-group">
+                    <label for="appointmentDate">Date</label>
+                    <input type="date" id="appointmentDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentTime">Heure</label>
+                    <input type="time" id="appointmentTime" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentReason">Raison</label>
+                    <textarea id="appointmentReason" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Prendre rendez-vous</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/products.js"></script>
+    <script src="assets/js/farmer.js"></script>
+</body>
+</html>
+
+
+
+
+
