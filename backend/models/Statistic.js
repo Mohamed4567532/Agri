@@ -4,7 +4,21 @@ const statisticSchema = new mongoose.Schema({
     category: {
         type: String,
         required: [true, "La catégorie est requise"],
-        enum: ['fruits', 'légumes', 'viande', 'huile']
+        unique: true,
+        trim: true
+    },
+    displayName: {
+        type: String,
+        required: [true, "Le nom d'affichage est requis"],
+        trim: true
+    },
+    icon: {
+        type: String,
+        default: '📊'
+    },
+    color: {
+        type: String,
+        default: '#3498db'
     },
     parts: [{
         label: {
@@ -22,9 +36,13 @@ const statisticSchema = new mongoose.Schema({
             default: '#3498db'
         }
     }],
+    isActive: {
+        type: Boolean,
+        default: true
+    },
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Admin'
     }
 }, {
     timestamps: true,
@@ -32,4 +50,3 @@ const statisticSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Statistic', statisticSchema, 'statistiques');
-

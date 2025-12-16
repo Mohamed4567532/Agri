@@ -19,42 +19,58 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // Charger les statistiques
 async function loadStatistics() {
+    const container = document.getElementById('statsContainer');
+    
     try {
-        const response = await fetch(`http://localhost:3000/api/statistics`);
+        const response = await fetch('http://localhost:3000/api/statistics');
         
         if (!response.ok) throw new Error('Erreur lors du chargement des statistiques');
         
         const statistics = await response.json();
         
-        // Créer les graphiques pour chaque catégorie
-        const categories = ['fruits', 'légumes', 'viande', 'huile'];
+        if (!statistics || statistics.length === 0) {
+            container.innerHTML = `
+                <div class="no-stats">
+                    <div class="icon">📊</div>
+                    <h3>Aucune statistique disponible</h3>
+                    <p>Les statistiques du marché seront bientôt disponibles.</p>
+                </div>
+            `;
+            return;
+        }
         
-        categories.forEach(category => {
-            const stat = statistics.find(s => s.category === category);
-            
-            if (stat && stat.parts && stat.parts.length > 0) {
-                createChart(category, stat.parts);
-            } else {
-                // Données par défaut si aucune statistique
-                createChart(category, getDefaultData(category));
+        // Créer les cartes pour chaque statistique
+        container.innerHTML = statistics.map(stat => `
+            <div class="stat-card" style="border-top: 4px solid ${stat.color || '#3498db'};">
+                <h3 style="color: ${stat.color || '#3498db'};">
+                    ${stat.displayName || stat.category}
+                </h3>
+                <canvas id="chart_${stat.category}"></canvas>
+            </div>
+        `).join('');
+        
+        // Créer les graphiques
+        statistics.forEach(stat => {
+            if (stat.parts && stat.parts.length > 0) {
+                createChart(stat.category, stat.parts);
             }
         });
         
     } catch (error) {
         console.error('Erreur:', error);
-        showAlert('Erreur lors du chargement des statistiques', 'error');
-        
-        // Charger des données par défaut en cas d'erreur
-        const categories = ['fruits', 'légumes', 'viande', 'huile'];
-        categories.forEach(category => {
-            createChart(category, getDefaultData(category));
-        });
+        container.innerHTML = `
+            <div class="no-stats">
+                <div class="icon">⚠️</div>
+                <h3>Erreur de chargement</h3>
+                <p>Impossible de charger les statistiques. Veuillez réessayer plus tard.</p>
+            </div>
+        `;
     }
 }
 
 // Créer un graphique en camembert
 function createChart(category, data) {
-    const canvasId = `${category}Chart`;
+    const canvasId = `chart_${category}`;
     const ctx = document.getElementById(canvasId);
     
     if (!ctx) {
@@ -63,15 +79,15 @@ function createChart(category, data) {
     }
     
     // Détruire le graphique existant s'il existe
-    if (charts[category]) {
-        charts[category].destroy();
+    if (charts[canvasId]) {
+        charts[canvasId].destroy();
     }
     
     const labels = data.map(d => d.label);
     const values = data.map(d => d.percentage);
     const colors = data.map(d => d.color || getRandomColor());
     
-    charts[category] = new Chart(ctx, {
+    charts[canvasId] = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: labels,
@@ -112,38 +128,6 @@ function createChart(category, data) {
     });
 }
 
-// Données par défaut pour chaque catégorie
-function getDefaultData(category) {
-    const defaultData = {
-        'fruits': [
-            { label: 'Agrumes', percentage: 30, color: '#e74c3c' },
-            { label: 'Dattes', percentage: 25, color: '#3498db' },
-            { label: 'Grenades', percentage: 20, color: '#2ecc71' },
-            { label: 'Autres', percentage: 25, color: '#f39c12' }
-        ],
-        'légumes': [
-            { label: 'Tomates', percentage: 35, color: '#e74c3c' },
-            { label: 'Pommes de terre', percentage: 25, color: '#3498db' },
-            { label: 'Oignons', percentage: 20, color: '#2ecc71' },
-            { label: 'Autres', percentage: 20, color: '#f39c12' }
-        ],
-        'viande': [
-            { label: 'Mouton', percentage: 40, color: '#e74c3c' },
-            { label: 'Bœuf', percentage: 30, color: '#3498db' },
-            { label: 'Volaille', percentage: 25, color: '#2ecc71' },
-            { label: 'Autres', percentage: 5, color: '#f39c12' }
-        ],
-        'huile': [
-            { label: 'Chemlali', percentage: 35, color: '#e74c3c' },
-            { label: 'Chetoui', percentage: 30, color: '#3498db' },
-            { label: 'Oueslati', percentage: 20, color: '#2ecc71' },
-            { label: 'Extra Vierge', percentage: 15, color: '#f39c12' }
-        ]
-    };
-    
-    return defaultData[category] || [];
-}
-
 // Générer une couleur aléatoire
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
@@ -153,4 +137,3 @@ function getRandomColor() {
     }
     return color;
 }
-

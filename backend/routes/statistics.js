@@ -43,11 +43,12 @@ router.post('/', async (req, res) => {
     try {
         console.log('📥 POST /api/statistics - Body:', req.body);
         
-        const { category, parts, updatedBy } = req.body;
+        const { category, displayName, icon, color, parts, updatedBy } = req.body;
 
         const errors = [];
         
         if (!category) errors.push('La catégorie est requise');
+        if (!displayName) errors.push('Le nom d\'affichage est requis');
         if (!parts || parts.length === 0) errors.push('Au moins une partie doit être définie');
         
         if (errors.length > 0) {
@@ -63,6 +64,9 @@ router.post('/', async (req, res) => {
         
         if (statistic) {
             // Update existing
+            statistic.displayName = displayName || statistic.displayName;
+            statistic.icon = icon || statistic.icon;
+            statistic.color = color || statistic.color;
             statistic.parts = parts;
             statistic.updatedBy = updatedBy;
             await statistic.save();
@@ -70,13 +74,16 @@ router.post('/', async (req, res) => {
             // Create new
             statistic = new Statistic({
                 category,
+                displayName: displayName || category,
+                icon: icon || '📊',
+                color: color || '#3498db',
                 parts,
                 updatedBy
             });
             await statistic.save();
         }
         
-        await statistic.populate('updatedBy', 'name username');
+        await statistic.populate('updatedBy', 'prenom nom');
         
         console.log('✅ Statistique sauvegardée:', statistic._id);
         res.status(201).json(statistic);

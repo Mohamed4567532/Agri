@@ -119,10 +119,26 @@
             <p>Gérez les utilisateurs et surveillez l'activité de la plateforme</p>
         </div>
 
-        <!-- Statistiques -->
+        <!-- Statistiques générales -->
         <section class="section">
-            <h2>📊 Statistiques</h2>
+            <h2>📊 Statistiques Générales</h2>
             <div id="adminStats">
+                <p>Chargement des statistiques...</p>
+            </div>
+        </section>
+
+        <!-- Gestion des Statistiques du Marché -->
+        <section class="section">
+            <h2>📈 Gestion des Statistiques du Marché Tunisien</h2>
+            <p style="color: #666; margin-bottom: 1rem;">Ces statistiques sont affichées aux agriculteurs sur leur page de statistiques.</p>
+            
+            <!-- Bouton pour ajouter une nouvelle statistique -->
+            <button class="btn btn-success" onclick="openNewStatModal()" style="margin-bottom: 1.5rem;">
+                ➕ Ajouter une nouvelle catégorie
+            </button>
+            
+            <!-- Container pour les statistiques dynamiques -->
+            <div id="statsManagementGrid" class="stats-management-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
                 <p>Chargement des statistiques...</p>
             </div>
         </section>
@@ -195,6 +211,133 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal Modifier Statistiques -->
+    <div id="statModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📊 Modifier les Statistiques: <span id="statCategoryTitle"></span></h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="statForm">
+                <input type="hidden" id="statCategory">
+                <input type="hidden" id="statId">
+                
+                <div id="statPartsContainer">
+                    <!-- Les parties seront ajoutées dynamiquement -->
+                </div>
+                
+                <!-- Affichage du total en temps réel -->
+                <div id="totalPercentageDisplay" style="text-align: center; padding: 10px; margin-bottom: 1rem; border-radius: 8px; font-weight: bold;">
+                    Total: 0%
+                </div>
+                
+                <button type="button" class="btn btn-secondary" onclick="addStatPart()" style="width: 100%; margin-bottom: 1rem;">
+                    ➕ Ajouter une partie
+                </button>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Enregistrer</button>
+                    <button type="button" class="btn btn-danger" onclick="closeStatModal()" style="flex: 1;">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nouvelle Statistique -->
+    <div id="newStatModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>➕ Nouvelle Catégorie de Statistique</h2>
+                <button class="close">&times;</button>
+            </div>
+            <form id="newStatForm">
+                <div class="form-group">
+                    <label>Nom de la catégorie (identifiant unique, sans accents)</label>
+                    <input type="text" id="newStatCategory" class="form-control" placeholder="Ex: cereales" required pattern="[a-z0-9_]+" title="Lettres minuscules, chiffres et underscores uniquement">
+                </div>
+                
+                <div class="form-group">
+                    <label>Nom d'affichage</label>
+                    <input type="text" id="newStatDisplayName" class="form-control" placeholder="Ex: Céréales" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Couleur de la catégorie</label>
+                    <input type="color" id="newStatColor" class="form-control" value="#3498db" style="height: 38px; width: 100%;">
+                </div>
+                
+                <hr style="margin: 1.5rem 0;">
+                <h4 style="margin-bottom: 1rem;">Données initiales</h4>
+                
+                <div id="newStatPartsContainer">
+                    <!-- Les parties seront ajoutées dynamiquement -->
+                </div>
+                
+                <!-- Affichage du total en temps réel -->
+                <div id="newTotalPercentageDisplay" style="text-align: center; padding: 10px; margin-bottom: 1rem; border-radius: 8px; font-weight: bold;">
+                    Total: 0%
+                </div>
+                
+                <button type="button" class="btn btn-secondary" onclick="addNewStatPart()" style="width: 100%; margin-bottom: 1rem;">
+                    ➕ Ajouter une partie
+                </button>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-success" style="flex: 1;">✅ Créer la catégorie</button>
+                    <button type="button" class="btn btn-danger" onclick="closeNewStatModal()" style="flex: 1;">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .stat-part {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        .stat-part .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .stat-part-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 0.5rem;
+            align-items: end;
+        }
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        .stat-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .stat-color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+    </style>
 
     <script src="assets/js/main.js"></script>
     <script src="assets/js/api.js"></script>
