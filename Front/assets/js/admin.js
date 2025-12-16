@@ -3,33 +3,136 @@
    ============================================ */
 
 // Initialisation de la page admin
-async function initAdminPage() {
-    if (!checkRole('admin')) return;
+document.addEventListener('DOMContentLoaded', async function() {
+    // Vérifier l'authentification
+    const user = getCurrentUser();
+    
+    if (!user) {
+        showAlert('Veuillez vous connecter', 'error');
+        setTimeout(() => window.location.href = 'login.html', 2000);
+        return;
+    }
+    
+    if (user.role !== 'admin') {
+        showAlert('Accès réservé aux administrateurs', 'error');
+        setTimeout(() => window.location.href = 'index.html', 2000);
+        return;
+    }
 
-    await loadPendingUsers();
-    await loadAllUsers();
-    await loadAllProducts();
-    await loadAllOrders();
-    await loadComplaints();
     await loadAdminStats();
+    await loadPendingUsers();
+    await loadAcceptedUsers();
+    await loadAllUsers();
+    
+    // Event listeners
+    const userRoleFilter = document.getElementById('userRoleFilter');
+    if (userRoleFilter) {
+        userRoleFilter.addEventListener('change', loadAllUsers);
+    }
+
+    const adminContactForm = document.getElementById('adminContactForm');
+    if (adminContactForm) {
+        adminContactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sendAdminMessage();
+        });
+    }
+
+    // Modal close
+    document.querySelectorAll('.close').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+});
+
+// Récupérer tous les utilisateurs depuis l'API
+async function fetchAllUsers() {
+    try {
+        const response = await fetch('http://localhost:3000/api/users');
+        const data = await response.json();
+        
+        if (data.success && data.users) {
+            return data.users;
+        }
+        return [];
+    } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs:', error);
+        return [];
+    }
+}
+
+// Charger les statistiques admin
+async function loadAdminStats() {
+    try {
+        const users = await fetchAllUsers();
+        
+        const statsContainer = document.getElementById('adminStats');
+        if (!statsContainer) return;
+
+        const pendingCount = users.filter(u => u.status === 'pending').length;
+        const acceptedCount = users.filter(u => u.status === 'accepted').length;
+        const rejectedCount = users.filter(u => u.status === 'rejected').length;
+        
+        const farmerCount = users.filter(u => u.role === 'farmer').length;
+        const consumerCount = users.filter(u => u.role === 'consumer').length;
+        const vetCount = users.filter(u => u.role === 'vet').length;
+
+        statsContainer.innerHTML = `
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <div class="stat-card" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold;">${users.length}</div>
+                    <div>Total Utilisateurs</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f39c12, #e67e22); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold;">${pendingCount}</div>
+                    <div>En Attente</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold;">${acceptedCount}</div>
+                    <div>Acceptés</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2rem; font-weight: bold;">${rejectedCount}</div>
+                    <div>Rejetés</div>
+                </div>
+            </div>
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                <div class="stat-card" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; text-align: center; border: 2px solid #27ae60;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #27ae60;">🌾 ${farmerCount}</div>
+                    <div>Agriculteurs</div>
+                </div>
+                <div class="stat-card" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; text-align: center; border: 2px solid #3498db;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #3498db;">🛒 ${consumerCount}</div>
+                    <div>Consommateurs</div>
+                </div>
+                <div class="stat-card" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; text-align: center; border: 2px solid #9b59b6;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #9b59b6;">🩺 ${vetCount}</div>
+                    <div>Vétérinaires</div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Erreur lors du chargement des statistiques:', error);
+    }
 }
 
 // Charger les utilisateurs en attente
 async function loadPendingUsers() {
     try {
-        const users = await apiGetUsers();
+        const users = await fetchAllUsers();
         const pending = users.filter(u => u.status === 'pending');
 
         const container = document.getElementById('pendingUsers');
         if (!container) return;
 
         if (pending.length === 0) {
-            container.innerHTML = '<p>Aucun utilisateur en attente.</p>';
+            container.innerHTML = '<p style="color: #27ae60;">✅ Aucun utilisateur en attente d\'approbation.</p>';
             return;
         }
 
         container.innerHTML = `
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Nom</th>
@@ -44,11 +147,11 @@ async function loadPendingUsers() {
                         <tr>
                             <td>${user.name}</td>
                             <td>${user.email}</td>
-                            <td>${user.role}</td>
+                            <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
                             <td>${formatDate(user.createdAt)}</td>
                             <td>
-                                <button class="btn btn-primary btn-small" onclick="updateUserStatus('${user.id}', 'accepted')">Accepter</button>
-                                <button class="btn btn-danger btn-small" onclick="updateUserStatus('${user.id}', 'rejected')">Rejeter</button>
+                                <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Accepter</button>
+                                <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
                             </td>
                         </tr>
                     `).join('')}
@@ -56,32 +159,92 @@ async function loadPendingUsers() {
             </table>
         `;
     } catch (error) {
-        console.error('Erreur lors du chargement des utilisateurs:', error);
+        console.error('Erreur lors du chargement des utilisateurs en attente:', error);
+        const container = document.getElementById('pendingUsers');
+        if (container) container.innerHTML = '<p>Erreur lors du chargement.</p>';
+    }
+}
+
+// Charger les utilisateurs acceptés
+async function loadAcceptedUsers() {
+    try {
+        const users = await fetchAllUsers();
+        const accepted = users.filter(u => u.status === 'accepted' && u.role !== 'admin');
+
+        const container = document.getElementById('acceptedUsers');
+        if (!container) return;
+
+        if (accepted.length === 0) {
+            container.innerHTML = '<p>Aucun utilisateur accepté pour le moment.</p>';
+            return;
+        }
+
+        container.innerHTML = `
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Date d'inscription</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${accepted.map(user => `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
+                            <td>${formatDate(user.createdAt)}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user._id}', 'suspended')">⏸️ Suspendre</button>
+                                <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    } catch (error) {
+        console.error('Erreur lors du chargement des utilisateurs acceptés:', error);
     }
 }
 
 // Charger tous les utilisateurs
 async function loadAllUsers() {
     try {
-        const users = await apiGetUsers();
+        const users = await fetchAllUsers();
         const roleFilter = document.getElementById('userRoleFilter')?.value || 'all';
+        const statusFilter = document.getElementById('userStatusFilter')?.value || 'all';
         
-        let filteredUsers = users;
+        let filteredUsers = users.filter(u => u.role !== 'admin'); // Exclure les admins de la liste
+        
         if (roleFilter !== 'all') {
-            filteredUsers = users.filter(u => u.role === roleFilter);
+            filteredUsers = filteredUsers.filter(u => u.role === roleFilter);
+        }
+        
+        if (statusFilter !== 'all') {
+            filteredUsers = filteredUsers.filter(u => u.status === statusFilter);
         }
 
         const container = document.getElementById('allUsers');
         if (!container) return;
 
+        if (filteredUsers.length === 0) {
+            container.innerHTML = '<p>Aucun utilisateur trouvé.</p>';
+            return;
+        }
+
         container.innerHTML = `
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Nom</th>
                         <th>Email</th>
                         <th>Rôle</th>
                         <th>Statut</th>
+                        <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -90,14 +253,11 @@ async function loadAllUsers() {
                         <tr>
                             <td>${user.name}</td>
                             <td>${user.email}</td>
-                            <td>${user.role}</td>
-                            <td>${user.status}</td>
+                            <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
+                            <td><span class="badge badge-${getStatusBadgeClass(user.status)}">${getStatusLabel(user.status)}</span></td>
+                            <td>${formatDate(user.createdAt)}</td>
                             <td>
-                                ${user.status !== 'suspended' ? 
-                                    `<button class="btn btn-danger btn-small" onclick="updateUserStatus('${user.id}', 'suspended')">Suspendre</button>` :
-                                    `<button class="btn btn-primary btn-small" onclick="updateUserStatus('${user.id}', 'accepted')">Réactiver</button>`
-                                }
-                                <button class="btn btn-secondary btn-small" onclick="contactUser('${user.id}')">Contacter</button>
+                                ${getActionButtons(user)}
                             </td>
                         </tr>
                     `).join('')}
@@ -109,190 +269,157 @@ async function loadAllUsers() {
     }
 }
 
+// Générer les boutons d'action selon le statut
+function getActionButtons(user) {
+    let buttons = '';
+    
+    switch(user.status) {
+        case 'pending':
+            buttons = `
+                <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Accepter</button>
+                <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
+            `;
+            break;
+        case 'accepted':
+            buttons = `
+                <button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user._id}', 'suspended')">⏸️ Suspendre</button>
+            `;
+            break;
+        case 'rejected':
+        case 'suspended':
+            buttons = `
+                <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Réactiver</button>
+            `;
+            break;
+    }
+    
+    buttons += `<button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}')" style="margin-left: 5px;">🗑️</button>`;
+    
+    return buttons;
+}
+
 // Mettre à jour le statut d'un utilisateur
 async function updateUserStatus(userId, status) {
+    const statusLabels = {
+        'accepted': 'accepter',
+        'rejected': 'rejeter',
+        'suspended': 'suspendre',
+        'pending': 'mettre en attente'
+    };
+    
+    if (!confirm(`Êtes-vous sûr de vouloir ${statusLabels[status]} cet utilisateur ?`)) {
+        return;
+    }
+    
     try {
-        await apiUpdateUser(userId, { status });
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status })
+        });
         
-        // Mettre à jour l'utilisateur actuel si c'est lui
-        const currentUser = getCurrentUser();
-        if (currentUser && currentUser.id === userId) {
-            const updatedUser = await apiGetUser(userId);
-            setCurrentUser(updatedUser);
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert(`Utilisateur ${statusLabels[status]} avec succès !`, 'success');
+            await loadAdminStats();
+            await loadPendingUsers();
+            await loadAcceptedUsers();
+            await loadAllUsers();
+        } else {
+            showAlert('Erreur: ' + data.message, 'error');
         }
-        
-        showAlert(`Statut de l'utilisateur mis à jour : ${status}`, 'success');
-        await loadPendingUsers();
-        await loadAllUsers();
     } catch (error) {
+        console.error('Erreur:', error);
         showAlert('Erreur lors de la mise à jour: ' + error.message, 'error');
     }
 }
 
-// Charger tous les produits
-async function loadAllProducts() {
+// Supprimer un utilisateur
+async function deleteUser(userId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ?')) {
+        return;
+    }
+    
     try {
-        const products = await getAllProducts();
-        const container = document.getElementById('allProducts');
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            method: 'DELETE'
+        });
         
-        if (!container) return;
-
-        if (products.length === 0) {
-            container.innerHTML = '<p>Aucun produit.</p>';
-            return;
-        }
-
-        const rows = await Promise.all(products.map(async product => {
-            const farmer = await getUserById(product.farmerId);
-            return `
-                <tr>
-                    <td>${product.title}</td>
-                    <td>${product.category}</td>
-                    <td>${formatPrice(product.price)}</td>
-                    <td>${farmer ? farmer.name : 'Inconnu'}</td>
-                    <td>${formatDate(product.createdAt)}</td>
-                </tr>
-            `;
-        }));
-
-        container.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Titre</th>
-                        <th>Catégorie</th>
-                        <th>Prix</th>
-                        <th>Fermier</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${rows.join('')}
-                </tbody>
-            </table>
-        `;
-    } catch (error) {
-        console.error('Erreur lors du chargement des produits:', error);
-    }
-}
-
-// Charger toutes les commandes
-async function loadAllOrders() {
-    try {
-        const orders = await apiGetOrders();
-        const container = document.getElementById('allOrders');
+        const data = await response.json();
         
-        if (!container) return;
-
-        if (orders.length === 0) {
-            container.innerHTML = '<p>Aucune commande.</p>';
-            return;
+        if (data.success) {
+            showAlert('Utilisateur supprimé avec succès !', 'success');
+            await loadAdminStats();
+            await loadPendingUsers();
+            await loadAcceptedUsers();
+            await loadAllUsers();
+        } else {
+            showAlert('Erreur: ' + data.message, 'error');
         }
-
-        const rows = await Promise.all(orders.map(async order => {
-            const consumer = await getUserById(order.consumerId);
-            return `
-                <tr>
-                    <td>${order.title}</td>
-                    <td>${consumer ? consumer.name : 'Inconnu'}</td>
-                    <td>${formatPrice(order.price)}</td>
-                    <td>${order.status}</td>
-                    <td>${formatDate(order.createdAt)}</td>
-                </tr>
-            `;
-        }));
-
-        container.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Produit</th>
-                        <th>Consommateur</th>
-                        <th>Prix</th>
-                        <th>Statut</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${rows.join('')}
-                </tbody>
-            </table>
-        `;
     } catch (error) {
-        console.error('Erreur lors du chargement des commandes:', error);
+        console.error('Erreur:', error);
+        showAlert('Erreur lors de la suppression: ' + error.message, 'error');
     }
 }
 
-// Charger les plaintes
-async function loadComplaints() {
-    try {
-        const complaints = await apiGetComplaints();
-        const container = document.getElementById('complaintsList');
-        
-        if (!container) return;
-
-        if (complaints.length === 0) {
-            container.innerHTML = '<p>Aucune plainte.</p>';
-            return;
-        }
-
-        const rows = await Promise.all(complaints.map(async complaint => {
-            const consumer = await getUserById(complaint.consumerId);
-            return `
-                <tr>
-                    <td>${complaint.orderId}</td>
-                    <td>${consumer ? consumer.name : 'Inconnu'}</td>
-                    <td>${complaint.complaint}</td>
-                    <td>${complaint.status}</td>
-                    <td>${formatDate(complaint.createdAt)}</td>
-                    <td>
-                        <button class="btn btn-primary btn-small" onclick="updateComplaintStatus('${complaint.id}', 'resolved')">Résoudre</button>
-                    </td>
-                </tr>
-            `;
-        }));
-
-        container.innerHTML = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Commande ID</th>
-                        <th>Consommateur</th>
-                        <th>Plainte</th>
-                        <th>Statut</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${rows.join('')}
-                </tbody>
-            </table>
-        `;
-    } catch (error) {
-        console.error('Erreur lors du chargement des plaintes:', error);
-    }
+// Labels et badges
+function getRoleLabel(role) {
+    const labels = {
+        'farmer': 'Agriculteur',
+        'consumer': 'Consommateur',
+        'vet': 'Vétérinaire',
+        'admin': 'Administrateur'
+    };
+    return labels[role] || role;
 }
 
-// Mettre à jour le statut d'une plainte
-async function updateComplaintStatus(complaintId, status) {
-    try {
-        await apiUpdateComplaint(complaintId, { status });
-        showAlert('Statut de la plainte mis à jour.', 'success');
-        await loadComplaints();
-    } catch (error) {
-        showAlert('Erreur lors de la mise à jour: ' + error.message, 'error');
-    }
+function getRoleBadgeClass(role) {
+    const classes = {
+        'farmer': 'success',
+        'consumer': 'info',
+        'vet': 'purple',
+        'admin': 'danger'
+    };
+    return classes[role] || 'secondary';
 }
 
-// Contacter un utilisateur
+function getStatusLabel(status) {
+    const labels = {
+        'pending': 'En attente',
+        'accepted': 'Accepté',
+        'rejected': 'Rejeté',
+        'suspended': 'Suspendu'
+    };
+    return labels[status] || status;
+}
+
+function getStatusBadgeClass(status) {
+    const classes = {
+        'pending': 'warning',
+        'accepted': 'success',
+        'rejected': 'danger',
+        'suspended': 'secondary'
+    };
+    return classes[status] || 'secondary';
+}
+
+// Contacter un utilisateur (modal)
 async function contactUser(userId) {
-    const user = await getUserById(userId);
-    if (!user) return;
-
-    document.getElementById('adminContactUserId').value = userId;
-    document.getElementById('adminContactUserName').textContent = user.name;
-    showModal('adminContactModal');
+    try {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`);
+        const data = await response.json();
+        
+        if (data.success && data.user) {
+            document.getElementById('adminContactUserId').value = userId;
+            document.getElementById('adminContactUserName').textContent = data.user.name;
+            document.getElementById('adminContactModal').style.display = 'block';
+        }
+    } catch (error) {
+        showAlert('Erreur: ' + error.message, 'error');
+    }
 }
 
 // Envoyer un message depuis l'admin
@@ -307,100 +434,32 @@ async function sendAdminMessage() {
     }
 
     try {
+        const currentUser = getCurrentUser();
         const newMessage = {
-            fromId: getCurrentUser().id,
+            fromId: currentUser.id,
             toId: userId,
             subject,
             message,
             createdAt: new Date().toISOString()
         };
 
-        await apiCreateMessage(newMessage);
+        const response = await fetch('http://localhost:3000/api/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newMessage)
+        });
+
         showAlert('Message envoyé avec succès !', 'success');
-        closeModal('adminContactModal');
+        document.getElementById('adminContactModal').style.display = 'none';
         document.getElementById('adminContactForm').reset();
     } catch (error) {
         showAlert('Erreur lors de l\'envoi: ' + error.message, 'error');
     }
 }
 
-// Charger les statistiques admin
-async function loadAdminStats() {
-    try {
-        const users = await apiGetUsers();
-        const products = await getAllProducts();
-        const orders = await apiGetOrders();
-        const complaints = await apiGetComplaints();
-
-        const statsContainer = document.getElementById('adminStats');
-        if (!statsContainer) return;
-
-        const roleCounts = {};
-        users.forEach(u => {
-            roleCounts[u.role] = (roleCounts[u.role] || 0) + 1;
-        });
-
-        statsContainer.innerHTML = `
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value">${users.length}</div>
-                    <div class="stat-label">Total Utilisateurs</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${products.length}</div>
-                    <div class="stat-label">Total Produits</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${orders.length}</div>
-                    <div class="stat-label">Total Commandes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${complaints.length}</div>
-                    <div class="stat-label">Plaintes</div>
-                </div>
-            </div>
-            <div class="chart-container">
-                <h3 class="chart-title">Utilisateurs par rôle</h3>
-                <div class="bar-chart">
-                    ${Object.keys(roleCounts).map(role => {
-                        const count = roleCounts[role];
-                        const maxCount = Math.max(...Object.values(roleCounts), 1);
-                        const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
-                        return `
-                            <div class="bar" style="height: ${height}%">
-                                <span class="bar-value">${count}</span>
-                                <span class="bar-label">${role}</span>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error);
-    }
-}
-
-// Filtrer les utilisateurs par rôle
-async function filterUsersByRole() {
-    await loadAllUsers();
-}
-
-// Initialisation
-document.addEventListener('DOMContentLoaded', () => {
-    initAdminPage();
-    
-    const userRoleFilter = document.getElementById('userRoleFilter');
-    if (userRoleFilter) {
-        userRoleFilter.addEventListener('change', filterUsersByRole);
-    }
-
-    const adminContactForm = document.getElementById('adminContactForm');
-    if (adminContactForm) {
-        adminContactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            sendAdminMessage();
-        });
-    }
-});
-
+// Exposer les fonctions globalement
+window.updateUserStatus = updateUserStatus;
+window.deleteUser = deleteUser;
+window.contactUser = contactUser;

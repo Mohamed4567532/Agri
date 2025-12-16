@@ -5,6 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - AgriSmart</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .admin-header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        .admin-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.8;
+        }
+        .section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        .badge-purple { background: #e2d5f1; color: #6f42c1; }
+        .badge-secondary { background: #e9ecef; color: #6c757d; }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+        .btn-success { background: #27ae60; color: white; border: none; }
+        .btn-warning { background: #f39c12; color: white; border: none; }
+        .filters-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .filter-group label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .filter-group select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -15,6 +102,7 @@
             </a>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Accueil</a></li>
+                <li><a href="admin.html" class="active">Administration</a></li>
                 <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
             </ul>
             <div class="hamburger">
@@ -26,55 +114,61 @@
     </nav>
 
     <div class="container">
-        <h1 class="section-title">Panneau d'Administration</h1>
+        <div class="admin-header">
+            <h1>🛡️ Panneau d'Administration</h1>
+            <p>Gérez les utilisateurs et surveillez l'activité de la plateforme</p>
+        </div>
 
+        <!-- Statistiques -->
         <section class="section">
-            <h2>Statistiques</h2>
-            <div id="adminStats"></div>
-        </section>
-
-        <section class="section">
-            <h2>Utilisateurs en Attente d'Approbation</h2>
-            <div class="table-container">
-                <div id="pendingUsers"></div>
+            <h2>📊 Statistiques</h2>
+            <div id="adminStats">
+                <p>Chargement des statistiques...</p>
             </div>
         </section>
 
+        <!-- Utilisateurs en attente -->
         <section class="section">
-            <h2>Tous les Utilisateurs</h2>
-            <div style="margin-bottom: 1rem;">
-                <label for="userRoleFilter">Filtrer par rôle:</label>
-                <select id="userRoleFilter" class="form-control" style="width: 200px; display: inline-block; margin-left: 1rem;">
-                    <option value="all">Tous</option>
-                    <option value="farmer">Agriculteurs</option>
-                    <option value="consumer">Consommateurs</option>
-                    <option value="vet">Vétérinaires</option>
-                    <option value="admin">Administrateurs</option>
-                </select>
-            </div>
-            <div class="table-container">
-                <div id="allUsers"></div>
+            <h2>⏳ Utilisateurs en Attente d'Approbation</h2>
+            <div id="pendingUsers">
+                <p>Chargement...</p>
             </div>
         </section>
 
+        <!-- Utilisateurs acceptés -->
         <section class="section">
-            <h2>Tous les Produits</h2>
-            <div class="table-container">
-                <div id="allProducts"></div>
+            <h2>✅ Utilisateurs Acceptés</h2>
+            <div id="acceptedUsers">
+                <p>Chargement...</p>
             </div>
         </section>
 
+        <!-- Tous les utilisateurs avec filtres -->
         <section class="section">
-            <h2>Toutes les Commandes</h2>
-            <div class="table-container">
-                <div id="allOrders"></div>
+            <h2>👥 Tous les Utilisateurs</h2>
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label for="userRoleFilter">Rôle:</label>
+                    <select id="userRoleFilter" class="form-control">
+                        <option value="all">Tous les rôles</option>
+                        <option value="farmer">Agriculteurs</option>
+                        <option value="consumer">Consommateurs</option>
+                        <option value="vet">Vétérinaires</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="userStatusFilter">Statut:</label>
+                    <select id="userStatusFilter" class="form-control" onchange="loadAllUsers()">
+                        <option value="all">Tous les statuts</option>
+                        <option value="pending">En attente</option>
+                        <option value="accepted">Acceptés</option>
+                        <option value="rejected">Rejetés</option>
+                        <option value="suspended">Suspendus</option>
+                    </select>
+                </div>
             </div>
-        </section>
-
-        <section class="section">
-            <h2>Plaintes</h2>
-            <div class="table-container">
-                <div id="complaintsList"></div>
+            <div id="allUsers">
+                <p>Chargement...</p>
             </div>
         </section>
     </div>
@@ -95,7 +189,7 @@
                 </div>
                 <div class="form-group">
                     <label for="adminMessageContent">Message</label>
-                    <textarea id="adminMessageContent" class="form-control" required></textarea>
+                    <textarea id="adminMessageContent" class="form-control" required rows="4"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
             </form>
@@ -105,8 +199,6 @@
     <script src="assets/js/main.js"></script>
     <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
-    <script src="assets/js/products.js"></script>
     <script src="assets/js/admin.js"></script>
 </body>
 </html>
-

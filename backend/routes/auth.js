@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Admin = require('../models/Admin');
 
 // POST /api/auth/register - Inscription
 router.post('/register', async (req, res) => {
@@ -105,6 +106,36 @@ router.post('/login', async (req, res) => {
             });
         }
         
+        // 1. Vérifier d'abord dans la table administrateurs
+        const admin = await Admin.findOne({ email: email.toLowerCase() });
+        
+        if (admin) {
+            // Vérifier le mot de passe admin
+            if (admin.motdepasse !== password) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Email ou mot de passe incorrect'
+                });
+            }
+            
+            console.log('   ✅ Connexion admin réussie:', admin.email);
+            
+            return res.json({
+                success: true,
+                message: 'Connexion administrateur réussie',
+                user: {
+                    id: admin._id.toString(),
+                    email: admin.email,
+                    name: `${admin.prenom} ${admin.nom}`,
+                    prenom: admin.prenom,
+                    nom: admin.nom,
+                    role: 'admin',
+                    status: 'accepted'
+                }
+            });
+        }
+        
+        // 2. Si pas admin, vérifier dans la table utilisateurs
         const user = await User.findOne({ email: email.toLowerCase() });
         
         if (!user || user.password !== password) {
@@ -115,9 +146,15 @@ router.post('/login', async (req, res) => {
         }
         
         if (user.status !== 'accepted') {
+            const statusMessages = {
+                'pending': 'Votre compte n\'est pas encore activé. Il est en attente d\'approbation par l\'administrateur.',
+                'rejected': 'Votre compte a été rejeté par l\'administrateur.',
+                'suspended': 'Votre compte a été suspendu. Contactez l\'administrateur.'
+            };
+            
             return res.status(403).json({
                 success: false,
-                message: 'Votre compte n\'est pas encore activé',
+                message: statusMessages[user.status] || 'Votre compte n\'est pas encore activé',
                 status: user.status
             });
         }

@@ -55,7 +55,7 @@ async function login() {
     const password = document.getElementById('password').value;
 
     if (!email || !password) {
-        showAlert('Veuillez remplir tous les champs.', 'error');
+        showAuthMessage('Veuillez remplir tous les champs.', 'error', 'Champs manquants');
         return;
     }
 
@@ -65,14 +65,79 @@ async function login() {
         
         // Connexion réussie - l'utilisateur est retourné par le backend
         setCurrentUser(response.user);
-        showAlert(response.message || 'Connexion réussie !', 'success');
+        showAuthMessage('Connexion réussie ! Redirection en cours...', 'success', 'Bienvenue ' + response.user.name);
         
         setTimeout(() => {
             redirectByRole();
-        }, 1000);
+        }, 1500);
     } catch (error) {
-        // Les erreurs de statut (pending, rejected, suspended) sont gérées par le backend
-        showAlert(error.message || 'Erreur lors de la connexion', 'error');
+        // Gérer les différents types d'erreurs avec des messages appropriés
+        handleLoginError(error);
+    }
+}
+
+// Gérer les erreurs de connexion avec des messages détaillés
+function handleLoginError(error) {
+    const message = error.message || 'Erreur lors de la connexion';
+    
+    // Détection des différents types d'erreurs
+    if (message.includes('pas encore activé') || message.includes('pending')) {
+        showAuthMessage(
+            'Votre compte est en attente d\'approbation par l\'administrateur. Vous recevrez une notification une fois votre compte activé.',
+            'warning',
+            '⏳ Compte en attente'
+        );
+    } else if (message.includes('rejeté') || message.includes('rejected')) {
+        showAuthMessage(
+            'Votre demande d\'inscription a été rejetée. Veuillez contacter l\'administrateur pour plus d\'informations.',
+            'error',
+            '❌ Compte rejeté'
+        );
+    } else if (message.includes('suspendu') || message.includes('suspended')) {
+        showAuthMessage(
+            'Votre compte a été suspendu. Veuillez contacter l\'administrateur pour plus d\'informations.',
+            'error',
+            '🚫 Compte suspendu'
+        );
+    } else if (message.includes('incorrect') || message.includes('Email ou mot de passe')) {
+        showAuthMessage(
+            'Vérifiez votre email et mot de passe puis réessayez.',
+            'error',
+            '🔒 Identifiants incorrects'
+        );
+    } else {
+        showAuthMessage(message, 'error', '❌ Erreur de connexion');
+    }
+}
+
+// Afficher un message d'authentification stylisé
+function showAuthMessage(message, type, title) {
+    const messageDiv = document.getElementById('authMessage');
+    if (!messageDiv) {
+        // Fallback to showAlert if authMessage div doesn't exist
+        showAlert(message, type);
+        return;
+    }
+    
+    const icons = {
+        'success': '✅',
+        'error': '❌',
+        'warning': '⚠️',
+        'info': 'ℹ️'
+    };
+    
+    messageDiv.className = `auth-message ${type} show`;
+    messageDiv.innerHTML = `
+        <div class="icon">${icons[type] || ''}</div>
+        <div class="title">${title || ''}</div>
+        <div class="details">${message}</div>
+    `;
+    
+    // Auto-hide after 10 seconds for non-error messages
+    if (type === 'success') {
+        setTimeout(() => {
+            messageDiv.classList.remove('show');
+        }, 5000);
     }
 }
 
