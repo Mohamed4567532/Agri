@@ -20,9 +20,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Modal close
     document.querySelectorAll('.close').forEach(btn => {
         btn.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('active');
+            }
         });
     });
+    
+    // Fermer le modal de détails en cliquant en dehors
+    const detailsModal = document.getElementById('consultationDetailsModal');
+    if (detailsModal) {
+        detailsModal.addEventListener('click', function(e) {
+            if (e.target === detailsModal) {
+                closeConsultationDetails();
+            }
+        });
+    }
 });
 
 // Charger la liste des vétérinaires
@@ -245,8 +259,174 @@ function getStatusColor(status) {
     return colors[status] || 'secondary';
 }
 
-function viewConsultation(id) {
-    // TODO: Implement consultation details modal
-    showAlert('Fonctionnalité en développement', 'info');
+// Afficher les détails d'une consultation
+async function viewConsultation(id) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/consultations/${id}`, {
+            headers: getHeaders()
+        });
+        
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des détails');
+        }
+        
+        const consultation = await response.json();
+        
+        // Afficher le modal avec les détails
+        const modal = document.getElementById('consultationDetailsModal');
+        const content = document.getElementById('consultationDetailsContent');
+        
+        if (!modal || !content) {
+            showAlert('Erreur: Le modal de détails n\'existe pas', 'error');
+            return;
+        }
+        
+        // Formater la date
+        const createdDate = new Date(consultation.createdAt).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        const responseDate = consultation.responseDate ? 
+            new Date(consultation.responseDate).toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : 'Non disponible';
+        
+        // Construire le HTML des détails
+        content.innerHTML = `
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    Informations Générales
+                </h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <strong>Date de création:</strong><br>
+                        <span style="color: #666;">${createdDate}</span>
+                    </div>
+                    <div>
+                        <strong>Statut:</strong><br>
+                        <span class="badge badge-${getStatusColor(consultation.status)}">${getStatusLabel(consultation.status)}</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <strong>Vétérinaire:</strong><br>
+                    <span style="color: #666;">Dr. ${consultation.vetId?.name || 'Non spécifié'}</span><br>
+                    <small style="color: #999;">${consultation.vetId?.email || ''}</small>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    Moutons Consultés
+                </h3>
+                <div style="display: grid; gap: 1rem;">
+                    ${consultation.sheepIds && consultation.sheepIds.length > 0 ? 
+                        consultation.sheepIds.map(sheep => `
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #27ae60;">
+                                <div style="display: flex; gap: 1rem; align-items: start;">
+                                    ${sheep.image ? `
+                                        <img src="http://localhost:3000${sheep.image}" 
+                                             alt="Mouton" 
+                                             style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                                    ` : ''}
+                                    <div style="flex: 1;">
+                                        <strong>Mouton</strong><br>
+                                        <span style="color: #666;">Poids: ${sheep.weight}kg</span><br>
+                                        <span style="color: #666;">Prix: ${sheep.price} TND</span><br>
+                                        ${sheep.description ? `
+                                            <p style="margin-top: 0.5rem; color: #555; font-size: 0.9rem;">
+                                                ${sheep.description}
+                                            </p>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('') 
+                        : '<p style="color: #999;">Aucun mouton spécifié</p>'
+                    }
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    Description du Problème
+                </h3>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #3498db;">
+                    <p style="color: #555; line-height: 1.6; margin: 0;">
+                        ${consultation.description || 'Aucune description'}
+                    </p>
+                </div>
+            </div>
+
+            ${consultation.video ? `
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        Vidéo
+                    </h3>
+                    <video controls style="width: 100%; max-height: 400px; border-radius: 8px; background: #000;">
+                        <source src="http://localhost:3000${consultation.video}" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                </div>
+            ` : ''}
+
+            ${consultation.vetResponse ? `
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        🩺 Diagnostic du Vétérinaire
+                    </h3>
+                    <div style="background: #d4edda; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #27ae60;">
+                        <p style="color: #155724; line-height: 1.6; margin: 0 0 1rem 0; white-space: pre-wrap;">
+                            ${consultation.vetResponse}
+                        </p>
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #c3e6cb;">
+                            <small style="color: #155724;">
+                                <strong>Date de réponse:</strong> ${responseDate}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        🩺 Diagnostic du Vétérinaire
+                    </h3>
+                    <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f39c12;">
+                        <p style="color: #856404; margin: 0;">
+                            ⏳ Le vétérinaire n'a pas encore fourni de diagnostic pour cette consultation.
+                        </p>
+                    </div>
+                </div>
+            `}
+        `;
+        
+        // Afficher le modal
+        modal.style.display = 'flex';
+        modal.classList.add('active');
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('Erreur lors du chargement des détails: ' + error.message, 'error');
+    }
 }
+
+// Fermer le modal de détails
+function closeConsultationDetails() {
+    const modal = document.getElementById('consultationDetailsModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('active');
+    }
+}
+
+// Exposer la fonction globalement
+window.viewConsultation = viewConsultation;
+window.closeConsultationDetails = closeConsultationDetails;
 

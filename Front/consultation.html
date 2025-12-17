@@ -5,6 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultation Vétérinaire - AgriSmart</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .badge-secondary {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+        #consultationDetailsModal .modal-content {
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -78,6 +120,19 @@
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer la consultation</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Détails Consultation -->
+    <div id="consultationDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2>📋 Détails de la Consultation</h2>
+                <button class="close" onclick="closeConsultationDetails()">&times;</button>
+            </div>
+            <div class="modal-body" id="consultationDetailsContent" style="padding: 1.5rem;">
+                <p>Chargement des détails...</p>
+            </div>
         </div>
     </div>
 

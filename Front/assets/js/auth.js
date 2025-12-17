@@ -212,6 +212,11 @@ function updateNavbar() {
             `;
         }
         
+        // Lien vers les réclamations pour tous les utilisateurs
+        navLinks += `
+            <li><a href="reclamations.html">Mes Réclamations</a></li>
+        `;
+        
         navLinks += `
             <li><a href="contact.html">Contact</a></li>
             <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>

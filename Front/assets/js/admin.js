@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     await loadPendingUsers();
     await loadAcceptedUsers();
     await loadAllUsers();
+    await loadReclamations();
     
     // Event listeners
     const userRoleFilter = document.getElementById('userRoleFilter');
@@ -36,6 +37,14 @@ document.addEventListener('DOMContentLoaded', async function() {
         adminContactForm.addEventListener('submit', (e) => {
             e.preventDefault();
             sendAdminMessage();
+        });
+    }
+
+    const reclamationResponseForm = document.getElementById('reclamationResponseForm');
+    if (reclamationResponseForm) {
+        reclamationResponseForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveReclamationResponse(e);
         });
     }
 
@@ -73,44 +82,39 @@ async function loadAdminStats() {
 
         const pendingCount = users.filter(u => u.status === 'pending').length;
         const acceptedCount = users.filter(u => u.status === 'accepted').length;
-        const rejectedCount = users.filter(u => u.status === 'rejected').length;
+        const rejectedCount = users.filter(u => u.status === 'rejected' || u.status === 'suspended').length;
         
         const farmerCount = users.filter(u => u.role === 'farmer').length;
         const consumerCount = users.filter(u => u.role === 'consumer').length;
         const vetCount = users.filter(u => u.role === 'vet').length;
 
+        // Mettre à jour le badge dans la sidebar
+        const pendingBadge = document.getElementById('pendingBadge');
+        if (pendingBadge) {
+            pendingBadge.textContent = pendingCount;
+            pendingBadge.style.display = pendingCount > 0 ? 'inline' : 'none';
+        }
+
         statsContainer.innerHTML = `
-            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                <div class="stat-card" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 2rem; font-weight: bold;">${users.length}</div>
-                    <div>Total Utilisateurs</div>
-                </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #f39c12, #e67e22); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 2rem; font-weight: bold;">${pendingCount}</div>
-                    <div>En Attente</div>
-                </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 2rem; font-weight: bold;">${acceptedCount}</div>
-                    <div>Acceptés</div>
-                </div>
-                <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 1.5rem; border-radius: 10px; text-align: center;">
-                    <div style="font-size: 2rem; font-weight: bold;">${rejectedCount}</div>
-                    <div>Rejetés</div>
-                </div>
+            <div class="stat-box blue">
+                <span class="stat-icon">👥</span>
+                <div class="stat-value">${users.length}</div>
+                <div class="stat-label">Total Utilisateurs</div>
             </div>
-            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                <div class="stat-card" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; text-align: center; border: 2px solid #27ae60;">
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #27ae60;">🌾 ${farmerCount}</div>
-                    <div>Agriculteurs</div>
-                </div>
-                <div class="stat-card" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; text-align: center; border: 2px solid #3498db;">
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #3498db;">🛒 ${consumerCount}</div>
-                    <div>Consommateurs</div>
-                </div>
-                <div class="stat-card" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; text-align: center; border: 2px solid #9b59b6;">
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #9b59b6;">🩺 ${vetCount}</div>
-                    <div>Vétérinaires</div>
-                </div>
+            <div class="stat-box orange">
+                <span class="stat-icon">⏳</span>
+                <div class="stat-value">${pendingCount}</div>
+                <div class="stat-label">En Attente</div>
+            </div>
+            <div class="stat-box green">
+                <span class="stat-icon">✅</span>
+                <div class="stat-value">${acceptedCount}</div>
+                <div class="stat-label">Acceptés</div>
+            </div>
+            <div class="stat-box red">
+                <span class="stat-icon">🚫</span>
+                <div class="stat-value">${rejectedCount}</div>
+                <div class="stat-label">Rejetés/Suspendus</div>
             </div>
         `;
     } catch (error) {
@@ -128,36 +132,44 @@ async function loadPendingUsers() {
         if (!container) return;
 
         if (pending.length === 0) {
-            container.innerHTML = '<p style="color: #27ae60;">✅ Aucun utilisateur en attente d\'approbation.</p>';
+            container.innerHTML = `
+                <div class="empty-state" style="padding: 2rem;">
+                    <div class="icon">✅</div>
+                    <p style="color: #27ae60; margin: 0;">Aucun utilisateur en attente d'approbation</p>
+                </div>
+            `;
             return;
         }
 
         container.innerHTML = `
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Date d'inscription</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${pending.map(user => `
+            <div class="table-container">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
-                            <td>${formatDate(user.createdAt)}</td>
-                            <td>
-                                <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Accepter</button>
-                                <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
-                            </td>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Date</th>
+                            <th style="text-align: center;">Actions</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${pending.map(user => `
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">${user.name}</div>
+                                    <div style="color: #999; font-size: 0.85rem;">${user.email}</div>
+                                </td>
+                                <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
+                                <td style="color: #666; font-size: 0.9rem;">${formatDate(user.createdAt)}</td>
+                                <td style="text-align: center;">
+                                    <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Accepter</button>
+                                    <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
         `;
     } catch (error) {
         console.error('Erreur lors du chargement des utilisateurs en attente:', error);
@@ -176,36 +188,44 @@ async function loadAcceptedUsers() {
         if (!container) return;
 
         if (accepted.length === 0) {
-            container.innerHTML = '<p>Aucun utilisateur accepté pour le moment.</p>';
+            container.innerHTML = `
+                <div class="empty-state" style="padding: 2rem;">
+                    <div class="icon">👥</div>
+                    <p style="color: #666; margin: 0;">Aucun utilisateur accepté pour le moment</p>
+                </div>
+            `;
             return;
         }
 
         container.innerHTML = `
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Date d'inscription</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${accepted.map(user => `
+            <div class="table-container">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
-                            <td>${formatDate(user.createdAt)}</td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user._id}', 'suspended')">⏸️ Suspendre</button>
-                                <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
-                            </td>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Date</th>
+                            <th style="text-align: center;">Actions</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${accepted.map(user => `
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">${user.name}</div>
+                                    <div style="color: #999; font-size: 0.85rem;">${user.email}</div>
+                                </td>
+                                <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
+                                <td style="color: #666; font-size: 0.9rem;">${formatDate(user.createdAt)}</td>
+                                <td style="text-align: center;">
+                                    <button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user._id}', 'suspended')">⏸️ Suspendre</button>
+                                    <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
         `;
     } catch (error) {
         console.error('Erreur lors du chargement des utilisateurs acceptés:', error);
@@ -233,37 +253,45 @@ async function loadAllUsers() {
         if (!container) return;
 
         if (filteredUsers.length === 0) {
-            container.innerHTML = '<p>Aucun utilisateur trouvé.</p>';
+            container.innerHTML = `
+                <div class="empty-state" style="padding: 2rem;">
+                    <div class="icon">🔍</div>
+                    <p style="color: #666; margin: 0;">Aucun utilisateur trouvé avec ces filtres</p>
+                </div>
+            `;
             return;
         }
 
         container.innerHTML = `
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Rôle</th>
-                        <th>Statut</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${filteredUsers.map(user => `
+            <div class="table-container">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>${user.name}</td>
-                            <td>${user.email}</td>
-                            <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
-                            <td><span class="badge badge-${getStatusBadgeClass(user.status)}">${getStatusLabel(user.status)}</span></td>
-                            <td>${formatDate(user.createdAt)}</td>
-                            <td>
-                                ${getActionButtons(user)}
-                            </td>
+                            <th>Utilisateur</th>
+                            <th>Rôle</th>
+                            <th>Statut</th>
+                            <th>Date</th>
+                            <th style="text-align: center;">Actions</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${filteredUsers.map(user => `
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600;">${user.name}</div>
+                                    <div style="color: #999; font-size: 0.85rem;">${user.email}</div>
+                                </td>
+                                <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
+                                <td><span class="badge badge-${getStatusBadgeClass(user.status)}">${getStatusLabel(user.status)}</span></td>
+                                <td style="color: #666; font-size: 0.9rem;">${formatDate(user.createdAt)}</td>
+                                <td style="text-align: center;">
+                                    ${getActionButtons(user)}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
         `;
     } catch (error) {
         console.error('Erreur lors du chargement des utilisateurs:', error);
@@ -416,7 +444,7 @@ async function contactUser(userId) {
         if (data.success && data.user) {
             document.getElementById('adminContactUserId').value = userId;
             document.getElementById('adminContactUserName').textContent = data.user.name;
-            document.getElementById('adminContactModal').style.display = 'block';
+            document.getElementById('adminContactModal').style.display = 'flex';
         }
     } catch (error) {
         showAlert('Erreur: ' + error.message, 'error');
@@ -489,26 +517,34 @@ function displayAllStatistics() {
     if (!container) return;
     
     if (marketStatistics.length === 0) {
-        container.innerHTML = '<p style="color: #999;">Aucune statistique. Cliquez sur "Ajouter une nouvelle catégorie" pour commencer.</p>';
+        container.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <div class="icon">📊</div>
+                <h3>Aucune statistique</h3>
+                <p>Cliquez sur "Nouvelle catégorie" pour commencer.</p>
+            </div>
+        `;
         return;
     }
     
     container.innerHTML = marketStatistics.map(stat => `
-        <div class="stat-card-admin" style="background: ${hexToRgba(stat.color || '#3498db', 0.1)}; padding: 1.5rem; border-radius: 10px; border-left: 4px solid ${stat.color || '#3498db'};">
-            <h3 style="color: ${stat.color || '#3498db'}; margin-bottom: 1rem;">
-                ${stat.displayName || stat.category}
-            </h3>
-            <div class="stat-summary">
+        <div class="stat-card-admin" style="border-top: 4px solid ${stat.color || '#3498db'};">
+            <div style="margin-bottom: 1rem;">
+                <h3 style="color: ${stat.color || '#3498db'}; margin: 0;">
+                    ${stat.displayName || stat.category}
+                </h3>
+            </div>
+            <div class="stat-summary" style="margin-bottom: 1rem;">
                 ${stat.parts && stat.parts.length > 0 ? stat.parts.map(part => `
                     <div class="stat-summary-item">
                         <span class="stat-color-dot" style="background: ${part.color}"></span>
                         <span>${part.label}: <strong>${part.percentage}%</strong></span>
                     </div>
-                `).join('') : '<p style="color: #999;">Aucune donnée</p>'}
+                `).join('') : '<p style="color: #999; font-size: 0.9rem;">Aucune donnée</p>'}
             </div>
-            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                <button class="btn btn-primary btn-sm" onclick="openStatModal('${stat.category}')">✏️ Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteStat('${stat._id}', '${stat.displayName || stat.category}')">🗑️ Supprimer</button>
+            <div style="display: flex; gap: 0.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
+                <button class="btn btn-primary btn-sm" onclick="openStatModal('${stat.category}')" style="flex: 1;">✏️ Modifier</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStat('${stat._id}', '${stat.displayName || stat.category}')" style="flex: 1;">🗑️ Supprimer</button>
             </div>
         </div>
     `).join('');
@@ -542,7 +578,7 @@ function openStatModal(category) {
         addStatPartToForm('', 0, '#3498db', 0);
     }
     
-    document.getElementById('statModal').style.display = 'block';
+    document.getElementById('statModal').style.display = 'flex';
 }
 
 // Fermer le modal
@@ -771,7 +807,7 @@ function openNewStatModal() {
     addNewStatPartToForm('', 25, '#2ecc71');
     addNewStatPartToForm('', 25, '#f39c12');
     
-    document.getElementById('newStatModal').style.display = 'block';
+    document.getElementById('newStatModal').style.display = 'flex';
 }
 
 // Fermer le modal
@@ -951,6 +987,288 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// ============================================
+// GESTION DES RÉCLAMATIONS
+// ============================================
+
+let allReclamations = [];
+
+// Charger toutes les réclamations
+async function loadReclamations() {
+    try {
+        // Charger toutes les réclamations pour l'admin (sans filtre userId)
+        const response = await fetch(`${API_BASE_URL}/reclamations?role=admin`);
+        if (!response.ok) throw new Error('Erreur lors du chargement');
+        
+        allReclamations = await response.json();
+        
+        // Trier par date de création (les plus récentes en premier)
+        allReclamations.sort((a, b) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        
+        // Mettre à jour le badge avec le nombre de réclamations en attente
+        const pendingReclamations = allReclamations.filter(r => r.statut === 'en_attente').length;
+        const badge = document.getElementById('reclamationsBadge');
+        if (badge) {
+            badge.textContent = pendingReclamations;
+            badge.style.display = pendingReclamations > 0 ? 'inline' : 'none';
+            // Mettre en évidence s'il y a de nouvelles réclamations
+            if (pendingReclamations > 0) {
+                badge.style.animation = 'pulse 2s infinite';
+            }
+        }
+        
+        console.log(`✅ ${allReclamations.length} réclamations chargées (${pendingReclamations} en attente)`);
+        displayReclamations();
+    } catch (error) {
+        console.error('Erreur:', error);
+        const container = document.getElementById('reclamationsList');
+        if (container) {
+            container.innerHTML = '<p style="color: #e74c3c;">Erreur lors du chargement des réclamations.</p>';
+        }
+    }
+}
+
+// Afficher les réclamations avec filtres
+function displayReclamations() {
+    const container = document.getElementById('reclamationsList');
+    if (!container) return;
+
+    const statusFilter = document.getElementById('reclamationStatusFilter')?.value || 'all';
+    const typeFilter = document.getElementById('reclamationTypeFilter')?.value || 'all';
+    const roleFilter = document.getElementById('reclamationRoleFilter')?.value || 'all';
+
+    let filtered = allReclamations;
+    if (statusFilter !== 'all') {
+        filtered = filtered.filter(r => r.statut === statusFilter);
+    }
+    if (typeFilter !== 'all') {
+        filtered = filtered.filter(r => r.type === typeFilter);
+    }
+    if (roleFilter !== 'all') {
+        filtered = filtered.filter(r => r.createdBy?.role === roleFilter);
+    }
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="padding: 2rem; text-align: center;">
+                <div class="icon">📋</div>
+                <p style="color: #666; margin: 0;">Aucune réclamation trouvée</p>
+            </div>
+        `;
+        return;
+    }
+
+    const statusLabels = {
+        'en_attente': { label: '⏳ En attente', class: 'badge-warning' },
+        'en_cours': { label: '🔄 En cours', class: 'badge-info' },
+        'resolue': { label: '✅ Résolue', class: 'badge-success' },
+        'fermee': { label: '🔒 Fermée', class: 'badge-secondary' }
+    };
+
+    const typeLabels = {
+        'technique': '🔧 Technique',
+        'produit': '📦 Produit',
+        'service': '🛎️ Service',
+        'autre': '📝 Autre'
+    };
+
+    container.innerHTML = `
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Sujet</th>
+                        <th>Type</th>
+                        <th>Statut</th>
+                        <th>Date</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filtered.map(reclamation => {
+                        const date = new Date(reclamation.createdAt).toLocaleDateString('fr-FR', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        const status = statusLabels[reclamation.statut] || { label: reclamation.statut, class: 'badge-secondary' };
+                        const user = reclamation.createdBy?.name || 'Utilisateur inconnu';
+                        const userEmail = reclamation.createdBy?.email || '';
+                        const userRole = reclamation.createdBy?.role || '';
+                        
+                        // Mettre en évidence les réclamations en attente
+                        const isPending = reclamation.statut === 'en_attente';
+                        const rowStyle = isPending ? 'background: #fff3cd20; border-left: 3px solid #f39c12;' : '';
+                        
+                        return `
+                            <tr style="${rowStyle}">
+                                <td>
+                                    <div style="font-weight: 600;">${user}</div>
+                                    <div style="color: #999; font-size: 0.85rem;">${userEmail}</div>
+                                    <div style="color: #999; font-size: 0.75rem;">
+                                        <span class="badge badge-${getRoleBadgeClass(userRole)}">${getRoleLabel(userRole)}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: 500; max-width: 250px;">
+                                        ${isPending ? '🆕 ' : ''}${reclamation.sujet || 'Sans sujet'}
+                                    </div>
+                                    ${reclamation.description && reclamation.description.length > 50 ? 
+                                        `<div style="color: #666; font-size: 0.85rem; margin-top: 0.25rem;">${reclamation.description.substring(0, 50)}...</div>` : 
+                                        `<div style="color: #666; font-size: 0.85rem; margin-top: 0.25rem;">${reclamation.description || 'Aucune description'}</div>`
+                                    }
+                                </td>
+                                <td>${typeLabels[reclamation.type] || reclamation.type}</td>
+                                <td><span class="badge ${status.class}">${status.label}</span></td>
+                                <td style="color: #666; font-size: 0.9rem;">${date}</td>
+                                <td style="text-align: center;">
+                                    <button class="btn btn-primary btn-sm" onclick="openReclamationResponseModal('${reclamation._id}')" style="margin: 2px;">
+                                        📝 Gérer
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteReclamation('${reclamation._id}')" style="margin: 2px;">
+                                        🗑️
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+// Ouvrir le modal de réponse
+async function openReclamationResponseModal(reclamationId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/reclamations/${reclamationId}`);
+        if (!response.ok) throw new Error('Erreur lors du chargement');
+        
+        const reclamation = await response.json();
+        
+        document.getElementById('reclamationId').value = reclamation._id;
+        document.getElementById('reclamationStatus').value = reclamation.statut;
+        document.getElementById('reclamationResponse').value = reclamation.reponse || '';
+        
+        const detailsContainer = document.getElementById('reclamationDetails');
+        const date = new Date(reclamation.createdAt).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        detailsContainer.innerHTML = `
+            <div style="margin-bottom: 0.5rem;">
+                <strong>De:</strong> ${reclamation.createdBy?.name || 'Utilisateur inconnu'} (${reclamation.createdBy?.email || ''})
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <strong>Sujet:</strong> ${reclamation.sujet}
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <strong>Type:</strong> ${reclamation.type}
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <strong>Date:</strong> ${date}
+            </div>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd;">
+                <strong>Description:</strong>
+                <p style="margin: 0.5rem 0 0 0; color: #555;">${reclamation.description}</p>
+            </div>
+        `;
+        
+        document.getElementById('reclamationResponseModal').style.display = 'flex';
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('Erreur lors du chargement de la réclamation', 'error');
+    }
+}
+
+// Fermer le modal de réponse
+function closeReclamationResponseModal() {
+    document.getElementById('reclamationResponseModal').style.display = 'none';
+    document.getElementById('reclamationResponseForm').reset();
+}
+
+// Sauvegarder la réponse
+async function saveReclamationResponse(e) {
+    e.preventDefault();
+    
+    const reclamationId = document.getElementById('reclamationId').value;
+    const statut = document.getElementById('reclamationStatus').value;
+    const reponse = document.getElementById('reclamationResponse').value.trim();
+    
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+        showAlert('Vous devez être connecté', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/reclamations/${reclamationId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                statut,
+                reponse,
+                resolvedBy: currentUser.id
+            })
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Erreur lors de la sauvegarde');
+        }
+        
+        showAlert('Réclamation mise à jour avec succès !', 'success');
+        closeReclamationResponseModal();
+        await loadReclamations();
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('Erreur lors de la sauvegarde: ' + error.message, 'error');
+    }
+}
+
+// Supprimer une réclamation
+async function deleteReclamation(reclamationId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/reclamations/${reclamationId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Erreur lors de la suppression');
+        }
+        
+        showAlert('Réclamation supprimée avec succès !', 'success');
+        await loadReclamations();
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('Erreur lors de la suppression: ' + error.message, 'error');
+    }
+}
+
+// Event listener pour le formulaire de réponse
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('reclamationResponseForm');
+    if (form) {
+        form.addEventListener('submit', saveReclamationResponse);
+    }
+});
+
 // Exposer les fonctions globalement
 window.updateUserStatus = updateUserStatus;
 window.deleteUser = deleteUser;
@@ -966,3 +1284,7 @@ window.addNewStatPart = addNewStatPart;
 window.removeNewStatPart = removeNewStatPart;
 window.updateNewTotalPercentage = updateNewTotalPercentage;
 window.deleteStat = deleteStat;
+window.loadReclamations = loadReclamations;
+window.openReclamationResponseModal = openReclamationResponseModal;
+window.closeReclamationResponseModal = closeReclamationResponseModal;
+window.deleteReclamation = deleteReclamation;

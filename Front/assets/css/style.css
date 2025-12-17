@@ -776,6 +776,10 @@ tbody tr:hover {
     color: var(--primary-dark);
 }
 
+.modal-body {
+    padding: 0;
+}
+
 .close {
     font-size: 2rem;
     font-weight: bold;

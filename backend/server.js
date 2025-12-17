@@ -50,6 +50,10 @@ const statisticsRoutes = require('./routes/statistics');
 app.use('/api/statistics', statisticsRoutes);
 console.log('   ✅ Routes /api/statistics chargées');
 
+const reclamationsRoutes = require('./routes/reclamations');
+app.use('/api/reclamations', reclamationsRoutes);
+console.log('   ✅ Routes /api/reclamations chargées');
+
 console.log('✅ Toutes les routes API chargées');
 
 // Servir les uploads

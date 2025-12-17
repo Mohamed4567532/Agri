@@ -6,90 +6,493 @@
     <title>Administration - AgriSmart</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        .admin-header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            text-align: center;
+        * {
+            box-sizing: border-box;
         }
-        .admin-header h1 {
-            margin: 0;
-            font-size: 2rem;
+        
+        body {
+            background: #f0f2f5;
         }
-        .admin-header p {
-            margin: 0.5rem 0 0;
-            opacity: 0.8;
+        
+        .admin-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
         }
-        .section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+        
+        /* Sidebar */
+        .admin-sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1a252f 0%, #2c3e50 100%);
+            padding: 2rem 0;
+            position: sticky;
+            top: 70px;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
         }
-        .section h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 0.5rem;
+        
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             margin-bottom: 1rem;
         }
+        
+        .sidebar-header h2 {
+            color: white;
+            font-size: 1.3rem;
+            margin: 0;
+        }
+        
+        .sidebar-header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            margin: 0.5rem 0 0;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sidebar-menu li {
+            margin: 0.25rem 0;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: #3498db;
+        }
+        
+        .sidebar-menu .menu-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .menu-badge {
+            margin-left: auto;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* Main Content */
+        .admin-main {
+            flex: 1;
+            padding: 2rem;
+            max-width: calc(100% - 280px);
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .admin-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .admin-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+        }
+        
+        .header-date {
+            text-align: right;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Section */
+        .admin-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+        
+        /* Stats Grid */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        
+        .stat-box.blue::before { background: #3498db; }
+        .stat-box.orange::before { background: #f39c12; }
+        .stat-box.green::before { background: #27ae60; }
+        .stat-box.red::before { background: #e74c3c; }
+        
+        .stat-box .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.15;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .stat-box .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .stat-box .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+        
         .table {
             width: 100%;
             border-collapse: collapse;
         }
-        .table th, .table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
+        
         .table th {
             background: #f8f9fa;
+            padding: 14px 16px;
+            text-align: left;
             font-weight: 600;
             color: #2c3e50;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .table tr:hover {
+        
+        .table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+        
+        .table tr:hover td {
             background: #f8f9fa;
         }
+        
+        /* Badges */
         .badge {
-            padding: 4px 12px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 500;
+            display: inline-block;
         }
+        
         .badge-success { background: #d4edda; color: #155724; }
         .badge-warning { background: #fff3cd; color: #856404; }
         .badge-danger { background: #f8d7da; color: #721c24; }
         .badge-info { background: #d1ecf1; color: #0c5460; }
         .badge-purple { background: #e2d5f1; color: #6f42c1; }
         .badge-secondary { background: #e9ecef; color: #6c757d; }
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            margin: 2px;
+        
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
         }
-        .btn-success { background: #27ae60; color: white; border: none; }
-        .btn-warning { background: #f39c12; color: white; border: none; }
-        .filters-row {
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+        
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #219a52; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-warning:hover { background: #d68910; }
+        .btn-secondary { background: #95a5a6; color: white; }
+        
+        /* Filters */
+        .filters-bar {
             display: flex;
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             flex-wrap: wrap;
+            align-items: center;
         }
+        
         .filter-group {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
+        
         .filter-group label {
             font-weight: 500;
-            color: #2c3e50;
+            color: #555;
+            font-size: 0.9rem;
         }
+        
         .filter-group select {
-            padding: 8px 12px;
+            padding: 10px 14px;
             border-radius: 8px;
             border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+        }
+        
+        /* Stats Management Grid */
+        .stats-management-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .stat-card-admin {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card-admin:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .stat-color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease;
+        }
+        
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+        
+        .modal-header .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        /* Stat Part Styles */
+        .stat-part {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .stat-part .remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-part-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 60px;
+            gap: 0.75rem;
+            align-items: end;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+        
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                display: none;
+            }
+            .admin-main {
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header-date {
+                margin-top: 1rem;
+            }
         }
     </style>
 </head>
@@ -105,243 +508,347 @@
                 <li><a href="admin.html" class="active">Administration</a></li>
                 <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
             </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="admin-header">
-            <h1>🛡️ Panneau d'Administration</h1>
-            <p>Gérez les utilisateurs et surveillez l'activité de la plateforme</p>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h2>🛡️ Admin Panel</h2>
+                <p>Gestion AgriSmart</p>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="#dashboard" class="active" onclick="showSection('dashboard')">
+                        <span class="menu-icon">📊</span>
+                        Tableau de bord
+                    </a>
+                </li>
+                <li>
+                    <a href="#users" onclick="showSection('users')">
+                        <span class="menu-icon">👥</span>
+                        Utilisateurs
+                        <span class="menu-badge" id="pendingBadge">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#statistics" onclick="showSection('statistics')">
+                        <span class="menu-icon">📈</span>
+                        Statistiques Marché
+                    </a>
+                </li>
+                <li>
+                    <a href="#reclamations" onclick="showSection('reclamations')">
+                        <span class="menu-icon">📝</span>
+                        Réclamations
+                        <span class="menu-badge" id="reclamationsBadge">0</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <div class="admin-header">
+                <div>
+                    <h1>Bienvenue, Administrateur</h1>
+                    <p>Gérez votre plateforme AgriSmart</p>
+                </div>
+                <div class="header-date" id="currentDate"></div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="admin-section active">
+                <h2 class="section-title">📊 Tableau de Bord</h2>
+                
+                <div class="stats-overview" id="adminStats">
+                    <!-- Stats will be loaded here -->
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">⏳ Utilisateurs en Attente d'Approbation</h3>
+                    </div>
+                    <div id="pendingUsers">
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="admin-section">
+                <h2 class="section-title">👥 Gestion des Utilisateurs</h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">✅ Utilisateurs Acceptés</h3>
+                    </div>
+                    <div id="acceptedUsers">
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📋 Tous les Utilisateurs</h3>
+                    </div>
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label>Rôle:</label>
+                            <select id="userRoleFilter" class="form-control">
+                                <option value="all">Tous</option>
+                                <option value="farmer">Agriculteurs</option>
+                                <option value="consumer">Consommateurs</option>
+                                <option value="vet">Vétérinaires</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Statut:</label>
+                            <select id="userStatusFilter" class="form-control" onchange="loadAllUsers()">
+                                <option value="all">Tous</option>
+                                <option value="pending">En attente</option>
+                                <option value="accepted">Acceptés</option>
+                                <option value="rejected">Rejetés</option>
+                                <option value="suspended">Suspendus</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="allUsers">
+                        <p>Chargement...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Section -->
+            <section id="statistics" class="admin-section">
+                <h2 class="section-title">📈 Statistiques du Marché Tunisien</h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Gestion des Catégories</h3>
+                        <button class="btn btn-success" onclick="openNewStatModal()">
+                            ➕ Nouvelle catégorie
+                        </button>
+                    </div>
+                    <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                        Ces statistiques sont affichées aux agriculteurs sur leur page de statistiques.
+                    </p>
+                    <div id="statsManagementGrid" class="stats-management-grid">
+                        <p>Chargement des statistiques...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Réclamations Section -->
+            <section id="reclamations" class="admin-section">
+                <h2 class="section-title">📝 Gestion des Réclamations</h2>
+                <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                    Toutes les réclamations créées par les utilisateurs (fermiers, vétérinaires, consommateurs) sont affichées ici.
+                </p>
+                
+                <div class="filters-bar">
+                    <div class="filter-group">
+                        <label>Statut:</label>
+                        <select id="reclamationStatusFilter" class="form-control" onchange="displayReclamations()">
+                            <option value="all">Toutes</option>
+                            <option value="en_attente">En attente</option>
+                            <option value="en_cours">En cours</option>
+                            <option value="resolue">Résolues</option>
+                            <option value="fermee">Fermées</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Type:</label>
+                        <select id="reclamationTypeFilter" class="form-control" onchange="displayReclamations()">
+                            <option value="all">Tous</option>
+                            <option value="technique">Technique</option>
+                            <option value="produit">Produit</option>
+                            <option value="service">Service</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Rôle:</label>
+                        <select id="reclamationRoleFilter" class="form-control" onchange="displayReclamations()">
+                            <option value="all">Tous</option>
+                            <option value="farmer">Fermiers</option>
+                            <option value="vet">Vétérinaires</option>
+                            <option value="consumer">Consommateurs</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div id="reclamationsList">
+                        <p>Chargement des réclamations...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Répondre à une Réclamation -->
+    <div id="reclamationResponseModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📩 Répondre à la Réclamation</h2>
+                <button class="close" onclick="closeReclamationResponseModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="reclamationDetails" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <!-- Les détails seront chargés ici -->
+                </div>
+                <form id="reclamationResponseForm">
+                    <input type="hidden" id="reclamationId">
+                    <div class="form-group">
+                        <label>Statut</label>
+                        <select id="reclamationStatus" class="form-control" required>
+                            <option value="en_attente">En attente</option>
+                            <option value="en_cours">En cours</option>
+                            <option value="resolue">Résolue</option>
+                            <option value="fermee">Fermée</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Réponse</label>
+                        <textarea id="reclamationResponse" class="form-control" rows="5" placeholder="Votre réponse à la réclamation..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Enregistrer</button>
+                        <button type="button" class="btn btn-danger" onclick="closeReclamationResponseModal()" style="flex: 1;">Annuler</button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <!-- Statistiques générales -->
-        <section class="section">
-            <h2>📊 Statistiques Générales</h2>
-            <div id="adminStats">
-                <p>Chargement des statistiques...</p>
-            </div>
-        </section>
-
-        <!-- Gestion des Statistiques du Marché -->
-        <section class="section">
-            <h2>📈 Gestion des Statistiques du Marché Tunisien</h2>
-            <p style="color: #666; margin-bottom: 1rem;">Ces statistiques sont affichées aux agriculteurs sur leur page de statistiques.</p>
-            
-            <!-- Bouton pour ajouter une nouvelle statistique -->
-            <button class="btn btn-success" onclick="openNewStatModal()" style="margin-bottom: 1.5rem;">
-                ➕ Ajouter une nouvelle catégorie
-            </button>
-            
-            <!-- Container pour les statistiques dynamiques -->
-            <div id="statsManagementGrid" class="stats-management-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                <p>Chargement des statistiques...</p>
-            </div>
-        </section>
-
-        <!-- Utilisateurs en attente -->
-        <section class="section">
-            <h2>⏳ Utilisateurs en Attente d'Approbation</h2>
-            <div id="pendingUsers">
-                <p>Chargement...</p>
-            </div>
-        </section>
-
-        <!-- Utilisateurs acceptés -->
-        <section class="section">
-            <h2>✅ Utilisateurs Acceptés</h2>
-            <div id="acceptedUsers">
-                <p>Chargement...</p>
-            </div>
-        </section>
-
-        <!-- Tous les utilisateurs avec filtres -->
-        <section class="section">
-            <h2>👥 Tous les Utilisateurs</h2>
-            <div class="filters-row">
-                <div class="filter-group">
-                    <label for="userRoleFilter">Rôle:</label>
-                    <select id="userRoleFilter" class="form-control">
-                        <option value="all">Tous les rôles</option>
-                        <option value="farmer">Agriculteurs</option>
-                        <option value="consumer">Consommateurs</option>
-                        <option value="vet">Vétérinaires</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="userStatusFilter">Statut:</label>
-                    <select id="userStatusFilter" class="form-control" onchange="loadAllUsers()">
-                        <option value="all">Tous les statuts</option>
-                        <option value="pending">En attente</option>
-                        <option value="accepted">Acceptés</option>
-                        <option value="rejected">Rejetés</option>
-                        <option value="suspended">Suspendus</option>
-                    </select>
-                </div>
-            </div>
-            <div id="allUsers">
-                <p>Chargement...</p>
-            </div>
-        </section>
     </div>
 
     <!-- Modal Contacter Utilisateur -->
     <div id="adminContactModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Contacter l'utilisateur</h2>
+                <h2>✉️ Contacter l'utilisateur</h2>
                 <button class="close">&times;</button>
             </div>
-            <form id="adminContactForm">
-                <input type="hidden" id="adminContactUserId">
-                <p><strong>Utilisateur:</strong> <span id="adminContactUserName"></span></p>
-                <div class="form-group">
-                    <label for="adminMessageSubject">Sujet</label>
-                    <input type="text" id="adminMessageSubject" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="adminMessageContent">Message</label>
-                    <textarea id="adminMessageContent" class="form-control" required rows="4"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
-            </form>
+            <div class="modal-body">
+                <form id="adminContactForm">
+                    <input type="hidden" id="adminContactUserId">
+                    <p style="margin-bottom: 1rem;"><strong>Destinataire:</strong> <span id="adminContactUserName"></span></p>
+                    <div class="form-group">
+                        <label>Sujet</label>
+                        <input type="text" id="adminMessageSubject" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="adminMessageContent" class="form-control" required rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- Modal Modifier Statistiques -->
     <div id="statModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>📊 Modifier les Statistiques: <span id="statCategoryTitle"></span></h2>
+                <h2>✏️ Modifier: <span id="statCategoryTitle"></span></h2>
                 <button class="close">&times;</button>
             </div>
-            <form id="statForm">
-                <input type="hidden" id="statCategory">
-                <input type="hidden" id="statId">
-                
-                <div id="statPartsContainer">
-                    <!-- Les parties seront ajoutées dynamiquement -->
-                </div>
-                
-                <!-- Affichage du total en temps réel -->
-                <div id="totalPercentageDisplay" style="text-align: center; padding: 10px; margin-bottom: 1rem; border-radius: 8px; font-weight: bold;">
-                    Total: 0%
-                </div>
-                
-                <button type="button" class="btn btn-secondary" onclick="addStatPart()" style="width: 100%; margin-bottom: 1rem;">
-                    ➕ Ajouter une partie
-                </button>
-                
-                <div style="display: flex; gap: 1rem;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Enregistrer</button>
-                    <button type="button" class="btn btn-danger" onclick="closeStatModal()" style="flex: 1;">Annuler</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="statForm">
+                    <input type="hidden" id="statCategory">
+                    <input type="hidden" id="statId">
+                    
+                    <div id="statPartsContainer"></div>
+                    
+                    <div id="totalPercentageDisplay" style="text-align: center; padding: 12px; margin-bottom: 1rem; border-radius: 8px; font-weight: 600;">
+                        Total: 0%
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary" onclick="addStatPart()" style="width: 100%; margin-bottom: 1rem;">
+                        ➕ Ajouter une partie
+                    </button>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Enregistrer</button>
+                        <button type="button" class="btn btn-danger" onclick="closeStatModal()" style="flex: 1;">Annuler</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- Modal Nouvelle Statistique -->
     <div id="newStatModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content">
             <div class="modal-header">
-                <h2>➕ Nouvelle Catégorie de Statistique</h2>
+                <h2>➕ Nouvelle Catégorie</h2>
                 <button class="close">&times;</button>
             </div>
-            <form id="newStatForm">
-                <div class="form-group">
-                    <label>Nom de la catégorie (identifiant unique, sans accents)</label>
-                    <input type="text" id="newStatCategory" class="form-control" placeholder="Ex: cereales" required pattern="[a-z0-9_]+" title="Lettres minuscules, chiffres et underscores uniquement">
-                </div>
-                
-                <div class="form-group">
-                    <label>Nom d'affichage</label>
-                    <input type="text" id="newStatDisplayName" class="form-control" placeholder="Ex: Céréales" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>Couleur de la catégorie</label>
-                    <input type="color" id="newStatColor" class="form-control" value="#3498db" style="height: 38px; width: 100%;">
-                </div>
-                
-                <hr style="margin: 1.5rem 0;">
-                <h4 style="margin-bottom: 1rem;">Données initiales</h4>
-                
-                <div id="newStatPartsContainer">
-                    <!-- Les parties seront ajoutées dynamiquement -->
-                </div>
-                
-                <!-- Affichage du total en temps réel -->
-                <div id="newTotalPercentageDisplay" style="text-align: center; padding: 10px; margin-bottom: 1rem; border-radius: 8px; font-weight: bold;">
-                    Total: 0%
-                </div>
-                
-                <button type="button" class="btn btn-secondary" onclick="addNewStatPart()" style="width: 100%; margin-bottom: 1rem;">
-                    ➕ Ajouter une partie
-                </button>
-                
-                <div style="display: flex; gap: 1rem;">
-                    <button type="submit" class="btn btn-success" style="flex: 1;">✅ Créer la catégorie</button>
-                    <button type="button" class="btn btn-danger" onclick="closeNewStatModal()" style="flex: 1;">Annuler</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="newStatForm">
+                    <div class="form-group">
+                        <label>Identifiant (minuscules, sans accents)</label>
+                        <input type="text" id="newStatCategory" class="form-control" placeholder="Ex: cereales" required pattern="[a-z0-9_]+">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nom d'affichage</label>
+                        <input type="text" id="newStatDisplayName" class="form-control" placeholder="Ex: Céréales" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Couleur</label>
+                        <input type="color" id="newStatColor" class="form-control" value="#3498db" style="height: 45px; width: 100%;">
+                    </div>
+                    
+                    <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #eee;">
+                    <h4 style="margin-bottom: 1rem; color: #2c3e50;">Données</h4>
+                    
+                    <div id="newStatPartsContainer"></div>
+                    
+                    <div id="newTotalPercentageDisplay" style="text-align: center; padding: 12px; margin-bottom: 1rem; border-radius: 8px; font-weight: 600;">
+                        Total: 0%
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary" onclick="addNewStatPart()" style="width: 100%; margin-bottom: 1rem;">
+                        ➕ Ajouter une partie
+                    </button>
+                    
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-success" style="flex: 1;">✅ Créer</button>
+                        <button type="button" class="btn btn-danger" onclick="closeNewStatModal()" style="flex: 1;">Annuler</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
-    <style>
-        .stat-part {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            position: relative;
-        }
-        .stat-part .remove-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .stat-part-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 0.5rem;
-            align-items: end;
-        }
-        .color-preview {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            cursor: pointer;
-        }
-        .stat-summary-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        .stat-color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-    </style>
 
     <script src="assets/js/main.js"></script>
     <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/admin.js"></script>
+    
+    <script>
+        // Navigation entre sections
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
+        }
+        
+        // Afficher la date actuelle
+        document.getElementById('currentDate').innerHTML = new Date().toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    </script>
 </body>
 </html>

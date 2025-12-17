@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Réclamations - AgriSmart</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .reclamations-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+        .reclamation-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+        }
+        .reclamation-card.en_attente { border-left-color: #f39c12; }
+        .reclamation-card.en_cours { border-left-color: #3498db; }
+        .reclamation-card.resolue { border-left-color: #27ae60; }
+        .reclamation-card.fermee { border-left-color: #95a5a6; }
+        .reclamation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+        .reclamation-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 0.5rem 0;
+        }
+        .reclamation-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .reclamation-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .reclamation-reponse {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 3px solid #27ae60;
+        }
+        .reclamation-reponse h4 {
+            margin: 0 0 0.5rem 0;
+            color: #27ae60;
+            font-size: 0.9rem;
+        }
+        .reclamation-reponse p {
+            margin: 0;
+            color: #555;
+        }
+        .priority-low { color: #27ae60; }
+        .priority-normal { color: #f39c12; }
+        .priority-high { color: #e67e22; }
+        .priority-urgent { color: #e74c3c; font-weight: bold; }
+        .reclamation-fichiers {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        .reclamation-fichiers a {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #3498db;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .reclamation-fichiers a:hover {
+            background: #e9ecef;
+        }
+        #newReclamationBtn {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            position: relative !important;
+            z-index: 9999 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: inline-block !important;
+        }
+        .card {
+            position: relative;
+            z-index: 1;
+        }
+        .card * {
+            pointer-events: auto !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="reclamations.html" class="active">Mes Réclamations</a></li>
+                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="reclamations-container">
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2 class="section-title">📝 Mes Réclamations</h2>
+                <p style="color: #666; margin-bottom: 1.5rem;">
+                    Créez une nouvelle réclamation ou consultez le statut de vos réclamations existantes.
+                </p>
+                <button 
+                    type="button"
+                    class="btn btn-primary" 
+                    id="newReclamationBtn" 
+                    style="cursor: pointer !important; pointer-events: auto !important; position: relative !important; z-index: 9999 !important;"
+                    onclick="event.preventDefault(); event.stopPropagation(); console.log('CLIC DETECTE'); document.getElementById('newReclamationModal').style.display='flex'; document.getElementById('newReclamationModal').classList.add('active');">
+                    ➕ Nouvelle Réclamation
+                </button>
+            </div>
+
+            <div id="reclamationsList">
+                <p>Chargement de vos réclamations...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nouvelle Réclamation -->
+    <div id="newReclamationModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📝 Nouvelle Réclamation</h2>
+                <button class="close" id="closeReclamationModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newReclamationForm" onsubmit="event.preventDefault(); createReclamation(event); return false;">
+                    <div class="form-group">
+                        <label>Sujet *</label>
+                        <input type="text" id="reclamationSujet" class="form-control" required placeholder="Ex: Problème avec un produit">
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="reclamationType" class="form-control">
+                            <option value="technique">Technique</option>
+                            <option value="produit">Produit</option>
+                            <option value="service">Service</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="reclamationDescription" class="form-control" required rows="5" placeholder="Décrivez votre réclamation en détail..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" id="submitReclamationBtn" class="btn btn-primary" style="flex: 1;">Envoyer</button>
+                        <button type="button" class="btn btn-secondary" id="cancelReclamationBtn" style="flex: 1;">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/reclamations.js"></script>
+    
+    <script>
+        // Script de test pour vérifier que tout fonctionne
+        console.log('Script de test chargé');
+        
+        // Fonction simple pour ouvrir le modal
+        function openModalDirect() {
+            console.log('openModalDirect appelée');
+            const modal = document.getElementById('newReclamationModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.zIndex = '2000';
+                modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                modal.classList.add('active');
+                console.log('Modal ouvert directement');
+            } else {
+                alert('Modal non trouvé');
+            }
+        }
+        
+        window.openModalDirect = openModalDirect;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Page chargée - DOMContentLoaded');
+            
+            // Vérifier que le bouton existe
+            const btn = document.getElementById('newReclamationBtn');
+            if (btn) {
+                console.log('✅ Bouton trouvé dans le DOM');
+                console.log('Bouton styles:', window.getComputedStyle(btn));
+                
+                // Forcer le bouton à être cliquable
+                btn.style.pointerEvents = 'auto';
+                btn.style.cursor = 'pointer';
+                btn.style.zIndex = '9999';
+                btn.disabled = false;
+                btn.readOnly = false;
+                
+                // Ajouter plusieurs event listeners
+                btn.onclick = function(e) {
+                    console.log('ONCLICK DIRECT - Clic détecté!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openModalDirect();
+                };
+                
+                btn.addEventListener('click', function(e) {
+                    console.log('ADD EVENT LISTENER - Clic détecté!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openModalDirect();
+                }, true);
+                
+                btn.addEventListener('mousedown', function(e) {
+                    console.log('MOUSEDOWN détecté!');
+                });
+                
+                console.log('✅ Event listeners ajoutés au bouton');
+            } else {
+                console.error('❌ Bouton non trouvé dans le DOM');
+            }
+            
+            // Vérifier que le modal existe
+            const modal = document.getElementById('newReclamationModal');
+            if (modal) {
+                console.log('✅ Modal trouvé dans le DOM');
+            } else {
+                console.error('❌ Modal non trouvé dans le DOM');
+            }
+        });
+        
+        // Aussi essayer immédiatement
+        setTimeout(function() {
+            const btn = document.getElementById('newReclamationBtn');
+            if (btn) {
+                console.log('✅ Bouton trouvé après timeout');
+                btn.onclick = function() {
+                    console.log('CLIC VIA TIMEOUT');
+                    openModalDirect();
+                };
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
+
