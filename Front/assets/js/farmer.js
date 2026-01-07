@@ -593,6 +593,9 @@ async function replyToMessage(e) {
         // Réinitialiser le formulaire
         document.getElementById('replyMessageForm').reset();
 
+        // Recharger les messages
+        await loadFarmerMessages();
+
     } catch (error) {
         console.error('❌ Erreur lors de l\'envoi de la réponse:', error);
         showAlert('Erreur lors de l\'envoi: ' + error.message, 'error');

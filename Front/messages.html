@@ -385,6 +385,32 @@
             <div class="modal-body" style="padding: 2rem;" id="messageDetailsContent">
                 <!-- Les détails seront chargés ici -->
             </div>
+            <div id="replySection" style="display: none; padding: 0 2rem 2rem 2rem; border-top: 2px solid #e0e0e0; margin-top: 1rem;">
+                <h3 style="margin: 1.5rem 0 1rem 0; color: #1a252f; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-reply" style="color: #4CAF50;"></i>
+                    Répondre
+                </h3>
+                <form id="replyMessageForm" onsubmit="replyToMessageFromModal(event); return false;">
+                    <input type="hidden" id="replyMessageId">
+                    <input type="hidden" id="replySenderId">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="replySubject" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1a252f;">Sujet *</label>
+                        <input type="text" id="replySubject" class="form-control" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1rem; transition: border-color 0.2s ease;" onfocus="this.style.borderColor='#4CAF50'; this.style.boxShadow='0 0 0 3px rgba(76, 175, 80, 0.1)'" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label for="replyContent" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1a252f;">Votre réponse *</label>
+                        <textarea id="replyContent" class="form-control" required rows="5" placeholder="Tapez votre réponse ici..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1rem; resize: vertical; transition: border-color 0.2s ease; font-family: inherit;" onfocus="this.style.borderColor='#4CAF50'; this.style.boxShadow='0 0 0 3px rgba(76, 175, 80, 0.1)'" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.75rem; border-radius: 8px; background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); border: none; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                            <i class="fa-solid fa-paper-plane"></i> Envoyer la réponse
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeMessageModal()" style="padding: 0.75rem 1.5rem; border-radius: 8px; background: #f0f0f0; border: none; color: #666; cursor: pointer; font-weight: 500; transition: all 0.2s ease;" onmouseover="this.style.background='#e0e0e0'" onmouseout="this.style.background='#f0f0f0'">
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

@@ -303,6 +303,8 @@ async function viewMessage(messageId) {
             '';
 
         const content = document.getElementById('messageDetailsContent');
+        const replySection = document.getElementById('replySection');
+        
         content.innerHTML = `
             <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid rgba(0,0,0,0.05);">
                 <h3 style="margin-top: 0; margin-bottom: 1rem; color: #1a252f; display: flex; align-items: center; gap: 0.5rem;">
@@ -343,6 +345,18 @@ async function viewMessage(messageId) {
             </div>
         `;
 
+        // Afficher la section de réponse uniquement pour les messages reçus
+        if (isReceived && replySection) {
+            replySection.style.display = 'block';
+            // Stocker l'ID du message et de l'expéditeur pour la réponse
+            document.getElementById('replyMessageId').value = messageId;
+            document.getElementById('replySenderId').value = message.senderId._id || message.senderId.id || message.senderId;
+            document.getElementById('replySubject').value = `Re: ${message.subject}`;
+            document.getElementById('replyContent').value = '';
+        } else if (replySection) {
+            replySection.style.display = 'none';
+        }
+
         // Marquer comme lu si c'est un message reçu
         if (isReceived && !message.isRead) {
             try {
@@ -372,9 +386,93 @@ async function viewMessage(messageId) {
     }
 }
 
+// Répondre à un message depuis le modal
+async function replyToMessageFromModal(e) {
+    e.preventDefault();
+
+    const messageId = document.getElementById('replyMessageId').value;
+    const senderId = document.getElementById('replySenderId').value;
+    const subject = document.getElementById('replySubject').value.trim();
+    const message = document.getElementById('replyContent').value.trim();
+
+    if (!subject || !message) {
+        showAlert('Veuillez remplir tous les champs.', 'error');
+        return;
+    }
+
+    try {
+        const currentUser = getCurrentUser();
+        if (!currentUser || !currentUser.id) {
+            showAlert('Vous devez être connecté pour répondre.', 'error');
+            return;
+        }
+
+        // Récupérer le message original pour obtenir le productId si disponible
+        const apiUrl = (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) ? API_BASE_URL : 'http://localhost:3000/api';
+        const headers = typeof getHeaders === 'function' ? getHeaders() : {};
+        
+        const originalMessageResponse = await fetch(`${apiUrl}/messages/${messageId}`, {
+            headers: headers
+        });
+
+        let productId = null;
+        if (originalMessageResponse.ok) {
+            const originalMessage = await originalMessageResponse.json();
+            productId = originalMessage.productId?._id || originalMessage.productId?.id || originalMessage.productId || null;
+        }
+
+        const newMessage = {
+            senderId: currentUser.id,
+            receiverId: senderId,
+            subject: subject,
+            message: message,
+            productId: productId
+        };
+
+        console.log('📤 Envoi de la réponse:', newMessage);
+
+        const response = await fetch(`${apiUrl}/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers
+            },
+            body: JSON.stringify(newMessage)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de l\'envoi');
+        }
+
+        const savedMessage = await response.json();
+        console.log('✅ Réponse envoyée avec succès:', savedMessage._id);
+
+        showAlert('Réponse envoyée avec succès !', 'success');
+
+        // Fermer le modal
+        closeMessageModal();
+
+        // Réinitialiser le formulaire
+        document.getElementById('replyMessageForm').reset();
+
+        // Recharger les messages
+        await loadAllMessages();
+        displayMessages();
+
+    } catch (error) {
+        console.error('❌ Erreur lors de l\'envoi de la réponse:', error);
+        showAlert('Erreur lors de l\'envoi: ' + error.message, 'error');
+    }
+}
+
 // Fermer le modal
 function closeMessageModal() {
     document.getElementById('messageDetailsModal').style.display = 'none';
+    const replySection = document.getElementById('replySection');
+    if (replySection) {
+        replySection.style.display = 'none';
+    }
 }
 
 // Exposer les fonctions globalement
@@ -382,3 +480,4 @@ window.switchTab = switchTab;
 window.applyFilter = applyFilter;
 window.viewMessage = viewMessage;
 window.closeMessageModal = closeMessageModal;
+window.replyToMessageFromModal = replyToMessageFromModal;

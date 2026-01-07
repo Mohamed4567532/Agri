@@ -613,6 +613,12 @@ async function viewConsumerMessage(messageId) {
             </div>
         `;
 
+        // Stocker l'ID du message et de l'expéditeur pour la réponse
+        document.getElementById('consumerReplyMessageId').value = messageId;
+        document.getElementById('consumerReplySenderId').value = message.senderId._id || message.senderId.id || message.senderId;
+        document.getElementById('consumerReplySubject').value = `Re: ${message.subject}`;
+        document.getElementById('consumerReplyContent').value = '';
+
         // Marquer le message comme lu
         if (!message.isRead) {
             try {
@@ -644,6 +650,87 @@ async function viewConsumerMessage(messageId) {
     } catch (error) {
         console.error('❌ Erreur lors de l\'affichage du message:', error);
         showAlert('Erreur: ' + error.message, 'error');
+    }
+}
+
+// Répondre à un message (pour le consommateur)
+async function replyToConsumerMessage(e) {
+    e.preventDefault();
+
+    const messageId = document.getElementById('consumerReplyMessageId').value;
+    const senderId = document.getElementById('consumerReplySenderId').value;
+    const subject = document.getElementById('consumerReplySubject').value.trim();
+    const message = document.getElementById('consumerReplyContent').value.trim();
+
+    if (!subject || !message) {
+        showAlert('Veuillez remplir tous les champs.', 'error');
+        return;
+    }
+
+    try {
+        const currentUser = getCurrentUser();
+        if (!currentUser || !currentUser.id) {
+            showAlert('Vous devez être connecté pour répondre.', 'error');
+            return;
+        }
+
+        // Récupérer le message original pour obtenir le productId si disponible
+        const apiUrl = (typeof CONSUMER_API_BASE_URL !== 'undefined' && CONSUMER_API_BASE_URL) ? CONSUMER_API_BASE_URL : 'http://localhost:3000/api';
+        const originalMessageResponse = await fetch(`${apiUrl}/messages/${messageId}`, {
+            headers: getHeaders()
+        });
+
+        let productId = null;
+        if (originalMessageResponse.ok) {
+            const originalMessage = await originalMessageResponse.json();
+            productId = originalMessage.productId?._id || originalMessage.productId?.id || originalMessage.productId || null;
+        }
+
+        const newMessage = {
+            senderId: currentUser.id,
+            receiverId: senderId,
+            subject: subject,
+            message: message,
+            productId: productId
+        };
+
+        console.log('📤 Envoi de la réponse:', newMessage);
+
+        const response = await fetch(`${apiUrl}/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...getHeaders()
+            },
+            body: JSON.stringify(newMessage)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de l\'envoi');
+        }
+
+        const savedMessage = await response.json();
+        console.log('✅ Réponse envoyée avec succès:', savedMessage._id);
+
+        showAlert('Réponse envoyée avec succès !', 'success');
+
+        // Fermer le modal
+        const modal = document.getElementById('consumerMessageModal');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+        }
+
+        // Réinitialiser le formulaire
+        document.getElementById('consumerReplyMessageForm').reset();
+
+        // Recharger les messages
+        await loadConsumerMessages();
+
+    } catch (error) {
+        console.error('❌ Erreur lors de l\'envoi de la réponse:', error);
+        showAlert('Erreur lors de l\'envoi: ' + error.message, 'error');
     }
 }
 
@@ -749,6 +836,7 @@ window.contactFarmerForAnimal = contactFarmerForAnimal;
 window.viewAnimalDetails = viewAnimalDetails;
 window.viewConsumerMessage = viewConsumerMessage;
 window.loadConsumerMessages = loadConsumerMessages;
+window.replyToConsumerMessage = replyToConsumerMessage;
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
