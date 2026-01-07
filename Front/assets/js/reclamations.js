@@ -1,7 +1,7 @@
 // Utiliser API_BASE_URL depuis api.js (déjà déclaré) ou définir si non disponible
 // Ne pas redéclarer const pour éviter l'erreur "already declared"
-const RECLAMATIONS_API_BASE_URL = (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) 
-    ? API_BASE_URL 
+const RECLAMATIONS_API_BASE_URL = (typeof API_BASE_URL !== 'undefined' && API_BASE_URL)
+    ? API_BASE_URL
     : 'http://localhost:3000/api';
 
 let allReclamations = [];
@@ -17,7 +17,7 @@ async function loadReclamations() {
     try {
         const response = await fetch(`${RECLAMATIONS_API_BASE_URL}/reclamations?userId=${currentUser.id}&role=${currentUser.role}`);
         if (!response.ok) throw new Error('Erreur lors du chargement');
-        
+
         allReclamations = await response.json();
         displayReclamations();
     } catch (error) {
@@ -40,12 +40,10 @@ function displayReclamations() {
 
     if (allReclamations.length === 0) {
         container.innerHTML = `
-            <div class="card">
-                <div style="text-align: center; padding: 2rem; color: #999;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
-                    <h3>Aucune réclamation</h3>
-                    <p>Vous n'avez pas encore créé de réclamation.</p>
-                </div>
+            <div class="reclamation-card" style="text-align: center; padding: 3rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem; color: #ccc;"><i class="fa-solid fa-clipboard-list"></i></div>
+                <h3 style="color: #1a252f; margin-bottom: 0.5rem;">Aucune réclamation</h3>
+                <p style="color: #666;">Vous n'avez pas encore créé de réclamation.</p>
             </div>
         `;
         return;
@@ -53,17 +51,17 @@ function displayReclamations() {
 
     container.innerHTML = allReclamations.map(reclamation => {
         const statusLabels = {
-            'en_attente': '⏳ En attente',
-            'en_cours': '🔄 En cours',
-            'resolue': '✅ Résolue',
-            'fermee': '🔒 Fermée'
+            'en_attente': 'En attente',
+            'en_cours': 'En cours',
+            'resolue': 'Résolue',
+            'fermee': 'Fermée'
         };
 
         const typeLabels = {
-            'technique': '🔧 Technique',
-            'produit': '📦 Produit',
-            'service': '🛎️ Service',
-            'autre': '📝 Autre'
+            'technique': 'Technique',
+            'produit': 'Produit',
+            'service': 'Service',
+            'autre': 'Autre'
         };
 
         const date = new Date(reclamation.createdAt).toLocaleDateString('fr-FR', {
@@ -75,55 +73,108 @@ function displayReclamations() {
         });
 
         const priorityLabels = {
-            'basse': { label: '🟢 Basse', class: 'priority-low' },
-            'normale': { label: '🟡 Normale', class: 'priority-normal' },
-            'haute': { label: '🟠 Haute', class: 'priority-high' },
-            'urgente': { label: '🔴 Urgente', class: 'priority-urgent' }
+            'basse': { label: 'Basse', class: 'low' },
+            'normale': { label: 'Normale', class: 'normal' },
+            'haute': { label: 'Haute', class: 'high' },
+            'urgente': { label: 'Urgente', class: 'urgent' }
         };
 
         const priority = priorityLabels[reclamation.priorite] || priorityLabels['normale'];
+
+        const statusIcons = {
+            'en_attente': '⏳',
+            'en_cours': '🔄',
+            'resolue': '✅',
+            'fermee': '🔒'
+        };
+
+        const typeIcons = {
+            'technique': '🔧',
+            'produit': '📦',
+            'service': '🛎️',
+            'autre': '📝'
+        };
 
         return `
             <div class="reclamation-card ${reclamation.statut}">
                 <div class="reclamation-header">
                     <div style="flex: 1;">
                         ${reclamation.numeroReference ? `
-                            <div style="font-size: 0.75rem; color: #666; margin-bottom: 0.25rem;">
-                                📋 Réf: <strong>${reclamation.numeroReference}</strong>
+                            <div style="font-size: 0.75rem; color: #999; margin-bottom: 0.5rem; letter-spacing: 0.5px; display: flex; align-items: center; gap: 0.25rem;">
+                                <i class="fa-solid fa-hashtag" style="font-size: 0.7rem;"></i>
+                                <strong style="color: #666;">${reclamation.numeroReference}</strong>
                             </div>
                         ` : ''}
-                        <h3 class="reclamation-title">${reclamation.sujet}</h3>
-                        <div class="reclamation-meta">
-                            <span><strong>Type:</strong> ${typeLabels[reclamation.type] || reclamation.type}</span>
-                            <span><strong>Statut:</strong> ${statusLabels[reclamation.statut] || reclamation.statut}</span>
-                            <span class="${priority.class}"><strong>Priorité:</strong> ${priority.label}</span>
-                            <span><strong>Date:</strong> ${date}</span>
+                        <h3 class="reclamation-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-file-lines" style="color: #4CAF50; font-size: 1.2rem;"></i>
+                            ${reclamation.sujet}
+                        </h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;">
+                            <span class="badge-modern badge-status ${reclamation.statut}" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                                ${statusIcons[reclamation.statut] || ''}
+                                ${statusLabels[reclamation.statut] || reclamation.statut}
+                            </span>
+                            <span class="badge-modern badge-priority ${priority.class}" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                                <i class="fa-solid fa-flag" style="font-size: 0.7rem;"></i>
+                                ${priority.label}
+                            </span>
+                            <span class="badge-modern badge-type" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                                ${typeIcons[reclamation.type] || '📋'}
+                                ${typeLabels[reclamation.type] || reclamation.type}
+                            </span>
+                        </div>
+                        <div class="reclamation-meta" style="margin-top: 1rem;">
+                            <span style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; background: rgba(0,0,0,0.03); border-radius: 8px;">
+                                <i class="fa-solid fa-calendar-days" style="color: #666;"></i>
+                                ${date}
+                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="reclamation-description">
-                    ${reclamation.description}
+                <div class="reclamation-description" style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid rgba(0,0,0,0.08);">
+                    <div style="display: flex; align-items: start; gap: 0.75rem;">
+                        <i class="fa-solid fa-align-left" style="color: #999; margin-top: 0.25rem; font-size: 0.9rem;"></i>
+                        <div style="flex: 1; color: #555; line-height: 1.7;">${reclamation.description}</div>
+                    </div>
                 </div>
                 ${reclamation.fichiers && reclamation.fichiers.length > 0 ? `
-                    <div class="reclamation-fichiers" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
-                        <strong>📎 Fichiers joints:</strong>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                    <div class="reclamation-fichiers" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08);">
+                        <strong style="color: #1a252f; font-size: 0.875rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-paperclip" style="color: #42A5F5;"></i>
+                            Fichiers joints (${reclamation.fichiers.length})
+                        </strong>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
                             ${reclamation.fichiers.map(fichier => `
-                                <a href="${fichier.chemin}" target="_blank" style="display: inline-block; padding: 0.25rem 0.5rem; background: #f8f9fa; border-radius: 4px; text-decoration: none; color: #3498db; font-size: 0.85rem;">
-                                    📄 ${fichier.nom || 'Fichier'}
+                                <a href="${fichier.chemin}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border: 1px solid rgba(66, 165, 245, 0.2); border-radius: 10px; text-decoration: none; color: #42A5F5; font-size: 0.875rem; font-weight: 500; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%)'; this.style.borderColor='#4CAF50'; this.style.color='#4CAF50'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(76, 175, 80, 0.15)'" onmouseout="this.style.background='linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)'; this.style.borderColor='rgba(66, 165, 245, 0.2)'; this.style.color='#42A5F5'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.05)'">
+                                    <i class="fa-solid fa-file" style="font-size: 1rem;"></i>
+                                    <span>${fichier.nom || 'Fichier'}</span>
+                                    <i class="fa-solid fa-external-link" style="font-size: 0.7rem; opacity: 0.7;"></i>
                                 </a>
                             `).join('')}
                         </div>
                     </div>
                 ` : ''}
                 ${reclamation.reponse ? `
-                    <div class="reclamation-reponse">
-                        <h4>📩 Réponse de l'administrateur:</h4>
-                        <p>${reclamation.reponse}</p>
+                    <div class="reclamation-reponse" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #66BB6A;">
+                        <h4 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: #4CAF50;">
+                            <i class="fa-solid fa-user-shield" style="font-size: 1.1rem;"></i>
+                            Réponse de l'administrateur
+                        </h4>
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="fa-solid fa-message" style="color: #66BB6A; margin-top: 0.25rem;"></i>
+                            <p style="flex: 1; margin: 0; color: #555; line-height: 1.7;">${reclamation.reponse}</p>
+                        </div>
                         ${reclamation.resolvedAt ? `
-                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #999;">
-                                Résolu le ${new Date(reclamation.resolvedAt).toLocaleDateString('fr-FR')}
-                            </p>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(102, 187, 106, 0.2); display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #999;">
+                                <i class="fa-solid fa-check-circle" style="color: #66BB6A;"></i>
+                                <span>Résolu le ${new Date(reclamation.resolvedAt).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })}</span>
+                            </div>
                         ` : ''}
                     </div>
                 ` : ''}
@@ -143,30 +194,32 @@ function openNewReclamationModal() {
             window.location.href = 'login.html';
             return;
         }
-        
+
         console.log('Utilisateur connecté:', currentUser);
-        
+
         const modal = document.getElementById('newReclamationModal');
         console.log('Modal trouvé:', modal);
-        
+
         if (!modal) {
             console.error('❌ Modal non trouvé dans le DOM');
             alert('Erreur: Le formulaire n\'a pas pu être chargé');
             return;
         }
-        
+
         // Réinitialiser le formulaire
         const form = document.getElementById('newReclamationForm');
         if (form) {
             form.reset();
             console.log('✅ Formulaire réinitialisé');
         }
-        
+
         // Ouvrir le modal - utiliser les deux méthodes pour être sûr
         modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        modal.style.opacity = '1';
         modal.classList.add('active');
         console.log('✅ Modal ouvert - display:', modal.style.display, 'classList:', modal.classList.toString());
-        
+
         // Vérifier visuellement
         setTimeout(() => {
             const isVisible = modal.style.display === 'flex' || modal.classList.contains('active');
@@ -183,7 +236,7 @@ function openNewReclamationModal() {
                 modal.style.zIndex = '2000';
             }
         }, 100);
-        
+
         // Focus sur le premier champ
         const sujetInput = document.getElementById('reclamationSujet');
         if (sujetInput) {
@@ -197,27 +250,78 @@ function openNewReclamationModal() {
 
 // Fermer le modal
 function closeNewReclamationModal() {
+    console.log('🔒 ========== FERMETURE DU MODAL ==========');
     const modal = document.getElementById('newReclamationModal');
-    if (modal) {
-        modal.classList.remove('active');
+
+    if (!modal) {
+        console.error('❌ Modal non trouvé lors de la fermeture');
+        return;
     }
+
+    console.log('📋 État avant fermeture:', {
+        display: modal.style.display,
+        visibility: modal.style.visibility,
+        opacity: modal.style.opacity,
+        hasActiveClass: modal.classList.contains('active')
+    });
+
+    // Méthode 1: Retirer la classe active
+    modal.classList.remove('active');
+
+    // Méthode 2: Masquer le modal de manière explicite avec tous les styles
+    modal.style.display = 'none';
+    modal.style.visibility = 'hidden';
+    modal.style.opacity = '0';
+    modal.style.pointerEvents = 'none';
+    modal.style.zIndex = '-1';
+
+    // Méthode 3: Forcer la fermeture en retirant tous les styles inline problématiques
+    const problematicStyles = ['position', 'top', 'left', 'width', 'height', 'backgroundColor'];
+    problematicStyles.forEach(prop => {
+        modal.style[prop] = '';
+    });
+
+    console.log('📋 État après fermeture:', {
+        display: modal.style.display,
+        visibility: modal.style.visibility,
+        opacity: modal.style.opacity,
+        hasActiveClass: modal.classList.contains('active')
+    });
+
+    // Vérifier que le modal est bien fermé
+    setTimeout(() => {
+        const isStillVisible = window.getComputedStyle(modal).display !== 'none' ||
+            modal.classList.contains('active');
+        if (isStillVisible) {
+            console.error('❌ Le modal est toujours visible! Forçage de la fermeture...');
+            // Forcer la fermeture de manière plus agressive
+            modal.remove();
+            // Recréer le modal depuis le HTML si nécessaire
+            console.warn('⚠️ Modal supprimé du DOM. Rechargez la page si nécessaire.');
+        } else {
+            console.log('✅ Modal fermé avec succès');
+        }
+    }, 100);
+
+    // Réinitialiser le formulaire
     const form = document.getElementById('newReclamationForm');
     if (form) {
         form.reset();
+        console.log('✅ Formulaire réinitialisé');
     }
 }
 
 // Créer une nouvelle réclamation
 async function createReclamation(e) {
     console.log('🚀 createReclamation appelée - Event:', e);
-    
+
     if (e) {
         e.preventDefault();
         e.stopPropagation();
     }
-    
+
     console.log('✅ preventDefault et stopPropagation exécutés');
-    
+
     const currentUser = getCurrentUser();
     if (!currentUser) {
         console.error('Utilisateur non connecté');
@@ -248,10 +352,10 @@ async function createReclamation(e) {
     const description = descriptionInput.value.trim();
     const type = typeInput.value || 'autre';
 
-    console.log('📝 Données du formulaire:', { 
-        sujet, 
-        description, 
-        type, 
+    console.log('📝 Données du formulaire:', {
+        sujet,
+        description,
+        type,
         userId: currentUser.id,
         sujetLength: sujet.length,
         descriptionLength: description.length
@@ -282,7 +386,7 @@ async function createReclamation(e) {
             submitBtn = form.querySelector('button[type="submit"]');
         }
     }
-    
+
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Envoi en cours...';
@@ -356,13 +460,13 @@ async function createReclamation(e) {
 
         const successMessage = 'Réclamation créée avec succès !';
         console.log('✅', successMessage, 'ID:', responseData._id);
-        
+
         if (typeof showAlert === 'function') {
             showAlert(successMessage + ' L\'administrateur sera notifié.', 'success');
         } else {
             alert(successMessage + ' L\'administrateur sera notifié.');
         }
-        
+
         closeNewReclamationModal();
         await loadReclamations();
     } catch (error) {
@@ -370,9 +474,9 @@ async function createReclamation(e) {
         console.error('   Type:', error.name);
         console.error('   Message:', error.message);
         console.error('   Stack:', error.stack);
-        
+
         let errorMessage = 'Erreur lors de la création de la réclamation: ';
-        
+
         if (error.message) {
             errorMessage += error.message;
         } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
@@ -380,7 +484,7 @@ async function createReclamation(e) {
         } else {
             errorMessage += 'Erreur inconnue';
         }
-        
+
         if (typeof showAlert === 'function') {
             showAlert(errorMessage, 'error');
         } else {
@@ -398,6 +502,22 @@ async function createReclamation(e) {
 // Exposer les fonctions globalement
 window.openNewReclamationModal = openNewReclamationModal;
 window.closeNewReclamationModal = closeNewReclamationModal;
+
+// Fonction de fermeture d'urgence (si tout le reste échoue)
+window.forceCloseReclamationModal = function () {
+    console.log('🚨 FERMETURE FORCÉE DU MODAL');
+    const modal = document.getElementById('newReclamationModal');
+    if (modal) {
+        modal.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;';
+        modal.classList.remove('active');
+        // Attendre un peu puis réinitialiser
+        setTimeout(() => {
+            modal.removeAttribute('style');
+            modal.style.display = 'none';
+        }, 100);
+    }
+    console.log('✅ Fermeture forcée effectuée');
+};
 window.createReclamation = createReclamation; // Exposer pour l'onsubmit inline
 
 // Initialisation quand le DOM est prêt
@@ -410,7 +530,7 @@ if (document.readyState === 'loading') {
 
 function initReclamations() {
     console.log('Initialisation de la page réclamations...');
-    
+
     // Vérifier l'authentification
     const currentUser = getCurrentUser();
     if (!currentUser) {
@@ -426,34 +546,34 @@ function initReclamations() {
         const form = document.getElementById('newReclamationForm');
         if (form) {
             console.log('📋 Formulaire trouvé dans le DOM');
-            
+
             // Retirer tous les anciens listeners
             const newForm = form.cloneNode(true);
             form.parentNode.replaceChild(newForm, form);
-            
+
             // Ajouter le nouveau listener avec plusieurs méthodes
             const newFormElement = document.getElementById('newReclamationForm');
-            
+
             // Méthode 1: addEventListener
-            newFormElement.addEventListener('submit', function(e) {
+            newFormElement.addEventListener('submit', function (e) {
                 console.log('📤 Event submit détecté via addEventListener');
                 createReclamation(e);
             }, true);
-            
+
             // Méthode 2: onsubmit (backup)
-            newFormElement.onsubmit = function(e) {
+            newFormElement.onsubmit = function (e) {
                 console.log('📤 Event submit détecté via onsubmit');
                 createReclamation(e);
                 return false;
             };
-            
+
             console.log('✅ Event listeners attachés au formulaire');
-            
+
             // Test: vérifier que les champs existent
             const sujetInput = document.getElementById('reclamationSujet');
             const descriptionInput = document.getElementById('reclamationDescription');
             const typeInput = document.getElementById('reclamationType');
-            
+
             if (sujetInput && descriptionInput && typeInput) {
                 console.log('✅ Tous les champs du formulaire sont présents');
             } else {
@@ -463,11 +583,11 @@ function initReclamations() {
                     type: !!typeInput
                 });
             }
-            
+
             // Ajouter aussi un listener sur le bouton submit directement
             const submitBtn = newFormElement.querySelector('button[type="submit"]');
             if (submitBtn) {
-                submitBtn.addEventListener('click', function(e) {
+                submitBtn.addEventListener('click', function (e) {
                     console.log('🖱️ Bouton submit cliqué directement');
                     e.preventDefault();
                     e.stopPropagation();
@@ -475,14 +595,14 @@ function initReclamations() {
                 });
                 console.log('✅ Listener ajouté au bouton submit');
             }
-            
+
             return true;
         } else {
             console.warn('⚠️ Formulaire non trouvé, réessai dans 500ms...');
             return false;
         }
     };
-    
+
     // Essayer immédiatement
     if (!attachFormListener()) {
         // Si le formulaire n'existe pas encore, réessayer après un délai
@@ -500,9 +620,9 @@ function initReclamations() {
         newReclamationBtn.style.cursor = 'pointer';
         newReclamationBtn.style.pointerEvents = 'auto';
         newReclamationBtn.disabled = false;
-        
+
         // Ajouter aussi un event listener en backup
-        newReclamationBtn.addEventListener('click', function(e) {
+        newReclamationBtn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             console.log('Bouton cliqué via event listener!');
@@ -513,31 +633,76 @@ function initReclamations() {
         console.error('❌ Bouton "Nouvelle Réclamation" non trouvé');
     }
 
-    // Event listener pour le bouton Annuler
+    // Event listener pour le bouton Annuler - avec plusieurs méthodes
     const cancelBtn = document.getElementById('cancelReclamationBtn');
     if (cancelBtn) {
-        cancelBtn.addEventListener('click', function(e) {
+        // Méthode 1: addEventListener
+        cancelBtn.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('🖱️ Bouton Annuler cliqué (addEventListener)');
             closeNewReclamationModal();
-        });
+        }, true);
+
+        // Méthode 2: onclick direct (backup)
+        cancelBtn.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🖱️ Bouton Annuler cliqué (onclick)');
+            closeNewReclamationModal();
+            return false;
+        };
+
+        console.log('✅ Event listeners ajoutés au bouton Annuler');
+    } else {
+        console.error('❌ Bouton Annuler non trouvé');
     }
 
-    // Event listener pour le bouton close
+    // Event listener pour le bouton close (X) - avec plusieurs méthodes
     const closeBtn = document.getElementById('closeReclamationModal');
     if (closeBtn) {
-        closeBtn.addEventListener('click', function(e) {
+        // Méthode 1: addEventListener
+        closeBtn.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
+            console.log('🖱️ Bouton X cliqué (addEventListener)');
             closeNewReclamationModal();
-        });
+        }, true);
+
+        // Méthode 2: onclick direct (backup)
+        closeBtn.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🖱️ Bouton X cliqué (onclick)');
+            closeNewReclamationModal();
+            return false;
+        };
+
+        console.log('✅ Event listeners ajoutés au bouton X');
+    } else {
+        console.error('❌ Bouton X non trouvé');
     }
 
     // Fermer le modal en cliquant en dehors
     const modal = document.getElementById('newReclamationModal');
     if (modal) {
-        modal.addEventListener('click', function(e) {
+        modal.addEventListener('click', function (e) {
             if (e.target === modal) {
+                console.log('🖱️ Clic en dehors du modal détecté');
                 closeNewReclamationModal();
             }
         });
+        console.log('✅ Event listener ajouté pour fermer en cliquant en dehors');
     }
+
+    // Ajouter aussi la touche Escape pour fermer
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            const modal = document.getElementById('newReclamationModal');
+            if (modal && (modal.style.display === 'flex' || modal.classList.contains('active'))) {
+                console.log('⌨️ Touche Escape pressée');
+                closeNewReclamationModal();
+            }
+        }
+    });
 }

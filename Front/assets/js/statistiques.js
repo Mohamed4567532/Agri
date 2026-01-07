@@ -1,9 +1,9 @@
 let charts = {};
 
 // Initialisation
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     await checkAuth();
-    
+
     // Vérifier que l'utilisateur est un agriculteur
     const user = getCurrentUser();
     if (!user || user.role !== 'farmer') {
@@ -13,32 +13,32 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 2000);
         return;
     }
-    
+
     await loadStatistics();
 });
 
 // Charger les statistiques
 async function loadStatistics() {
     const container = document.getElementById('statsContainer');
-    
+
     try {
         const response = await fetch('http://localhost:3000/api/statistics');
-        
+
         if (!response.ok) throw new Error('Erreur lors du chargement des statistiques');
-        
+
         const statistics = await response.json();
-        
+
         if (!statistics || statistics.length === 0) {
             container.innerHTML = `
                 <div class="no-stats">
-                    <div class="icon">📊</div>
+                    <div class="icon"><i class="fa-solid fa-chart-pie"></i></div>
                     <h3>Aucune statistique disponible</h3>
                     <p>Les statistiques du marché seront bientôt disponibles.</p>
                 </div>
             `;
             return;
         }
-        
+
         // Créer les cartes pour chaque statistique
         container.innerHTML = statistics.map(stat => `
             <div class="stat-card" style="border-top: 4px solid ${stat.color || '#3498db'};">
@@ -48,19 +48,19 @@ async function loadStatistics() {
                 <canvas id="chart_${stat.category}"></canvas>
             </div>
         `).join('');
-        
+
         // Créer les graphiques
         statistics.forEach(stat => {
             if (stat.parts && stat.parts.length > 0) {
                 createChart(stat.category, stat.parts);
             }
         });
-        
+
     } catch (error) {
         console.error('Erreur:', error);
         container.innerHTML = `
             <div class="no-stats">
-                <div class="icon">⚠️</div>
+                <div class="icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 <h3>Erreur de chargement</h3>
                 <p>Impossible de charger les statistiques. Veuillez réessayer plus tard.</p>
             </div>
@@ -72,21 +72,21 @@ async function loadStatistics() {
 function createChart(category, data) {
     const canvasId = `chart_${category}`;
     const ctx = document.getElementById(canvasId);
-    
+
     if (!ctx) {
         console.error(`Canvas ${canvasId} non trouvé`);
         return;
     }
-    
+
     // Détruire le graphique existant s'il existe
     if (charts[canvasId]) {
         charts[canvasId].destroy();
     }
-    
+
     const labels = data.map(d => d.label);
     const values = data.map(d => d.percentage);
     const colors = data.map(d => d.color || getRandomColor());
-    
+
     charts[canvasId] = new Chart(ctx, {
         type: 'pie',
         data: {
@@ -113,7 +113,7 @@ function createChart(category, data) {
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
+                        label: function (context) {
                             let label = context.label || '';
                             if (label) {
                                 label += ': ';

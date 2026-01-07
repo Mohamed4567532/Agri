@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriSmart - Plateforme Agricole Intelligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
@@ -15,7 +18,6 @@
             </a>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Accueil</a></li>
-                <li><a href="contact.html">Contact</a></li>
                 <li><a href="login.html">Connexion</a></li>
                 <li><a href="register.html">Inscription</a></li>
             </ul>
@@ -31,10 +33,10 @@
         <div class="hero-content">
             <h1 class="hero-title">AgriSmart</h1>
             <h2 class="hero-subtitle">Plateforme Agricole Intelligente</h2>
-            <p class="hero-description">Connectez-vous avec les agriculteurs, consommateurs et vétérinaires pour une agriculture durable et moderne</p>
-            <div class="hero-buttons">
+            <p class="hero-description">Connectez-vous avec les agriculteurs, consommateurs et vétérinaires pour une
+                agriculture durable et moderne</p>
+            <div class="hero-buttons" id="heroButtons">
                 <a href="register.html" class="btn btn-hero-primary">Commencer</a>
-                <a href="contact.html" class="btn btn-hero-secondary">Nous contacter</a>
             </div>
         </div>
     </section>
@@ -46,12 +48,14 @@
                 <div class="card">
                     <div class="card-icon service-icon service-icon-fermier"></div>
                     <h3 class="card-title">Pour les Agriculteurs</h3>
-                    <p class="card-text">Gérez vos produits, contactez des vétérinaires et suivez les statistiques du marché tunisien.</p>
+                    <p class="card-text">Gérez vos produits, contactez des vétérinaires et suivez les statistiques du
+                        marché tunisien.</p>
                 </div>
                 <div class="card">
                     <div class="card-icon service-icon service-icon-consommateur"></div>
                     <h3 class="card-title">Pour les Consommateurs</h3>
-                    <p class="card-text">Achetez des produits agricoles de qualité directement auprès des producteurs locaux.</p>
+                    <p class="card-text">Achetez des produits agricoles de qualité directement auprès des producteurs
+                        locaux.</p>
                 </div>
                 <div class="card">
                     <div class="card-icon service-icon service-icon-veterinaire"></div>
@@ -84,13 +88,57 @@
         </section>
     </div>
 
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">AgriSmart</h3>
+                    <p class="footer-text">Plateforme agricole intelligente connectant agriculteurs, consommateurs et
+                        vétérinaires pour une agriculture durable et moderne.</p>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Liens rapides</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="login.html">Connexion</a></li>
+                        <li><a href="register.html">Inscription</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="farmer.html">Pour les Agriculteurs</a></li>
+                        <li><a href="consumer.html">Pour les Consommateurs</a></li>
+                        <li><a href="veterinarian.html">Pour les Vétérinaires</a></li>
+                        <li><a href="marketplace.html">Marché</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4 class="footer-subtitle">Contact</h4>
+                    <p class="footer-text">Email: contact@agrismart.tn</p>
+                    <p class="footer-text">Téléphone: +216 XX XXX XXX</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 AgriSmart. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+
     <script src="assets/js/api.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/auth.js"></script>
+    <script>
+        // Masquer le bouton "Commencer" si l'utilisateur est connecté
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = getCurrentUser();
+            const heroButtons = document.getElementById('heroButtons');
+            
+            if (user && heroButtons) {
+                heroButtons.style.display = 'none';
+            }
+        });
+    </script>
 </body>
+
 </html>
-
-
-
-
-

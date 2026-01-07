@@ -24,7 +24,7 @@ async function checkServerConnection() {
             alertDiv.style.right = '20px';
             alertDiv.style.zIndex = '9999';
             alertDiv.style.maxWidth = '400px';
-            alertDiv.innerHTML = '⚠️ Le serveur n\'est pas disponible. <br>Démarrez-le avec: <code>npm start</code>';
+            alertDiv.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Le serveur n\'est pas disponible. <br>Démarrez-le avec: <code>npm start</code>';
             document.body.appendChild(alertDiv);
             setTimeout(() => alertDiv.remove(), 10000);
         }, 1000);
@@ -50,6 +50,28 @@ function setCurrentUser(user) {
 // Vérifier si l'utilisateur est connecté
 function isLoggedIn() {
     return getCurrentUser() !== null;
+}
+
+// Masquer Contact pour le rôle farmer (UI only)
+function hideContactForFarmer() {
+    const user = getCurrentUser();
+    if (!user || user.role !== 'farmer') return;
+
+    const selectors = [
+        'a[href*="contact.html"]',
+        'button[onclick*="contact.html"]'
+    ];
+
+    selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+            const li = el.closest('li');
+            if (li) {
+                li.style.display = 'none';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    });
 }
 
 // Vérifier le rôle de l'utilisateur
@@ -116,6 +138,9 @@ function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.classList.remove('active');
+        modal.style.display = 'none';
+        modal.style.visibility = 'hidden';
+        modal.style.opacity = '0';
     }
 }
 
@@ -146,10 +171,10 @@ function showAlert(message, type = 'info') {
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type}`;
     alertDiv.textContent = message;
-    
+
     const container = document.querySelector('.container') || document.body;
     container.insertBefore(alertDiv, container.firstChild);
-    
+
     setTimeout(() => {
         alertDiv.remove();
     }, 5000);
@@ -175,6 +200,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await checkServerConnection();
     initHamburgerMenu();
     initModals();
+    hideContactForFarmer();
 });
 
 

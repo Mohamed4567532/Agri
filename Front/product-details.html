@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails du Produit - AgriSmart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
     <nav class="navbar">
         <div class="nav-container">
@@ -15,7 +18,6 @@
             </a>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="index.html">Accueil</a></li>
-                <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="hamburger">
                 <span></span>
@@ -39,7 +41,8 @@
                 <button class="close">&times;</button>
             </div>
             <div id="buyModalContent"></div>
-            <button class="btn btn-primary" onclick="confirmBuy()" style="width: 100%; margin-top: 1rem;">Confirmer l'achat</button>
+            <button class="btn btn-primary" onclick="confirmBuy()" style="width: 100%; margin-top: 1rem;">Confirmer
+                l'achat</button>
         </div>
     </div>
 
@@ -54,7 +57,7 @@
         async function loadProductDetails() {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
-            
+
             if (!productId) {
                 document.getElementById('productDetails').innerHTML = '<p>Produit introuvable.</p>';
                 return;
@@ -62,7 +65,7 @@
 
             currentProductId = productId;
             const product = await getProductById(productId);
-            
+
             if (!product) {
                 document.getElementById('productDetails').innerHTML = '<p>Produit introuvable.</p>';
                 return;
@@ -121,7 +124,7 @@
 
         async function confirmBuy() {
             if (!currentProductId) return;
-            
+
             const user = getCurrentUser();
             if (!user || user.role !== 'consumer') {
                 showAlert('Vous devez être connecté en tant que consommateur pour acheter.', 'error');
@@ -281,7 +284,8 @@
                 <p><strong>Produit:</strong> <span id="vetOpinionProductTitle"></span></p>
                 <div class="form-group">
                     <label for="vetQuestion">Votre question</label>
-                    <textarea id="vetQuestion" class="form-control" required placeholder="Posez votre question au vétérinaire..."></textarea>
+                    <textarea id="vetQuestion" class="form-control" required
+                        placeholder="Posez votre question au vétérinaire..."></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
             </form>
@@ -311,9 +315,5 @@
         </div>
     </div>
 </body>
+
 </html>
-
-
-
-
-

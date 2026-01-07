@@ -1,16 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const User = require('../models/User');
 const upload = require('../config/multer');
 
 router.get('/', async (req, res) => {
     try {
-        const products = await Product.find()
-            .populate('farmerId', 'name username email')
+        const { type, status } = req.query;
+        
+        // Construire la requête
+        let query = {};
+        
+        // Filtrer par type si spécifié
+        if (type) {
+            query.type = type;
+        }
+        
+        // Filtrer par statut du produit si spécifié
+        if (status) {
+            query.status = status;
+        }
+        
+        // Récupérer tous les produits avec les informations du fermier
+        let products = await Product.find(query)
+            .populate({
+                path: 'farmerId',
+                select: 'name username email role status',
+                match: { status: 'accepted' } // Filtrer uniquement les fermiers acceptés
+            })
             .sort({ createdAt: -1 });
+        
+        // Filtrer les produits dont le fermier est null (fermier non accepté)
+        products = products.filter(p => p.farmerId !== null && p.farmerId.status === 'accepted');
+        
+        console.log(`✅ ${products.length} produits retournés (fermiers acceptés uniquement)`);
         res.json(products);
     } catch (error) {
-        console.error('Erreur GET /api/products:', error);
+        console.error('❌ Erreur GET /api/products:', error);
         res.status(500).json({ message: error.message });
     }
 });

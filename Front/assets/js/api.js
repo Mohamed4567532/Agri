@@ -11,13 +11,13 @@ function getHeaders() {
     const headers = {
         'Content-Type': 'application/json'
     };
-    
+
     if (user) {
         headers['X-User-Role'] = user.role;
         headers['X-User-Id'] = user.id;
         headers['X-User-Status'] = user.status;
     }
-    
+
     return headers;
 }
 
@@ -55,10 +55,31 @@ async function apiLogin(email, password) {
 }
 
 async function apiRegister(userData) {
-    return apiRequest('/auth/register', {
+    const isFormData = userData instanceof FormData;
+    const url = `${API_BASE_URL}/auth/register`;
+
+    const options = {
         method: 'POST',
-        body: JSON.stringify(userData)
-    });
+        body: isFormData ? userData : JSON.stringify(userData)
+    };
+
+    if (!isFormData) {
+        options.headers = { 'Content-Type': 'application/json' };
+    }
+
+    try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || data.error || `Erreur HTTP: ${response.status}`);
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Erreur API Register:', error);
+        throw error;
+    }
 }
 
 // ============================================
@@ -80,10 +101,47 @@ async function apiCreateUser(userData) {
 }
 
 async function apiUpdateUser(id, userData) {
-    return apiRequest(`/users/${id}`, {
+    const isFormData = userData instanceof FormData;
+    const url = `${API_BASE_URL}/users/${id}`;
+
+    const headers = getHeaders();
+    if (isFormData) {
+        delete headers['Content-Type'];
+    }
+
+    const options = {
         method: 'PATCH',
-        body: JSON.stringify(userData)
-    });
+        headers: headers,
+        body: isFormData ? userData : JSON.stringify(userData)
+    };
+
+    try {
+        const response = await fetch(url, options);
+
+        let data;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            console.warn('Réponse non-JSON reçue (probablement HTML 404/500):', contentType);
+            if (!response.ok) {
+                // Si 404, c'est souvent car le backend n'a pas été redémarré avec la nouvelle route
+                throw new Error(response.status === 404
+                    ? `Erreur 404: Endpoint non trouvé. Redémarrez le serveur (npm start) pour appliquer les changements.`
+                    : `Erreur HTTP: ${response.status}`);
+            }
+            data = { success: true };
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur HTTP: ${response.status}`);
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Erreur API Update User:', error);
+        throw error;
+    }
 }
 
 async function apiDeleteUser(id) {
@@ -105,37 +163,37 @@ async function apiGetProduct(id) {
 
 async function apiCreateProduct(productData) {
     const isFormData = productData instanceof FormData;
-    
+
     const options = {
         method: 'POST'
     };
-    
+
     if (isFormData) {
         options.body = productData;
     } else {
         options.headers = { 'Content-Type': 'application/json' };
         options.body = JSON.stringify(productData);
     }
-    
+
     const url = `${API_BASE_URL}/products`;
     console.log('🚀 POST', url);
-    
+
     try {
         const token = localStorage.getItem('authToken');
         if (token && !isFormData) {
             options.headers = { ...options.headers, 'Authorization': `Bearer ${token}` };
         }
-        
+
         const response = await fetch(url, options);
         console.log('📥 Status:', response.status);
-        
+
         const data = await response.json();
-        
+
         if (!response.ok) {
             const errorMsg = data.errors ? data.errors.join(', ') : data.message || `Erreur HTTP: ${response.status}`;
             throw new Error(errorMsg);
         }
-        
+
         return data;
     } catch (error) {
         console.error('❌ Erreur API:', error);
@@ -258,9 +316,9 @@ async function apiCreateAppointment(appointmentData) {
 async function apiSearchProducts(query) {
     const products = await apiGetProducts();
     if (!query) return products;
-    
+
     const lowerQuery = query.toLowerCase();
-    return products.filter(p => 
+    return products.filter(p =>
         p.title.toLowerCase().includes(lowerQuery) ||
         p.description.toLowerCase().includes(lowerQuery) ||
         p.category.toLowerCase().includes(lowerQuery)

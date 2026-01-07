@@ -3,16 +3,16 @@
    ============================================ */
 
 // Initialisation de la page admin
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function () {
     // Vérifier l'authentification
     const user = getCurrentUser();
-    
+
     if (!user) {
         showAlert('Veuillez vous connecter', 'error');
         setTimeout(() => window.location.href = 'login.html', 2000);
         return;
     }
-    
+
     if (user.role !== 'admin') {
         showAlert('Accès réservé aux administrateurs', 'error');
         setTimeout(() => window.location.href = 'index.html', 2000);
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     await loadAcceptedUsers();
     await loadAllUsers();
     await loadReclamations();
-    
+
     // Event listeners
     const userRoleFilter = document.getElementById('userRoleFilter');
     if (userRoleFilter) {
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Modal close
     document.querySelectorAll('.close').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             this.closest('.modal').style.display = 'none';
         });
     });
@@ -59,9 +59,16 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Récupérer tous les utilisateurs depuis l'API
 async function fetchAllUsers() {
     try {
-        const response = await fetch('http://localhost:3000/api/users');
+        const response = await fetch(`${API_BASE_URL}/users`);
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Le serveur a retourné une réponse non-JSON. Vérifiez que le serveur backend est démarré.');
+        }
+
         const data = await response.json();
-        
+
         if (data.success && data.users) {
             return data.users;
         }
@@ -76,14 +83,14 @@ async function fetchAllUsers() {
 async function loadAdminStats() {
     try {
         const users = await fetchAllUsers();
-        
+
         const statsContainer = document.getElementById('adminStats');
         if (!statsContainer) return;
 
         const pendingCount = users.filter(u => u.status === 'pending').length;
         const acceptedCount = users.filter(u => u.status === 'accepted').length;
         const rejectedCount = users.filter(u => u.status === 'rejected' || u.status === 'suspended').length;
-        
+
         const farmerCount = users.filter(u => u.role === 'farmer').length;
         const consumerCount = users.filter(u => u.role === 'consumer').length;
         const vetCount = users.filter(u => u.role === 'vet').length;
@@ -97,22 +104,22 @@ async function loadAdminStats() {
 
         statsContainer.innerHTML = `
             <div class="stat-box blue">
-                <span class="stat-icon">👥</span>
+                <span class="stat-icon"><i class="fa-solid fa-users"></i></span>
                 <div class="stat-value">${users.length}</div>
                 <div class="stat-label">Total Utilisateurs</div>
             </div>
             <div class="stat-box orange">
-                <span class="stat-icon">⏳</span>
+                <span class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></span>
                 <div class="stat-value">${pendingCount}</div>
                 <div class="stat-label">En Attente</div>
             </div>
             <div class="stat-box green">
-                <span class="stat-icon">✅</span>
+                <span class="stat-icon"><i class="fa-solid fa-check"></i></span>
                 <div class="stat-value">${acceptedCount}</div>
                 <div class="stat-label">Acceptés</div>
             </div>
             <div class="stat-box red">
-                <span class="stat-icon">🚫</span>
+                <span class="stat-icon"><i class="fa-solid fa-ban"></i></span>
                 <div class="stat-value">${rejectedCount}</div>
                 <div class="stat-label">Rejetés/Suspendus</div>
             </div>
@@ -134,7 +141,7 @@ async function loadPendingUsers() {
         if (pending.length === 0) {
             container.innerHTML = `
                 <div class="empty-state" style="padding: 2rem;">
-                    <div class="icon">✅</div>
+                    <div class="icon"><i class="fa-solid fa-check-circle"></i></div>
                     <p style="color: #27ae60; margin: 0;">Aucun utilisateur en attente d'approbation</p>
                 </div>
             `;
@@ -162,8 +169,8 @@ async function loadPendingUsers() {
                                 <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
                                 <td style="color: #666; font-size: 0.9rem;">${formatDate(user.createdAt)}</td>
                                 <td style="text-align: center;">
-                                    <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Accepter</button>
-                                    <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
+                                    <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')" style="padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #27ae60; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#219a52'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#27ae60'; this.style.transform='scale(1)'" title="Accepter"><i class="fa-solid fa-check" style="font-size: 16px;"></i></button>
+                                    <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')" style="margin-left: 5px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #e74c3c; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#c0392b'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#e74c3c'; this.style.transform='scale(1)'" title="Rejeter"><i class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
                                 </td>
                             </tr>
                         `).join('')}
@@ -190,7 +197,7 @@ async function loadAcceptedUsers() {
         if (accepted.length === 0) {
             container.innerHTML = `
                 <div class="empty-state" style="padding: 2rem;">
-                    <div class="icon">👥</div>
+                    <div class="icon"><i class="fa-solid fa-users"></i></div>
                     <p style="color: #666; margin: 0;">Aucun utilisateur accepté pour le moment</p>
                 </div>
             `;
@@ -218,8 +225,8 @@ async function loadAcceptedUsers() {
                                 <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
                                 <td style="color: #666; font-size: 0.9rem;">${formatDate(user.createdAt)}</td>
                                 <td style="text-align: center;">
-                                    <button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user._id}', 'suspended')">⏸️ Suspendre</button>
-                                    <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
+                                    <button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user._id}', 'suspended')" style="padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #f39c12; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#d68910'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#f39c12'; this.style.transform='scale(1)'" title="Suspendre"><i class="fa-solid fa-ban" style="font-size: 16px;"></i></button>
+                                    <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')" style="margin-left: 5px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #e74c3c; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#c0392b'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#e74c3c'; this.style.transform='scale(1)'" title="Rejeter"><i class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
                                 </td>
                             </tr>
                         `).join('')}
@@ -238,13 +245,13 @@ async function loadAllUsers() {
         const users = await fetchAllUsers();
         const roleFilter = document.getElementById('userRoleFilter')?.value || 'all';
         const statusFilter = document.getElementById('userStatusFilter')?.value || 'all';
-        
+
         let filteredUsers = users.filter(u => u.role !== 'admin'); // Exclure les admins de la liste
-        
+
         if (roleFilter !== 'all') {
             filteredUsers = filteredUsers.filter(u => u.role === roleFilter);
         }
-        
+
         if (statusFilter !== 'all') {
             filteredUsers = filteredUsers.filter(u => u.status === statusFilter);
         }
@@ -255,7 +262,7 @@ async function loadAllUsers() {
         if (filteredUsers.length === 0) {
             container.innerHTML = `
                 <div class="empty-state" style="padding: 2rem;">
-                    <div class="icon">🔍</div>
+                    <div class="icon"><i class="fa-solid fa-magnifying-glass"></i></div>
                     <p style="color: #666; margin: 0;">Aucun utilisateur trouvé avec ces filtres</p>
                 </div>
             `;
@@ -301,29 +308,31 @@ async function loadAllUsers() {
 // Générer les boutons d'action selon le statut
 function getActionButtons(user) {
     let buttons = '';
-    
-    switch(user.status) {
+
+    switch (user.status) {
         case 'pending':
             buttons = `
-                <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Accepter</button>
-                <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')">❌ Rejeter</button>
+                <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')" style="padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #27ae60; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#219a52'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#27ae60'; this.style.transform='scale(1)'" title="Accepter"><i class="fa-solid fa-check" style="font-size: 16px;"></i></button>
+                <button class="btn btn-danger btn-sm" onclick="updateUserStatus('${user._id}', 'rejected')" style="padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #e74c3c; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#c0392b'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#e74c3c'; this.style.transform='scale(1)'" title="Rejeter"><i class="fa-solid fa-xmark" style="font-size: 16px;"></i></button>
             `;
             break;
         case 'accepted':
             buttons = `
-                <button class="btn btn-warning btn-sm" onclick="updateUserStatus('${user._id}', 'suspended')">⏸️ Suspendre</button>
+                <button class="btn btn-warning btn-sm" onclick="openSuspendModal('${user._id}', '${user.name}')" style="padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #f39c12; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#d68910'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#f39c12'; this.style.transform='scale(1)'" title="Suspendre"><i class="fa-solid fa-ban" style="font-size: 16px;"></i></button>
             `;
             break;
         case 'rejected':
         case 'suspended':
             buttons = `
-                <button class="btn btn-success btn-sm" onclick="updateUserStatus('${user._id}', 'accepted')">✅ Réactiver</button>
+                <button class="btn btn-success btn-sm" onclick="unsuspendUser('${user._id}')" style="padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #27ae60; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#219a52'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#27ae60'; this.style.transform='scale(1)'" title="Réactiver"><i class="fa-solid fa-check" style="font-size: 16px;"></i></button>
             `;
             break;
     }
-    
-    buttons += `<button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}')" style="margin-left: 5px;">🗑️</button>`;
-    
+
+    buttons += `<button class="btn btn-danger btn-sm" onclick="deleteUser('${user._id}')" style="margin-left: 5px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #e74c3c; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#c0392b'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#e74c3c'; this.style.transform='scale(1)'" title="Supprimer l'utilisateur">
+        <i class="fa-solid fa-trash" style="font-size: 16px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));"></i>
+    </button>`;
+
     return buttons;
 }
 
@@ -335,22 +344,34 @@ async function updateUserStatus(userId, status) {
         'suspended': 'suspendre',
         'pending': 'mettre en attente'
     };
-    
+
     if (!confirm(`Êtes-vous sûr de vouloir ${statusLabels[status]} cet utilisateur ?`)) {
         return;
     }
-    
+
     try {
-        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ status })
         });
-        
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}). Vérifiez que le serveur backend est démarré et que la route PUT /api/users/:id existe.`);
+        }
+
         const data = await response.json();
-        
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur HTTP: ${response.status}`);
+        }
+
         if (data.success) {
             showAlert(`Utilisateur ${statusLabels[status]} avec succès !`, 'success');
             await loadAdminStats();
@@ -358,7 +379,7 @@ async function updateUserStatus(userId, status) {
             await loadAcceptedUsers();
             await loadAllUsers();
         } else {
-            showAlert('Erreur: ' + data.message, 'error');
+            showAlert('Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
         }
     } catch (error) {
         console.error('Erreur:', error);
@@ -371,14 +392,26 @@ async function deleteUser(userId) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ?')) {
         return;
     }
-    
+
     try {
-        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
             method: 'DELETE'
         });
-        
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}). Vérifiez que le serveur backend est démarré.`);
+        }
+
         const data = await response.json();
-        
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur HTTP: ${response.status}`);
+        }
+
         if (data.success) {
             showAlert('Utilisateur supprimé avec succès !', 'success');
             await loadAdminStats();
@@ -386,7 +419,7 @@ async function deleteUser(userId) {
             await loadAcceptedUsers();
             await loadAllUsers();
         } else {
-            showAlert('Erreur: ' + data.message, 'error');
+            showAlert('Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
         }
     } catch (error) {
         console.error('Erreur:', error);
@@ -438,15 +471,25 @@ function getStatusBadgeClass(status) {
 // Contacter un utilisateur (modal)
 async function contactUser(userId) {
     try {
-        const response = await fetch(`http://localhost:3000/api/users/${userId}`);
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Le serveur a retourné une réponse non-JSON. Vérifiez que le serveur backend est démarré.');
+        }
+
         const data = await response.json();
-        
+
         if (data.success && data.user) {
             document.getElementById('adminContactUserId').value = userId;
             document.getElementById('adminContactUserName').textContent = data.user.name;
             document.getElementById('adminContactModal').style.display = 'flex';
+        } else {
+            showAlert('Erreur: ' + (data.message || 'Utilisateur non trouvé'), 'error');
         }
     } catch (error) {
+        console.error('Erreur:', error);
         showAlert('Erreur: ' + error.message, 'error');
     }
 }
@@ -472,7 +515,7 @@ async function sendAdminMessage() {
             createdAt: new Date().toISOString()
         };
 
-        const response = await fetch('http://localhost:3000/api/messages', {
+        const response = await fetch(`${API_BASE_URL}/messages`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -480,10 +523,25 @@ async function sendAdminMessage() {
             body: JSON.stringify(newMessage)
         });
 
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}). Vérifiez que le serveur backend est démarré.`);
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur HTTP: ${response.status}`);
+        }
+
         showAlert('Message envoyé avec succès !', 'success');
         document.getElementById('adminContactModal').style.display = 'none';
         document.getElementById('adminContactForm').reset();
     } catch (error) {
+        console.error('Erreur:', error);
         showAlert('Erreur lors de l\'envoi: ' + error.message, 'error');
     }
 }
@@ -497,16 +555,25 @@ let marketStatistics = [];
 // Charger les statistiques du marché
 async function loadMarketStatistics() {
     try {
-        const response = await fetch('http://localhost:3000/api/statistics');
+        const response = await fetch(`${API_BASE_URL}/statistics`);
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}). Vérifiez que le serveur backend est démarré.`);
+        }
+
         marketStatistics = await response.json();
-        
+
         displayAllStatistics();
-        
+
     } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error);
         const container = document.getElementById('statsManagementGrid');
         if (container) {
-            container.innerHTML = '<p style="color: #e74c3c;">Erreur lors du chargement des statistiques</p>';
+            container.innerHTML = `<p style="color: #e74c3c;">Erreur lors du chargement des statistiques: ${error.message}</p>`;
         }
     }
 }
@@ -515,18 +582,18 @@ async function loadMarketStatistics() {
 function displayAllStatistics() {
     const container = document.getElementById('statsManagementGrid');
     if (!container) return;
-    
+
     if (marketStatistics.length === 0) {
         container.innerHTML = `
             <div class="empty-state" style="grid-column: 1 / -1;">
-                <div class="icon">📊</div>
+                <div class="icon"><i class="fa-solid fa-chart-simple"></i></div>
                 <h3>Aucune statistique</h3>
                 <p>Cliquez sur "Nouvelle catégorie" pour commencer.</p>
             </div>
         `;
         return;
     }
-    
+
     container.innerHTML = marketStatistics.map(stat => `
         <div class="stat-card-admin" style="border-top: 4px solid ${stat.color || '#3498db'};">
             <div style="margin-bottom: 1rem;">
@@ -543,8 +610,12 @@ function displayAllStatistics() {
                 `).join('') : '<p style="color: #999; font-size: 0.9rem;">Aucune donnée</p>'}
             </div>
             <div style="display: flex; gap: 0.5rem; border-top: 1px solid #eee; padding-top: 1rem;">
-                <button class="btn btn-primary btn-sm" onclick="openStatModal('${stat.category}')" style="flex: 1;">✏️ Modifier</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteStat('${stat._id}', '${stat.displayName || stat.category}')" style="flex: 1;">🗑️ Supprimer</button>
+                <button class="btn btn-primary btn-sm" onclick="openStatModal('${stat.category}')" style="flex: 1; padding: 8px; display: inline-flex; align-items: center; justify-content: center; background: #3498db; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#2980b9'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#3498db'; this.style.transform='scale(1)'" title="Modifier">
+                    <i class="fa-solid fa-pen-to-square" style="font-size: 16px;"></i>
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStat('${stat._id}', '${stat.displayName || stat.category}')" style="flex: 1; padding: 8px; display: inline-flex; align-items: center; justify-content: center; background: #e74c3c; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#c0392b'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#e74c3c'; this.style.transform='scale(1)'" title="Supprimer">
+                    <i class="fa-solid fa-trash" style="font-size: 16px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));"></i>
+                </button>
             </div>
         </div>
     `).join('');
@@ -561,14 +632,14 @@ function hexToRgba(hex, alpha) {
 // Ouvrir le modal de modification des statistiques
 function openStatModal(category) {
     const stat = marketStatistics.find(s => s.category === category);
-    
+
     document.getElementById('statCategory').value = category;
     document.getElementById('statId').value = stat ? stat._id : '';
-    document.getElementById('statCategoryTitle').textContent = getCategoryLabel(category);
-    
+    document.getElementById('statCategoryTitle').innerHTML = getCategoryLabel(category);
+
     const container = document.getElementById('statPartsContainer');
     container.innerHTML = '';
-    
+
     if (stat && stat.parts) {
         stat.parts.forEach((part, index) => {
             addStatPartToForm(part.label, part.percentage, part.color, index);
@@ -577,7 +648,7 @@ function openStatModal(category) {
         // Ajouter une partie vide par défaut
         addStatPartToForm('', 0, '#3498db', 0);
     }
-    
+
     document.getElementById('statModal').style.display = 'flex';
 }
 
@@ -596,7 +667,7 @@ function addStatPart() {
 // Ajouter une partie avec des valeurs
 function addStatPartToForm(label, percentage, color, index) {
     const container = document.getElementById('statPartsContainer');
-    
+
     const partDiv = document.createElement('div');
     partDiv.className = 'stat-part';
     partDiv.innerHTML = `
@@ -616,7 +687,7 @@ function addStatPartToForm(label, percentage, color, index) {
             </div>
         </div>
     `;
-    
+
     container.appendChild(partDiv);
     updateTotalPercentage();
 }
@@ -625,26 +696,26 @@ function addStatPartToForm(label, percentage, color, index) {
 function updateTotalPercentage() {
     const partElements = document.querySelectorAll('.stat-part');
     let total = 0;
-    
+
     partElements.forEach(partEl => {
         const percentage = parseInt(partEl.querySelector('.part-percentage').value) || 0;
         total += percentage;
     });
-    
+
     const display = document.getElementById('totalPercentageDisplay');
     if (display) {
         if (total === 100) {
             display.style.background = '#d4edda';
             display.style.color = '#155724';
-            display.textContent = `✅ Total: ${total}%`;
+            display.innerHTML = `<i class="fa-solid fa-check"></i> Total: ${total}%`;
         } else if (total > 100) {
             display.style.background = '#f8d7da';
             display.style.color = '#721c24';
-            display.textContent = `❌ Total: ${total}% (trop élevé!)`;
+            display.innerHTML = `<i class="fa-solid fa-xmark"></i> Total: ${total}% (trop élevé!)`;
         } else {
             display.style.background = '#fff3cd';
             display.style.color = '#856404';
-            display.textContent = `⚠️ Total: ${total}% (il manque ${100 - total}%)`;
+            display.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Total: ${total}% (il manque ${100 - total}%)`;
         }
     }
 }
@@ -669,15 +740,15 @@ function showModalMessage(message, type) {
         const form = document.getElementById('statForm');
         form.insertBefore(msgDiv, form.firstChild);
     }
-    
+
     const colors = {
         'error': { bg: '#f8d7da', text: '#721c24', border: '#f5c6cb' },
         'warning': { bg: '#fff3cd', text: '#856404', border: '#ffeeba' },
         'success': { bg: '#d4edda', text: '#155724', border: '#c3e6cb' }
     };
-    
+
     const style = colors[type] || colors.warning;
-    
+
     msgDiv.style.cssText = `
         padding: 12px;
         margin-bottom: 15px;
@@ -689,7 +760,7 @@ function showModalMessage(message, type) {
         font-weight: 500;
     `;
     msgDiv.textContent = message;
-    
+
     // Auto-hide après 5 secondes
     setTimeout(() => {
         if (msgDiv) msgDiv.style.display = 'none';
@@ -699,42 +770,42 @@ function showModalMessage(message, type) {
 // Sauvegarder les statistiques
 async function saveStatistics(e) {
     e.preventDefault();
-    
+
     const category = document.getElementById('statCategory').value;
     const statId = document.getElementById('statId').value;
-    
+
     // Récupérer les infos de la statistique existante
     const existingStat = marketStatistics.find(s => s.category === category);
-    
+
     // Collecter les parties
     const parts = [];
     const partElements = document.querySelectorAll('#statPartsContainer .stat-part');
-    
+
     let totalPercentage = 0;
-    
+
     partElements.forEach(partEl => {
         const label = partEl.querySelector('.part-label').value.trim();
         const percentage = parseInt(partEl.querySelector('.part-percentage').value) || 0;
         const color = partEl.querySelector('.part-color').value;
-        
+
         if (label) {
             parts.push({ label, percentage, color });
             totalPercentage += percentage;
         }
     });
-    
+
     if (parts.length === 0) {
         showModalMessage('⚠️ Ajoutez au moins une partie avec un nom', 'error');
         return;
     }
-    
+
     if (totalPercentage !== 100) {
         showModalMessage(`⚠️ Le total des pourcentages doit être 100% (actuellement: ${totalPercentage}%)`, 'warning');
         return;
     }
-    
+
     try {
-        const response = await fetch('http://localhost:3000/api/statistics', {
+        const response = await fetch(`${API_BASE_URL}/statistics`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -747,16 +818,24 @@ async function saveStatistics(e) {
                 parts
             })
         });
-        
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}). Vérifiez que le serveur backend est démarré.`);
+        }
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Erreur lors de la sauvegarde');
         }
-        
+
         showAlert('Statistiques mises à jour avec succès !', 'success');
         closeStatModal();
         await loadMarketStatistics();
-        
+
     } catch (error) {
         console.error('Erreur:', error);
         showModalMessage('❌ ' + error.message, 'error');
@@ -766,10 +845,10 @@ async function saveStatistics(e) {
 // Labels des catégories
 function getCategoryLabel(category) {
     const labels = {
-        'fruits': '🍎 Fruits',
-        'légumes': '🥬 Légumes',
-        'viande': '🥩 Viande',
-        'huile': '🫒 Huile d\'Olive'
+        'fruits': '<i class="fa-solid fa-apple-whole"></i> Fruits',
+        'légumes': '<i class="fa-solid fa-leaf"></i> Légumes',
+        'viande': '<i class="fa-solid fa-drumstick-bite"></i> Viande',
+        'huile': '<i class="fa-solid fa-bottle-droplet"></i> Huile d\'Olive'
     };
     return labels[category] || category;
 }
@@ -781,7 +860,7 @@ function getRandomColor() {
 }
 
 // Event listener pour le formulaire de statistiques
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const statForm = document.getElementById('statForm');
     if (statForm) {
         statForm.addEventListener('submit', saveStatistics);
@@ -797,16 +876,16 @@ function openNewStatModal() {
     document.getElementById('newStatCategory').value = '';
     document.getElementById('newStatDisplayName').value = '';
     document.getElementById('newStatColor').value = '#3498db';
-    
+
     const container = document.getElementById('newStatPartsContainer');
     container.innerHTML = '';
-    
+
     // Ajouter quelques parties vides par défaut
     addNewStatPartToForm('', 25, '#e74c3c');
     addNewStatPartToForm('', 25, '#3498db');
     addNewStatPartToForm('', 25, '#2ecc71');
     addNewStatPartToForm('', 25, '#f39c12');
-    
+
     document.getElementById('newStatModal').style.display = 'flex';
 }
 
@@ -823,7 +902,7 @@ function addNewStatPart() {
 // Ajouter une partie avec des valeurs au nouveau formulaire
 function addNewStatPartToForm(label, percentage, color) {
     const container = document.getElementById('newStatPartsContainer');
-    
+
     const partDiv = document.createElement('div');
     partDiv.className = 'stat-part';
     partDiv.innerHTML = `
@@ -843,7 +922,7 @@ function addNewStatPartToForm(label, percentage, color) {
             </div>
         </div>
     `;
-    
+
     container.appendChild(partDiv);
     updateNewTotalPercentage();
 }
@@ -863,12 +942,12 @@ function removeNewStatPart(btn) {
 function updateNewTotalPercentage() {
     const partElements = document.querySelectorAll('#newStatPartsContainer .stat-part');
     let total = 0;
-    
+
     partElements.forEach(partEl => {
         const percentage = parseInt(partEl.querySelector('.new-part-percentage').value) || 0;
         total += percentage;
     });
-    
+
     const display = document.getElementById('newTotalPercentageDisplay');
     if (display) {
         if (total === 100) {
@@ -890,45 +969,45 @@ function updateNewTotalPercentage() {
 // Sauvegarder la nouvelle statistique
 async function saveNewStatistic(e) {
     e.preventDefault();
-    
+
     const category = document.getElementById('newStatCategory').value.toLowerCase().trim();
     const displayName = document.getElementById('newStatDisplayName').value.trim();
     const color = document.getElementById('newStatColor').value;
-    
+
     // Vérifier si la catégorie existe déjà
     if (marketStatistics.some(s => s.category === category)) {
         alert('Cette catégorie existe déjà !');
         return;
     }
-    
+
     // Collecter les parties
     const parts = [];
     const partElements = document.querySelectorAll('#newStatPartsContainer .stat-part');
     let totalPercentage = 0;
-    
+
     partElements.forEach(partEl => {
         const label = partEl.querySelector('.new-part-label').value.trim();
         const percentage = parseInt(partEl.querySelector('.new-part-percentage').value) || 0;
         const partColor = partEl.querySelector('.new-part-color').value;
-        
+
         if (label) {
             parts.push({ label, percentage, color: partColor });
             totalPercentage += percentage;
         }
     });
-    
+
     if (parts.length === 0) {
         alert('Ajoutez au moins une partie avec un nom');
         return;
     }
-    
+
     if (totalPercentage !== 100) {
         alert(`Le total des pourcentages doit être 100% (actuellement: ${totalPercentage}%)`);
         return;
     }
-    
+
     try {
-        const response = await fetch('http://localhost:3000/api/statistics', {
+        const response = await fetch(`${API_BASE_URL}/statistics`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -941,16 +1020,24 @@ async function saveNewStatistic(e) {
                 parts
             })
         });
-        
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}). Vérifiez que le serveur backend est démarré.`);
+        }
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Erreur lors de la création');
         }
-        
+
         showAlert('✅ Nouvelle catégorie créée avec succès !', 'success');
         closeNewStatModal();
         await loadMarketStatistics();
-        
+
     } catch (error) {
         console.error('Erreur:', error);
         showAlert('❌ Erreur: ' + error.message, 'error');
@@ -962,17 +1049,28 @@ async function deleteStat(statId, statName) {
     if (!confirm(`Êtes-vous sûr de vouloir supprimer la catégorie "${statName}" ?`)) {
         return;
     }
-    
+
     try {
-        const response = await fetch(`http://localhost:3000/api/statistics/${statId}`, {
+        const response = await fetch(`${API_BASE_URL}/statistics/${statId}`, {
             method: 'DELETE'
         });
-        
-        if (!response.ok) throw new Error('Erreur lors de la suppression');
-        
+
+        // Vérifier si la réponse est JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}). Vérifiez que le serveur backend est démarré.`);
+        }
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Erreur lors de la suppression');
+        }
+
         showAlert('✅ Catégorie supprimée avec succès !', 'success');
         await loadMarketStatistics();
-        
+
     } catch (error) {
         console.error('Erreur:', error);
         showAlert('❌ Erreur: ' + error.message, 'error');
@@ -980,7 +1078,7 @@ async function deleteStat(statId, statName) {
 }
 
 // Event listener pour le formulaire de nouvelle statistique
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const newStatForm = document.getElementById('newStatForm');
     if (newStatForm) {
         newStatForm.addEventListener('submit', saveNewStatistic);
@@ -999,14 +1097,14 @@ async function loadReclamations() {
         // Charger toutes les réclamations pour l'admin (sans filtre userId)
         const response = await fetch(`${API_BASE_URL}/reclamations?role=admin`);
         if (!response.ok) throw new Error('Erreur lors du chargement');
-        
+
         allReclamations = await response.json();
-        
+
         // Trier par date de création (les plus récentes en premier)
         allReclamations.sort((a, b) => {
             return new Date(b.createdAt) - new Date(a.createdAt);
         });
-        
+
         // Mettre à jour le badge avec le nombre de réclamations en attente
         const pendingReclamations = allReclamations.filter(r => r.statut === 'en_attente').length;
         const badge = document.getElementById('reclamationsBadge');
@@ -1018,7 +1116,7 @@ async function loadReclamations() {
                 badge.style.animation = 'pulse 2s infinite';
             }
         }
-        
+
         console.log(`✅ ${allReclamations.length} réclamations chargées (${pendingReclamations} en attente)`);
         displayReclamations();
     } catch (error) {
@@ -1089,23 +1187,23 @@ function displayReclamations() {
                 </thead>
                 <tbody>
                     ${filtered.map(reclamation => {
-                        const date = new Date(reclamation.createdAt).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                        const status = statusLabels[reclamation.statut] || { label: reclamation.statut, class: 'badge-secondary' };
-                        const user = reclamation.createdBy?.name || 'Utilisateur inconnu';
-                        const userEmail = reclamation.createdBy?.email || '';
-                        const userRole = reclamation.createdBy?.role || '';
-                        
-                        // Mettre en évidence les réclamations en attente
-                        const isPending = reclamation.statut === 'en_attente';
-                        const rowStyle = isPending ? 'background: #fff3cd20; border-left: 3px solid #f39c12;' : '';
-                        
-                        return `
+        const date = new Date(reclamation.createdAt).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const status = statusLabels[reclamation.statut] || { label: reclamation.statut, class: 'badge-secondary' };
+        const user = reclamation.createdBy?.name || 'Utilisateur inconnu';
+        const userEmail = reclamation.createdBy?.email || '';
+        const userRole = reclamation.createdBy?.role || '';
+
+        // Mettre en évidence les réclamations en attente
+        const isPending = reclamation.statut === 'en_attente';
+        const rowStyle = isPending ? 'background: #fff3cd20; border-left: 3px solid #f39c12;' : '';
+
+        return `
                             <tr style="${rowStyle}">
                                 <td>
                                     <div style="font-weight: 600;">${user}</div>
@@ -1118,10 +1216,10 @@ function displayReclamations() {
                                     <div style="font-weight: 500; max-width: 250px;">
                                         ${isPending ? '🆕 ' : ''}${reclamation.sujet || 'Sans sujet'}
                                     </div>
-                                    ${reclamation.description && reclamation.description.length > 50 ? 
-                                        `<div style="color: #666; font-size: 0.85rem; margin-top: 0.25rem;">${reclamation.description.substring(0, 50)}...</div>` : 
-                                        `<div style="color: #666; font-size: 0.85rem; margin-top: 0.25rem;">${reclamation.description || 'Aucune description'}</div>`
-                                    }
+                                    ${reclamation.description && reclamation.description.length > 50 ?
+                `<div style="color: #666; font-size: 0.85rem; margin-top: 0.25rem;">${reclamation.description.substring(0, 50)}...</div>` :
+                `<div style="color: #666; font-size: 0.85rem; margin-top: 0.25rem;">${reclamation.description || 'Aucune description'}</div>`
+            }
                                 </td>
                                 <td>${typeLabels[reclamation.type] || reclamation.type}</td>
                                 <td><span class="badge ${status.class}">${status.label}</span></td>
@@ -1130,13 +1228,13 @@ function displayReclamations() {
                                     <button class="btn btn-primary btn-sm" onclick="openReclamationResponseModal('${reclamation._id}')" style="margin: 2px;">
                                         📝 Gérer
                                     </button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteReclamation('${reclamation._id}')" style="margin: 2px;">
-                                        🗑️
+                                    <button class="btn btn-danger btn-sm" onclick="deleteReclamation('${reclamation._id}')" style="margin: 2px; padding: 8px; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #e74c3c; border: none; border-radius: 6px; color: white; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.background='#c0392b'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='#e74c3c'; this.style.transform='scale(1)'" title="Supprimer la réclamation">
+                                        <i class="fa-solid fa-trash" style="font-size: 16px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));"></i>
                                     </button>
                                 </td>
                             </tr>
                         `;
-                    }).join('')}
+    }).join('')}
                 </tbody>
             </table>
         </div>
@@ -1148,13 +1246,13 @@ async function openReclamationResponseModal(reclamationId) {
     try {
         const response = await fetch(`${API_BASE_URL}/reclamations/${reclamationId}`);
         if (!response.ok) throw new Error('Erreur lors du chargement');
-        
+
         const reclamation = await response.json();
-        
+
         document.getElementById('reclamationId').value = reclamation._id;
         document.getElementById('reclamationStatus').value = reclamation.statut;
         document.getElementById('reclamationResponse').value = reclamation.reponse || '';
-        
+
         const detailsContainer = document.getElementById('reclamationDetails');
         const date = new Date(reclamation.createdAt).toLocaleDateString('fr-FR', {
             day: 'numeric',
@@ -1163,7 +1261,7 @@ async function openReclamationResponseModal(reclamationId) {
             hour: '2-digit',
             minute: '2-digit'
         });
-        
+
         detailsContainer.innerHTML = `
             <div style="margin-bottom: 0.5rem;">
                 <strong>De:</strong> ${reclamation.createdBy?.name || 'Utilisateur inconnu'} (${reclamation.createdBy?.email || ''})
@@ -1182,7 +1280,7 @@ async function openReclamationResponseModal(reclamationId) {
                 <p style="margin: 0.5rem 0 0 0; color: #555;">${reclamation.description}</p>
             </div>
         `;
-        
+
         document.getElementById('reclamationResponseModal').style.display = 'flex';
     } catch (error) {
         console.error('Erreur:', error);
@@ -1199,17 +1297,17 @@ function closeReclamationResponseModal() {
 // Sauvegarder la réponse
 async function saveReclamationResponse(e) {
     e.preventDefault();
-    
+
     const reclamationId = document.getElementById('reclamationId').value;
     const statut = document.getElementById('reclamationStatus').value;
     const reponse = document.getElementById('reclamationResponse').value.trim();
-    
+
     const currentUser = getCurrentUser();
     if (!currentUser) {
         showAlert('Vous devez être connecté', 'error');
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/reclamations/${reclamationId}`, {
             method: 'PUT',
@@ -1222,12 +1320,12 @@ async function saveReclamationResponse(e) {
                 resolvedBy: currentUser.id
             })
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Erreur lors de la sauvegarde');
         }
-        
+
         showAlert('Réclamation mise à jour avec succès !', 'success');
         closeReclamationResponseModal();
         await loadReclamations();
@@ -1242,17 +1340,17 @@ async function deleteReclamation(reclamationId) {
     if (!confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?')) {
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/reclamations/${reclamationId}`, {
             method: 'DELETE'
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Erreur lors de la suppression');
         }
-        
+
         showAlert('Réclamation supprimée avec succès !', 'success');
         await loadReclamations();
     } catch (error) {
@@ -1266,6 +1364,138 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('reclamationResponseForm');
     if (form) {
         form.addEventListener('submit', saveReclamationResponse);
+    }
+});
+
+// ============================================
+// GESTION DE LA SUSPENSION DES UTILISATEURS
+// ============================================
+
+// Ouvrir le modal de suspension
+function openSuspendModal(userId, userName) {
+    document.getElementById('suspendUserId').value = userId;
+    document.getElementById('suspendUserName').textContent = userName;
+    document.getElementById('suspensionReason').value = '';
+    document.getElementById('suspensionEndDate').value = '';
+    document.getElementById('suspendUserModal').style.display = 'flex';
+}
+
+// Fermer le modal de suspension
+function closeSuspendModal() {
+    document.getElementById('suspendUserModal').style.display = 'none';
+    document.getElementById('suspendUserForm').reset();
+}
+
+// Suspendre un utilisateur
+async function suspendUser(e) {
+    e.preventDefault();
+
+    const userId = document.getElementById('suspendUserId').value;
+    const reason = document.getElementById('suspensionReason').value.trim();
+    const endDate = document.getElementById('suspensionEndDate').value;
+
+    if (!reason) {
+        showAlert('Veuillez entrer une raison pour la suspension', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: 'suspended',
+                suspensionReason: reason,
+                suspensionEndDate: endDate || null
+            })
+        });
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}).`);
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur HTTP: ${response.status}`);
+        }
+
+        if (data.success) {
+            const endDateStr = endDate
+                ? `jusqu'au ${new Date(endDate).toLocaleDateString('fr-FR')}`
+                : 'indéfiniment';
+            showAlert(`Utilisateur suspendu ${endDateStr}`, 'success');
+            closeSuspendModal();
+            await loadAdminStats();
+            await loadPendingUsers();
+            await loadAcceptedUsers();
+            await loadAllUsers();
+        } else {
+            showAlert('Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('Erreur lors de la suspension: ' + error.message, 'error');
+    }
+}
+
+// Réactiver (unsuspend) un utilisateur
+async function unsuspendUser(userId) {
+    if (!confirm('Êtes-vous sûr de vouloir réactiver cet utilisateur ?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: 'accepted',
+                suspensionReason: '',
+                suspensionEndDate: null
+            })
+        });
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}).`);
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur HTTP: ${response.status}`);
+        }
+
+        if (data.success) {
+            showAlert('Utilisateur réactivé avec succès !', 'success');
+            await loadAdminStats();
+            await loadPendingUsers();
+            await loadAcceptedUsers();
+            await loadAllUsers();
+        } else {
+            showAlert('Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('Erreur lors de la réactivation: ' + error.message, 'error');
+    }
+}
+
+// Event listener pour le formulaire de suspension
+document.addEventListener('DOMContentLoaded', function () {
+    const suspendForm = document.getElementById('suspendUserForm');
+    if (suspendForm) {
+        suspendForm.addEventListener('submit', suspendUser);
     }
 });
 
@@ -1288,3 +1518,6 @@ window.loadReclamations = loadReclamations;
 window.openReclamationResponseModal = openReclamationResponseModal;
 window.closeReclamationResponseModal = closeReclamationResponseModal;
 window.deleteReclamation = deleteReclamation;
+window.openSuspendModal = openSuspendModal;
+window.closeSuspendModal = closeSuspendModal;
+window.unsuspendUser = unsuspendUser;

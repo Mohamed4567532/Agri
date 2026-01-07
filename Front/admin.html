@@ -1,87 +1,89 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - AgriSmart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         * {
             box-sizing: border-box;
         }
-        
+
         body {
             background: #f0f2f5;
         }
-        
+
         .admin-layout {
             display: flex;
-            min-height: calc(100vh - 70px);
+            min-height: 100vh;
         }
-        
+
         /* Sidebar */
         .admin-sidebar {
             width: 280px;
             background: linear-gradient(180deg, #1a252f 0%, #2c3e50 100%);
             padding: 2rem 0;
             position: sticky;
-            top: 70px;
-            height: calc(100vh - 70px);
+            top: 0;
+            height: 100vh;
             overflow-y: auto;
         }
-        
+
         .sidebar-header {
             padding: 0 1.5rem 1.5rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 1rem;
         }
-        
+
         .sidebar-header h2 {
             color: white;
             font-size: 1.3rem;
             margin: 0;
         }
-        
+
         .sidebar-header p {
-            color: rgba(255,255,255,0.6);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 0.85rem;
             margin: 0.5rem 0 0;
         }
-        
+
         .sidebar-menu {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        
+
         .sidebar-menu li {
             margin: 0.25rem 0;
         }
-        
+
         .sidebar-menu a {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px 1.5rem;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
         }
-        
+
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
             border-left-color: #3498db;
         }
-        
+
         .sidebar-menu .menu-icon {
             font-size: 1.2rem;
             width: 24px;
             text-align: center;
         }
-        
+
         .menu-badge {
             margin-left: auto;
             background: #e74c3c;
@@ -91,14 +93,14 @@
             font-size: 0.75rem;
             font-weight: 600;
         }
-        
+
         /* Main Content */
         .admin-main {
             flex: 1;
             padding: 2rem;
             max-width: calc(100% - 280px);
         }
-        
+
         .admin-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -109,39 +111,46 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .admin-header h1 {
             margin: 0;
             font-size: 1.8rem;
             font-weight: 600;
         }
-        
+
         .admin-header p {
             margin: 0.5rem 0 0;
             opacity: 0.9;
         }
-        
+
         .header-date {
             text-align: right;
             font-size: 0.9rem;
             opacity: 0.9;
         }
-        
+
         /* Section */
         .admin-section {
             display: none;
             animation: fadeIn 0.3s ease;
         }
-        
+
         .admin-section.active {
             display: block;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .section-title {
             font-size: 1.4rem;
             color: #2c3e50;
@@ -149,30 +158,30 @@
             padding-bottom: 0.75rem;
             border-bottom: 2px solid #3498db;
         }
-        
+
         /* Cards */
         .card {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        
+
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
         }
-        
+
         .card-title {
             font-size: 1.1rem;
             font-weight: 600;
             color: #2c3e50;
             margin: 0;
         }
-        
+
         /* Stats Grid */
         .stats-overview {
             display: grid;
@@ -180,16 +189,16 @@
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
-        
+
         .stat-box {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             position: relative;
             overflow: hidden;
         }
-        
+
         .stat-box::before {
             content: '';
             position: absolute;
@@ -198,12 +207,23 @@
             width: 4px;
             height: 100%;
         }
-        
-        .stat-box.blue::before { background: #3498db; }
-        .stat-box.orange::before { background: #f39c12; }
-        .stat-box.green::before { background: #27ae60; }
-        .stat-box.red::before { background: #e74c3c; }
-        
+
+        .stat-box.blue::before {
+            background: #3498db;
+        }
+
+        .stat-box.orange::before {
+            background: #f39c12;
+        }
+
+        .stat-box.green::before {
+            background: #27ae60;
+        }
+
+        .stat-box.red::before {
+            background: #e74c3c;
+        }
+
         .stat-box .stat-icon {
             font-size: 2.5rem;
             opacity: 0.15;
@@ -212,29 +232,29 @@
             top: 50%;
             transform: translateY(-50%);
         }
-        
+
         .stat-box .stat-value {
             font-size: 2rem;
             font-weight: 700;
             color: #2c3e50;
         }
-        
+
         .stat-box .stat-label {
             color: #7f8c8d;
             font-size: 0.9rem;
             margin-top: 0.25rem;
         }
-        
+
         /* Table Styles */
         .table-container {
             overflow-x: auto;
         }
-        
+
         .table {
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         .table th {
             background: #f8f9fa;
             padding: 14px 16px;
@@ -245,17 +265,17 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .table td {
             padding: 14px 16px;
             border-bottom: 1px solid #eee;
             color: #555;
         }
-        
+
         .table tr:hover td {
             background: #f8f9fa;
         }
-        
+
         /* Badges */
         .badge {
             padding: 5px 12px;
@@ -264,14 +284,37 @@
             font-weight: 500;
             display: inline-block;
         }
-        
-        .badge-success { background: #d4edda; color: #155724; }
-        .badge-warning { background: #fff3cd; color: #856404; }
-        .badge-danger { background: #f8d7da; color: #721c24; }
-        .badge-info { background: #d1ecf1; color: #0c5460; }
-        .badge-purple { background: #e2d5f1; color: #6f42c1; }
-        .badge-secondary { background: #e9ecef; color: #6c757d; }
-        
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-purple {
+            background: #e2d5f1;
+            color: #6f42c1;
+        }
+
+        .badge-secondary {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
         /* Buttons */
         .btn {
             padding: 8px 16px;
@@ -281,22 +324,53 @@
             transition: all 0.2s ease;
             border: none;
         }
-        
+
         .btn-sm {
             padding: 6px 12px;
             font-size: 0.85rem;
         }
-        
-        .btn-primary { background: #3498db; color: white; }
-        .btn-primary:hover { background: #2980b9; }
-        .btn-success { background: #27ae60; color: white; }
-        .btn-success:hover { background: #219a52; }
-        .btn-danger { background: #e74c3c; color: white; }
-        .btn-danger:hover { background: #c0392b; }
-        .btn-warning { background: #f39c12; color: white; }
-        .btn-warning:hover { background: #d68910; }
-        .btn-secondary { background: #95a5a6; color: white; }
-        
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d68910;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
         /* Filters */
         .filters-bar {
             display: flex;
@@ -305,19 +379,19 @@
             flex-wrap: wrap;
             align-items: center;
         }
-        
+
         .filter-group {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .filter-group label {
             font-weight: 500;
             color: #555;
             font-size: 0.9rem;
         }
-        
+
         .filter-group select {
             padding: 10px 14px;
             border-radius: 8px;
@@ -325,26 +399,26 @@
             background: white;
             cursor: pointer;
         }
-        
+
         /* Stats Management Grid */
         .stats-management-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
-        
+
         .stat-card-admin {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             transition: transform 0.2s ease;
         }
-        
+
         .stat-card-admin:hover {
             transform: translateY(-3px);
         }
-        
+
         .stat-summary-item {
             display: flex;
             align-items: center;
@@ -353,14 +427,14 @@
             font-size: 0.9rem;
             color: #555;
         }
-        
+
         .stat-color-dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             flex-shrink: 0;
         }
-        
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -369,12 +443,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
-        
+
         .modal-content {
             background: white;
             border-radius: 16px;
@@ -384,17 +458,31 @@
             overflow-y: auto;
             animation: modalSlide 0.3s ease;
         }
-        
+
         @keyframes modalSlide {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
-        
+
         .modal-header {
             padding: 1.5rem;
             border-bottom: 1px solid #eee;
@@ -402,13 +490,13 @@
             justify-content: space-between;
             align-items: center;
         }
-        
+
         .modal-header h2 {
             margin: 0;
             font-size: 1.2rem;
             color: #2c3e50;
         }
-        
+
         .modal-header .close {
             background: none;
             border: none;
@@ -416,11 +504,11 @@
             cursor: pointer;
             color: #999;
         }
-        
+
         .modal-body {
             padding: 1.5rem;
         }
-        
+
         /* Stat Part Styles */
         .stat-part {
             background: #f8f9fa;
@@ -429,7 +517,7 @@
             margin-bottom: 1rem;
             position: relative;
         }
-        
+
         .stat-part .remove-btn {
             position: absolute;
             top: 8px;
@@ -446,101 +534,89 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .stat-part-row {
             display: grid;
             grid-template-columns: 2fr 1fr 60px;
             gap: 0.75rem;
             align-items: end;
         }
-        
+
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 3rem;
             color: #999;
         }
-        
+
         .empty-state .icon {
             font-size: 3rem;
             margin-bottom: 1rem;
         }
-        
+
         /* Responsive */
         @media (max-width: 1200px) {
             .stats-overview {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-        
-        @media (max-width: 992px) {
+
+        @media (max-width: 768px) {
             .admin-sidebar {
                 display: none;
             }
+
             .admin-main {
                 max-width: 100%;
             }
-        }
-        
-        @media (max-width: 768px) {
+
             .stats-overview {
                 grid-template-columns: 1fr;
             }
+
             .admin-header {
                 flex-direction: column;
                 text-align: center;
             }
+
             .header-date {
                 margin-top: 1rem;
             }
         }
     </style>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
-                <span>AgriSmart</span>
-            </a>
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="admin.html" class="active">Administration</a></li>
-                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
-            </ul>
-        </div>
-    </nav>
 
+<body>
     <div class="admin-layout">
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-header">
-                <h2>🛡️ Admin Panel</h2>
+                <h2><i class="fa-solid fa-shield-halved"></i> Admin Panel</h2>
                 <p>Gestion AgriSmart</p>
             </div>
             <ul class="sidebar-menu">
                 <li>
                     <a href="#dashboard" class="active" onclick="showSection('dashboard')">
-                        <span class="menu-icon">📊</span>
+                        <span class="menu-icon"><i class="fa-solid fa-chart-pie"></i></span>
                         Tableau de bord
                     </a>
                 </li>
                 <li>
                     <a href="#users" onclick="showSection('users')">
-                        <span class="menu-icon">👥</span>
+                        <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
                         Utilisateurs
                         <span class="menu-badge" id="pendingBadge">0</span>
                     </a>
                 </li>
                 <li>
                     <a href="#statistics" onclick="showSection('statistics')">
-                        <span class="menu-icon">📈</span>
+                        <span class="menu-icon"><i class="fa-solid fa-chart-line"></i></span>
                         Statistiques Marché
                     </a>
                 </li>
                 <li>
                     <a href="#reclamations" onclick="showSection('reclamations')">
-                        <span class="menu-icon">📝</span>
+                        <span class="menu-icon"><i class="fa-solid fa-clipboard-list"></i></span>
                         Réclamations
                         <span class="menu-badge" id="reclamationsBadge">0</span>
                     </a>
@@ -560,15 +636,16 @@
 
             <!-- Dashboard Section -->
             <section id="dashboard" class="admin-section active">
-                <h2 class="section-title">📊 Tableau de Bord</h2>
-                
+                <h2 class="section-title"><i class="fa-solid fa-chart-pie"></i> Tableau de Bord</h2>
+
                 <div class="stats-overview" id="adminStats">
                     <!-- Stats will be loaded here -->
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">⏳ Utilisateurs en Attente d'Approbation</h3>
+                        <h3 class="card-title"><i class="fa-solid fa-hourglass-half"></i> Utilisateurs en Attente
+                            d'Approbation</h3>
                     </div>
                     <div id="pendingUsers">
                         <p>Chargement...</p>
@@ -578,11 +655,11 @@
 
             <!-- Users Section -->
             <section id="users" class="admin-section">
-                <h2 class="section-title">👥 Gestion des Utilisateurs</h2>
-                
+                <h2 class="section-title"><i class="fa-solid fa-users"></i> Gestion des Utilisateurs</h2>
+
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">✅ Utilisateurs Acceptés</h3>
+                        <h3 class="card-title"><i class="fa-solid fa-check"></i> Utilisateurs Acceptés</h3>
                     </div>
                     <div id="acceptedUsers">
                         <p>Chargement...</p>
@@ -591,7 +668,7 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">📋 Tous les Utilisateurs</h3>
+                        <h3 class="card-title"><i class="fa-solid fa-list"></i> Tous les Utilisateurs</h3>
                     </div>
                     <div class="filters-bar">
                         <div class="filter-group">
@@ -622,13 +699,13 @@
 
             <!-- Statistics Section -->
             <section id="statistics" class="admin-section">
-                <h2 class="section-title">📈 Statistiques du Marché Tunisien</h2>
-                
+                <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> Statistiques du Marché Tunisien</h2>
+
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Gestion des Catégories</h3>
                         <button class="btn btn-success" onclick="openNewStatModal()">
-                            ➕ Nouvelle catégorie
+                            <i class="fa-solid fa-plus"></i> Nouvelle catégorie
                         </button>
                     </div>
                     <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">
@@ -644,9 +721,10 @@
             <section id="reclamations" class="admin-section">
                 <h2 class="section-title">📝 Gestion des Réclamations</h2>
                 <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">
-                    Toutes les réclamations créées par les utilisateurs (fermiers, vétérinaires, consommateurs) sont affichées ici.
+                    Toutes les réclamations créées par les utilisateurs (fermiers, vétérinaires, consommateurs) sont
+                    affichées ici.
                 </p>
-                
+
                 <div class="filters-bar">
                     <div class="filter-group">
                         <label>Statut:</label>
@@ -696,7 +774,8 @@
                 <button class="close" onclick="closeReclamationResponseModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div id="reclamationDetails" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <div id="reclamationDetails"
+                    style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
                     <!-- Les détails seront chargés ici -->
                 </div>
                 <form id="reclamationResponseForm">
@@ -712,11 +791,13 @@
                     </div>
                     <div class="form-group">
                         <label>Réponse</label>
-                        <textarea id="reclamationResponse" class="form-control" rows="5" placeholder="Votre réponse à la réclamation..."></textarea>
+                        <textarea id="reclamationResponse" class="form-control" rows="5"
+                            placeholder="Votre réponse à la réclamation..."></textarea>
                     </div>
                     <div style="display: flex; gap: 1rem;">
                         <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Enregistrer</button>
-                        <button type="button" class="btn btn-danger" onclick="closeReclamationResponseModal()" style="flex: 1;">Annuler</button>
+                        <button type="button" class="btn btn-danger" onclick="closeReclamationResponseModal()"
+                            style="flex: 1;">Annuler</button>
                     </div>
                 </form>
             </div>
@@ -727,13 +808,14 @@
     <div id="adminContactModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>✉️ Contacter l'utilisateur</h2>
+                <h2><i class="fa-solid fa-envelope"></i> Contacter l'utilisateur</h2>
                 <button class="close">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="adminContactForm">
                     <input type="hidden" id="adminContactUserId">
-                    <p style="margin-bottom: 1rem;"><strong>Destinataire:</strong> <span id="adminContactUserName"></span></p>
+                    <p style="margin-bottom: 1rem;"><strong>Destinataire:</strong> <span
+                            id="adminContactUserName"></span></p>
                     <div class="form-group">
                         <label>Sujet</label>
                         <input type="text" id="adminMessageSubject" class="form-control" required>
@@ -759,20 +841,23 @@
                 <form id="statForm">
                     <input type="hidden" id="statCategory">
                     <input type="hidden" id="statId">
-                    
+
                     <div id="statPartsContainer"></div>
-                    
-                    <div id="totalPercentageDisplay" style="text-align: center; padding: 12px; margin-bottom: 1rem; border-radius: 8px; font-weight: 600;">
+
+                    <div id="totalPercentageDisplay"
+                        style="text-align: center; padding: 12px; margin-bottom: 1rem; border-radius: 8px; font-weight: 600;">
                         Total: 0%
                     </div>
-                    
-                    <button type="button" class="btn btn-secondary" onclick="addStatPart()" style="width: 100%; margin-bottom: 1rem;">
+
+                    <button type="button" class="btn btn-secondary" onclick="addStatPart()"
+                        style="width: 100%; margin-bottom: 1rem;">
                         ➕ Ajouter une partie
                     </button>
-                    
+
                     <div style="display: flex; gap: 1rem;">
                         <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Enregistrer</button>
-                        <button type="button" class="btn btn-danger" onclick="closeStatModal()" style="flex: 1;">Annuler</button>
+                        <button type="button" class="btn btn-danger" onclick="closeStatModal()"
+                            style="flex: 1;">Annuler</button>
                     </div>
                 </form>
             </div>
@@ -783,42 +868,87 @@
     <div id="newStatModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>➕ Nouvelle Catégorie</h2>
+                <h2><i class="fa-solid fa-plus"></i> Nouvelle Catégorie</h2>
                 <button class="close">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="newStatForm">
                     <div class="form-group">
                         <label>Identifiant (minuscules, sans accents)</label>
-                        <input type="text" id="newStatCategory" class="form-control" placeholder="Ex: cereales" required pattern="[a-z0-9_]+">
+                        <input type="text" id="newStatCategory" class="form-control" placeholder="Ex: cereales" required
+                            pattern="[a-z0-9_]+">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Nom d'affichage</label>
-                        <input type="text" id="newStatDisplayName" class="form-control" placeholder="Ex: Céréales" required>
+                        <input type="text" id="newStatDisplayName" class="form-control" placeholder="Ex: Céréales"
+                            required>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Couleur</label>
-                        <input type="color" id="newStatColor" class="form-control" value="#3498db" style="height: 45px; width: 100%;">
+                        <input type="color" id="newStatColor" class="form-control" value="#3498db"
+                            style="height: 45px; width: 100%;">
                     </div>
-                    
+
                     <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #eee;">
                     <h4 style="margin-bottom: 1rem; color: #2c3e50;">Données</h4>
-                    
+
                     <div id="newStatPartsContainer"></div>
-                    
-                    <div id="newTotalPercentageDisplay" style="text-align: center; padding: 12px; margin-bottom: 1rem; border-radius: 8px; font-weight: 600;">
+
+                    <div id="newTotalPercentageDisplay"
+                        style="text-align: center; padding: 12px; margin-bottom: 1rem; border-radius: 8px; font-weight: 600;">
                         Total: 0%
                     </div>
-                    
-                    <button type="button" class="btn btn-secondary" onclick="addNewStatPart()" style="width: 100%; margin-bottom: 1rem;">
+
+                    <button type="button" class="btn btn-secondary" onclick="addNewStatPart()"
+                        style="width: 100%; margin-bottom: 1rem;">
                         ➕ Ajouter une partie
                     </button>
-                    
+
                     <div style="display: flex; gap: 1rem;">
-                        <button type="submit" class="btn btn-success" style="flex: 1;">✅ Créer</button>
-                        <button type="button" class="btn btn-danger" onclick="closeNewStatModal()" style="flex: 1;">Annuler</button>
+                        <button type="submit" class="btn btn-success" style="flex: 1;"><i class="fa-solid fa-check"></i>
+                            Créer</button>
+                        <button type="button" class="btn btn-danger" onclick="closeNewStatModal()"
+                            style="flex: 1;">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Suspension Utilisateur -->
+    <div id="suspendUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-ban"></i> Suspendre l'utilisateur</h2>
+                <button class="close" onclick="closeSuspendModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="suspendUserForm">
+                    <input type="hidden" id="suspendUserId">
+                    <p style="margin-bottom: 1rem;"><strong>Utilisateur:</strong> <span id="suspendUserName"></span></p>
+
+                    <div class="form-group">
+                        <label>Raison de la suspension *</label>
+                        <textarea id="suspensionReason" class="form-control" required rows="3"
+                            placeholder="Expliquez pourquoi cet utilisateur est suspendu..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date de fin de suspension (optionnel)</label>
+                        <input type="datetime-local" id="suspensionEndDate" class="form-control">
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">
+                            Laissez vide pour une suspension indéfinie
+                        </small>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-warning" style="flex: 1;">
+                            <i class="fa-solid fa-ban"></i> Suspendre
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeSuspendModal()"
+                            style="flex: 1;">Annuler</button>
                     </div>
                 </form>
             </div>
@@ -829,7 +959,7 @@
     <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/admin.js"></script>
-    
+
     <script>
         // Navigation entre sections
         function showSection(sectionId) {
@@ -841,7 +971,7 @@
             document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
             document.querySelector(`a[href="#${sectionId}"]`).classList.add('active');
         }
-        
+
         // Afficher la date actuelle
         document.getElementById('currentDate').innerHTML = new Date().toLocaleDateString('fr-FR', {
             weekday: 'long',
@@ -851,4 +981,5 @@
         });
     </script>
 </body>
+
 </html>

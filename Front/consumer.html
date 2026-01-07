@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Consommateur - AgriSmart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+
+<body class="farmer-no-bg">
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
@@ -14,9 +17,23 @@
                 <span>AgriSmart</span>
             </a>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="#" onclick="logout(); return false;">Déconnexion</a></li>
+                <li><a href="index.html">
+                        <span class="nav-icon"><svg viewBox="0 0 24 24">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                                <polyline points="9 22 9 12 15 12 15 22" />
+                            </svg></span>
+                        Accueil
+                    </a></li>
+                <li><a href="#" onclick="logout(); return false;">
+                        <span class="nav-icon"><svg viewBox="0 0 24 24">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                <polyline points="16 17 21 12 16 7" />
+                                <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg></span>
+                        Déconnexion
+                    </a></li>
             </ul>
+
             <div class="hamburger">
                 <span></span>
                 <span></span>
@@ -29,20 +46,40 @@
         <h1 class="section-title">Espace Consommateur</h1>
 
         <section class="section">
-            <h2>Produits Disponibles</h2>
-            <div class="search-bar">
-                <input type="text" id="searchInput" class="form-control search-input" placeholder="Rechercher un produit...">
-                <select id="categoryFilter" class="form-control">
-                    <option value="all">Toutes les catégories</option>
-                </select>
+            <h2><i class="fa-solid fa-cow"></i> Animaux Disponibles</h2>
+            <p style="color: #666; margin-bottom: 1.5rem;">
+                Consultez tous les animaux (moutons) proposés par les fermiers acceptés.
+                Vous pouvez contacter directement le fermier pour plus d'informations ou pour effectuer un achat.
+            </p>
+            <div class="search-bar" style="margin-bottom: 1.5rem;">
+                <input type="text" id="searchInput" class="form-control search-input"
+                    placeholder="Rechercher un animal...">
+                <button class="btn btn-secondary" onclick="loadAnimalsForConsumer()"><i
+                        class="fa-solid fa-rotate-right"></i> Actualiser</button>
             </div>
-            <div class="grid grid-3" id="productsContainer"></div>
+            <div class="grid grid-3" id="productsContainer">
+                <p style="text-align: center; grid-column: 1 / -1;">Chargement des animaux...</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2><i class="fa-solid fa-comments"></i> Messages Reçus</h2>
+            <p style="color: #666; margin-bottom: 1rem;">
+                Consultez les réponses des fermiers à vos messages.
+            </p>
+            <div class="table-container">
+                <div id="consumerMessages">
+                    <p>Chargement des messages...</p>
+                </div>
+            </div>
         </section>
 
         <section class="section">
             <h2>Mes Commandes</h2>
             <div class="table-container">
-                <div id="ordersList"></div>
+                <div id="ordersList">
+                    <p>Chargement des commandes...</p>
+                </div>
             </div>
         </section>
 
@@ -50,7 +87,6 @@
             <h2>Actions</h2>
             <div class="grid grid-2">
                 <button class="btn btn-secondary" onclick="showModal('complaintModal')">Porter une plainte</button>
-                <button class="btn btn-secondary" onclick="window.location.href='contact.html'">Nous contacter</button>
             </div>
         </section>
     </div>
@@ -59,21 +95,31 @@
     <div id="contactFarmerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Contacter le fermier</h2>
-                <button class="close">&times;</button>
+                <h2><i class="fa-solid fa-comments"></i> Contacter le fermier</h2>
+                <button class="close" onclick="closeModal('contactFarmerModal')">&times;</button>
             </div>
             <form id="contactFarmerForm">
                 <input type="hidden" id="contactFarmerId">
-                <p><strong>Fermier:</strong> <span id="contactFarmerName"></span></p>
-                <div class="form-group">
-                    <label for="messageSubject">Sujet</label>
-                    <input type="text" id="messageSubject" class="form-control" required>
+                <input type="hidden" id="contactAnimalId">
+                <div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                    <p style="margin: 0 0 0.5rem 0;"><strong>Fermier:</strong> <span id="contactFarmerName"></span></p>
+                    <p id="contactAnimalInfo" style="margin: 0; color: #666; font-size: 0.9rem;"></p>
                 </div>
                 <div class="form-group">
-                    <label for="messageContent">Message</label>
-                    <textarea id="messageContent" class="form-control" required></textarea>
+                    <label for="messageSubject">Sujet *</label>
+                    <input type="text" id="messageSubject" class="form-control" required
+                        placeholder="Ex: Demande d'information sur le mouton">
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+                <div class="form-group">
+                    <label for="messageContent">Message *</label>
+                    <textarea id="messageContent" class="form-control" required rows="5"
+                        placeholder="Bonjour, je suis intéressé(e) par votre mouton. Pouvez-vous me donner plus d'informations ?"></textarea>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">📤 Envoyer le message</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('contactFarmerModal')">Annuler</button>
+                </div>
             </form>
         </div>
     </div>
@@ -89,10 +135,17 @@
                 <input type="hidden" id="vetOpinionProductId">
                 <p><strong>Produit:</strong> <span id="vetOpinionProductTitle"></span></p>
                 <div class="form-group">
-                    <label for="vetQuestion">Votre question</label>
-                    <textarea id="vetQuestion" class="form-control" required placeholder="Posez votre question au vétérinaire..."></textarea>
+                    <label for="vetOpinionVetId">Sélectionner un vétérinaire *</label>
+                    <select id="vetOpinionVetId" class="form-control" required>
+                        <option value="">-- Chargement des vétérinaires... --</option>
+                    </select>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+                <div class="form-group">
+                    <label for="vetQuestion">Votre question *</label>
+                    <textarea id="vetQuestion" class="form-control" required
+                        placeholder="Posez votre question au vétérinaire..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer le message</button>
             </form>
         </div>
     </div>
@@ -118,6 +171,21 @@
         </div>
     </div>
 
+    <!-- Modal Détails Message Consommateur -->
+    <div id="consumerMessageModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>💬 Détails du Message</h2>
+                <button class="close" onclick="closeModal('consumerMessageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="consumerMessageDetails">
+                    <!-- Les détails du message seront chargés ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/main.js"></script>
     <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
@@ -130,9 +198,5 @@
         });
     </script>
 </body>
+
 </html>
-
-
-
-
-
