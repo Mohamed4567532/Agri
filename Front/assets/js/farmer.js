@@ -343,34 +343,46 @@ async function loadFarmerMessages() {
         }
 
         farmerMessages.innerHTML = `
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>De</th>
-                        <th>Sujet</th>
-                        <th>Date</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${receivedMessages.map(m => {
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                ${receivedMessages.map(m => {
             const senderName = m.senderId?.name || m.senderId?.username || 'Inconnu';
             const senderRole = m.senderId?.role || 'N/A';
+            const hasProduct = m.productId ? true : false;
             return `
-                        <tr>
-                            <td>${senderName} (${senderRole})</td>
-                            <td>${m.subject}</td>
-                            <td>${formatDate(m.createdAt)}</td>
-                            <td>${m.isRead ? '<i class="fa-solid fa-check-double"></i> Lu' : '<i class="fa-solid fa-envelope"></i> Non lu'}</td>
-                            <td>
-                                <button class="btn btn-sm btn-primary" onclick="viewFarmerMessage('${m._id}')">Voir & Répondre</button>
-                            </td>
-                        </tr>
+                        <div style="background: white; border-radius: 12px; padding: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid ${m.isRead ? '#90A4AE' : '#4CAF50'}; transition: all 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.12)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'">
+                            <div style="display: flex; justify-content: space-between; align-items: start; gap: 1rem; margin-bottom: 0.75rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <i class="fa-solid fa-user" style="color: #42A5F5;"></i>
+                                        <strong style="color: #1a252f;">${senderName}</strong>
+                                        <span style="font-size: 0.85rem; color: #666; padding: 0.25rem 0.75rem; background: rgba(66, 165, 245, 0.1); border-radius: 12px;">${senderRole}</span>
+                                        ${!m.isRead ? '<span style="font-size: 0.7rem; padding: 0.2rem 0.5rem; background: #4CAF50; color: white; border-radius: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Nouveau</span>' : ''}
+                                    </div>
+                                    <h4 style="margin: 0 0 0.5rem 0; color: #1a252f; font-size: 1.1rem;">${m.subject}</h4>
+                                    ${hasProduct ? `
+                                        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.75rem; background: rgba(76, 175, 80, 0.1); border-radius: 8px; margin-bottom: 0.5rem;">
+                                            <i class="fa-solid fa-box" style="color: #4CAF50; font-size: 0.9rem;"></i>
+                                            <span style="font-size: 0.85rem; color: #4CAF50; font-weight: 600;">Produit: ${m.productId?.type || 'N/A'} - ${m.productId?.price ? formatPrice(m.productId.price) + ' TND' : 'N/A'}</span>
+                                        </div>
+                                    ` : ''}
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; color: #666; font-size: 0.9rem;">
+                                        <i class="fa-solid fa-calendar-days" style="font-size: 0.8rem;"></i>
+                                        ${formatDate(m.createdAt)}
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 1.5rem; color: ${m.isRead ? '#90A4AE' : '#4CAF50'};">
+                                        ${m.isRead ? '<i class="fa-solid fa-check-double" title="Lu"></i>' : '<i class="fa-solid fa-envelope" title="Non lu"></i>'}
+                                    </span>
+                                    <button class="btn btn-sm btn-primary" onclick="viewFarmerMessage('${m._id}')" style="padding: 0.5rem 1rem; border-radius: 8px; background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); border: none; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                        <i class="fa-solid fa-reply"></i> Répondre
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     `;
         }).join('')}
-                </tbody>
-            </table>
+            </div>
         `;
 
     } catch (error) {
@@ -430,16 +442,42 @@ async function viewFarmerMessage(messageId) {
             '';
 
         messageDetailsDiv.innerHTML = `
-            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                <h3 style="margin-top: 0;">${message.subject}</h3>
-                <p><strong>De:</strong> ${messageSenderName} (${messageSenderRole})</p>
-                <p><strong>Email:</strong> ${messageSenderEmail}</p>
-                <p><strong>Date:</strong> ${formatDate(message.createdAt)}</p>
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid rgba(0,0,0,0.05);">
+                <h3 style="margin-top: 0; margin-bottom: 1rem; color: #1a252f; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-envelope" style="color: #4CAF50;"></i>
+                    ${message.subject}
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div>
+                        <div style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">De</div>
+                        <div style="color: #1a252f; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-user" style="color: #42A5F5;"></i>
+                            ${messageSenderName} <span style="font-size: 0.85rem; color: #666; font-weight: 400;">(${messageSenderRole})</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Email</div>
+                        <div style="color: #1a252f; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-envelope" style="color: #42A5F5; font-size: 0.9rem;"></i>
+                            ${messageSenderEmail}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem;">Date</div>
+                        <div style="color: #1a252f; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-calendar-days" style="color: #42A5F5; font-size: 0.9rem;"></i>
+                            ${formatDate(message.createdAt)}
+                        </div>
+                    </div>
+                </div>
                 ${productInfo}
             </div>
-            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 1rem;">
-                <h4 style="margin-top: 0;">Message:</h4>
-                <p style="white-space: pre-wrap;">${message.message}</p>
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 1rem;">
+                <h4 style="margin-top: 0; margin-bottom: 1rem; color: #1a252f; display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-message" style="color: #4CAF50;"></i>
+                    Message
+                </h4>
+                <p style="white-space: pre-wrap; color: #555; line-height: 1.7; margin: 0;">${message.message}</p>
             </div>
         `;
 

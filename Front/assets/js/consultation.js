@@ -171,13 +171,26 @@ async function loadFarmerSheep() {
         }
 
         sheepSelection.innerHTML = sheep.map(s => `
-            <div style="padding: 10px; border-bottom: 1px solid #eee;">
-                <label style="display: flex; align-items: center; cursor: pointer;">
-                    <input type="checkbox" name="sheepIds" value="${s._id || s.id}" style="margin-right: 10px;">
-                    <div>
-                        <strong>Mouton</strong> - ${s.weight}kg - ${s.price} TND
+            <div style="padding: 1rem; border-bottom: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 0.5rem; background: white; transition: all 0.2s ease;" onmouseover="this.style.background='#f8f9fa'; this.style.borderColor='#4CAF50'" onmouseout="this.style.background='white'; this.style.borderColor='#e0e0e0'">
+                <label style="display: flex; align-items: center; cursor: pointer; gap: 1rem;">
+                    <input type="checkbox" name="sheepIds" value="${s._id || s.id}" style="width: 20px; height: 20px; cursor: pointer; accent-color: #4CAF50;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <i class="fa-solid fa-sheep" style="color: #4CAF50; font-size: 1.2rem;"></i>
+                            <strong style="color: #1a252f; font-size: 1rem;">Mouton</strong>
+                        </div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-weight" style="color: #42A5F5; font-size: 0.9rem;"></i>
+                                <span style="color: #666; font-weight: 500;">${s.weight} kg</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-money-bill-wave" style="color: #4CAF50; font-size: 0.9rem;"></i>
+                                <span style="color: #1a252f; font-weight: 600;">${s.price} TND</span>
+                            </div>
+                        </div>
                         <br>
-                        <small style="color: #666;">${s.description.substring(0, 50)}...</small>
+                        <small style="color: #666; display: block; margin-top: 0.5rem;">${s.description.substring(0, 50)}...</small>
                     </div>
                 </label>
             </div>
