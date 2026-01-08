@@ -184,13 +184,20 @@ function updateNavbar() {
 
     if (user) {
         // Utilisateur connecté
-        let navLinks = `<li><a href="index.html">
-            <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg></span>
-            Accueil
-        </a></li>`;
+        // Ne pas afficher le lien Accueil sur farmer.html et admin.html
+        const currentPage = window.location.pathname.split('/').pop() || window.location.href.split('/').pop();
+        const hideHomeLink = currentPage === 'farmer.html' || currentPage === 'admin.html';
+        
+        let navLinks = '';
+        if (!hideHomeLink) {
+            navLinks = `<li><a href="index.html">
+                <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg></span>
+                Accueil
+            </a></li>`;
+        }
 
         // Liens spécifiques pour agriculteurs
         if (user.role === 'farmer') {
