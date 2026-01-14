@@ -1,4 +1,5 @@
 let selectedVet = null;
+let isSubscribed = false;
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async function () {
@@ -8,6 +9,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (!user || user.role !== 'farmer') {
         showAlert('Accès réservé aux agriculteurs', 'error');
         setTimeout(() => window.location.href = 'index.html', 2000);
+        return;
+    }
+
+    // Vérifier l'abonnement du fermier
+    const hasSubscription = await checkFarmerSubscription(user.id);
+    
+    if (!hasSubscription) {
+        showSubscriptionRequired();
         return;
     }
 
@@ -487,6 +496,85 @@ function closeConsultationDetails() {
         modal.style.display = 'none';
         modal.classList.remove('active');
     }
+}
+
+// Vérifier l'abonnement du fermier
+async function checkFarmerSubscription(userId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
+            headers: getHeaders()
+        });
+
+        if (!response.ok) {
+            console.error('Erreur lors de la vérification de l\'abonnement');
+            return false;
+        }
+
+        const data = await response.json();
+        const user = data.user || data;
+        
+        isSubscribed = user.subscribed === true;
+        console.log('Statut abonnement:', isSubscribed);
+        
+        return isSubscribed;
+    } catch (error) {
+        console.error('Erreur:', error);
+        return false;
+    }
+}
+
+// Afficher le message "Abonnement requis"
+function showSubscriptionRequired() {
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div style="max-width: 600px; margin: 3rem auto; text-align: center;">
+            <div style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); border-radius: 24px; padding: 3rem; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05);">
+                
+                <div style="width: 120px; height: 120px; margin: 0 auto 2rem; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(243, 156, 18, 0.3);">
+                    <i class="fa-solid fa-lock" style="font-size: 3.5rem; color: white;"></i>
+                </div>
+                
+                <h1 style="color: #1a252f; font-size: 2rem; margin-bottom: 1rem; font-weight: 700;">
+                    <i class="fa-solid fa-crown" style="color: #f39c12;"></i>
+                    Abonnement Requis
+                </h1>
+                
+                <p style="color: #666; font-size: 1.1rem; line-height: 1.7; margin-bottom: 2rem;">
+                    Pour accéder au service de <strong>consultation vétérinaire</strong>, vous devez avoir un abonnement actif.
+                </p>
+                
+                <div style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(230, 126, 34, 0.05) 100%); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; border-left: 4px solid #f39c12;">
+                    <h3 style="color: #e67e22; margin: 0 0 0.75rem 0; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-info-circle"></i>
+                        Comment obtenir un abonnement ?
+                    </h3>
+                    <p style="color: #666; margin: 0; line-height: 1.6;">
+                        Contactez l'administrateur de la plateforme pour activer votre abonnement et profiter des consultations vétérinaires.
+                    </p>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="farmer.html" class="btn btn-secondary" style="padding: 1rem 2rem; border-radius: 12px; font-weight: 600; background: #f5f5f5; color: #666; border: 2px solid #e0e0e0; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Retour à mon espace
+                    </a>
+                    <a href="reclamations.html" class="btn btn-primary" style="padding: 1rem 2rem; border-radius: 12px; font-weight: 600; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border: none; color: white; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3); transition: all 0.2s ease;">
+                        <i class="fa-solid fa-envelope"></i>
+                        Contacter l'admin
+                    </a>
+                </div>
+                
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0;">
+                    <p style="color: #999; font-size: 0.9rem; margin: 0;">
+                        <i class="fa-solid fa-shield-halved" style="color: #4CAF50;"></i>
+                        Les consultations vétérinaires sont un service premium pour nos agriculteurs abonnés.
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 // Exposer la fonction globalement

@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<body class="farmer-no-bg">
+<body class="consumer-page">
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="logo">
@@ -17,13 +17,6 @@
                 <span>AgriSmart</span>
             </a>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html">
-                        <span class="nav-icon"><svg viewBox="0 0 24 24">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                                <polyline points="9 22 9 12 15 12 15 22" />
-                            </svg></span>
-                        Accueil
-                    </a></li>
                 <li><a href="#" onclick="logout(); return false;">
                         <span class="nav-icon"><svg viewBox="0 0 24 24">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -43,59 +36,38 @@
     </nav>
 
     <div class="container">
-        <h1 class="section-title">Espace Consommateur</h1>
+        <div class="page-header">
+            <h1><i class="fa-solid fa-bag-shopping"></i> Espace Consommateur</h1>
+            <p>Découvrez les meilleurs produits agricoles tunisiens</p>
+        </div>
 
         <section class="section">
-            <h2><i class="fa-solid fa-cow"></i> Animaux Disponibles</h2>
+            <h2><i class="fa-solid fa-paw"></i> Animaux Disponibles</h2>
             <p style="color: #666; margin-bottom: 1.5rem;">
                 Consultez tous les animaux (moutons) proposés par les fermiers acceptés.
                 Vous pouvez contacter directement le fermier pour plus d'informations ou pour effectuer un achat.
             </p>
-            <div class="search-bar" style="margin-bottom: 1.5rem;">
+            <div class="search-bar">
                 <input type="text" id="searchInput" class="form-control search-input"
-                    placeholder="Rechercher un animal...">
-                <button class="btn btn-secondary" onclick="loadAnimalsForConsumer()"><i
-                        class="fa-solid fa-rotate-right"></i> Actualiser</button>
+                    placeholder="🔍 Rechercher un animal...">
+                <button class="btn btn-primary" onclick="loadAnimalsForConsumer()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Actualiser
+                </button>
             </div>
             <div class="grid grid-3" id="productsContainer">
-                <p style="text-align: center; grid-column: 1 / -1;">Chargement des animaux...</p>
+                <p style="text-align: center; grid-column: 1 / -1; color: #667eea;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Chargement des animaux...
+                </p>
             </div>
         </section>
 
-        <section class="section">
-            <h2><i class="fa-solid fa-comments"></i> Messages Reçus</h2>
-            <p style="color: #666; margin-bottom: 1rem;">
-                Consultez les réponses des fermiers à vos messages.
-            </p>
-            <div class="table-container">
-                <div id="consumerMessages">
-                    <p>Chargement des messages...</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Mes Commandes</h2>
-            <div class="table-container">
-                <div id="ordersList">
-                    <p>Chargement des commandes...</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Actions</h2>
-            <div class="grid grid-2">
-                <button class="btn btn-secondary" onclick="showModal('complaintModal')">Porter une plainte</button>
-            </div>
-        </section>
     </div>
 
     <!-- Modal Contacter Fermier -->
     <div id="contactFarmerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fa-solid fa-comments"></i> Contacter le fermier</h2>
+                <h2><i class="fa-solid fa-message"></i> Contacter le fermier</h2>
                 <button class="close" onclick="closeModal('contactFarmerModal')">&times;</button>
             </div>
             <form id="contactFarmerForm">
@@ -116,7 +88,9 @@
                         placeholder="Bonjour, je suis intéressé(e) par votre mouton. Pouvez-vous me donner plus d'informations ?"></textarea>
                 </div>
                 <div style="display: flex; gap: 0.5rem;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">📤 Envoyer le message</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fa-solid fa-paper-plane"></i> Envoyer le message
+                    </button>
                     <button type="button" class="btn btn-secondary"
                         onclick="closeModal('contactFarmerModal')">Annuler</button>
                 </div>
@@ -128,7 +102,7 @@
     <div id="vetOpinionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Demander l'avis d'un vétérinaire</h2>
+                <h2><i class="fa-solid fa-user-doctor"></i> Demander l'avis d'un vétérinaire</h2>
                 <button class="close">&times;</button>
             </div>
             <form id="vetOpinionForm">
@@ -154,7 +128,7 @@
     <div id="complaintModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Porter une plainte</h2>
+                <h2><i class="fa-solid fa-triangle-exclamation"></i> Porter une plainte</h2>
                 <button class="close">&times;</button>
             </div>
             <form id="complaintForm">
@@ -175,7 +149,7 @@
     <div id="consumerMessageModal" class="modal">
         <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
-                <h2>💬 Détails du Message</h2>
+                <h2><i class="fa-solid fa-envelope-open-text"></i> Détails du Message</h2>
                 <button class="close" onclick="closeModal('consumerMessageModal')">&times;</button>
             </div>
             <div class="modal-body">
@@ -186,7 +160,7 @@
                 <hr style="margin: 1.5rem 0; border: none; border-top: 2px solid #e0e0e0;">
 
                 <h3 style="margin-bottom: 1rem; color: #1a252f; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-reply" style="color: #4CAF50;"></i>
+                    <i class="fa-solid fa-reply" style="color: #764ba2;"></i>
                     Répondre
                 </h3>
                 <form id="consumerReplyMessageForm" onsubmit="replyToConsumerMessage(event); return false;">
@@ -202,11 +176,11 @@
                             placeholder="Tapez votre réponse ici..."></textarea>
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.75rem; border-radius: 8px; background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); border: none; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
                             <i class="fa-solid fa-paper-plane"></i> Envoyer la réponse
                         </button>
                         <button type="button" class="btn btn-secondary"
-                            onclick="closeModal('consumerMessageModal')" style="padding: 0.75rem 1.5rem; border-radius: 8px;">Annuler</button>
+                            onclick="closeModal('consumerMessageModal')">Annuler</button>
                     </div>
                 </form>
             </div>

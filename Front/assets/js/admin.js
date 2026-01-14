@@ -277,6 +277,7 @@ async function loadAllUsers() {
                             <th>Utilisateur</th>
                             <th>Rôle</th>
                             <th>Statut</th>
+                            <th>Abonnement</th>
                             <th>Date</th>
                             <th style="text-align: center;">Actions</th>
                         </tr>
@@ -290,6 +291,23 @@ async function loadAllUsers() {
                                 </td>
                                 <td><span class="badge badge-${getRoleBadgeClass(user.role)}">${getRoleLabel(user.role)}</span></td>
                                 <td><span class="badge badge-${getStatusBadgeClass(user.status)}">${getStatusLabel(user.status)}</span></td>
+                                <td style="text-align: center;">
+                                    ${user.role === 'farmer' ? `
+                                        <label class="subscription-toggle" title="${user.subscribed ? 'Abonné' : 'Non abonné'}" onclick="event.stopPropagation()">
+                                            <input type="checkbox" 
+                                                id="toggle-${user._id}"
+                                                ${user.subscribed ? 'checked' : ''} 
+                                                onchange="event.stopPropagation(); toggleSubscription('${user._id}', this.checked)"
+                                            >
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <div class="subscription-status-${user._id}" style="font-size: 0.75rem; color: ${user.subscribed ? '#27ae60' : '#999'}; margin-top: 4px;">
+                                            ${user.subscribed ? '✓ Abonné' : '✗ Non abonné'}
+                                        </div>
+                                    ` : `
+                                        <span style="color: #ccc; font-size: 0.85rem;">—</span>
+                                    `}
+                                </td>
                                 <td style="color: #666; font-size: 0.9rem;">${formatDate(user.createdAt)}</td>
                                 <td style="text-align: center;">
                                     ${getActionButtons(user)}
@@ -384,6 +402,77 @@ async function updateUserStatus(userId, status) {
     } catch (error) {
         console.error('Erreur:', error);
         showAlert('Erreur lors de la mise à jour: ' + error.message, 'error');
+    }
+}
+
+// Flag pour empêcher les appels multiples
+let isTogglingSubscription = false;
+
+// Basculer l'abonnement d'un fermier
+async function toggleSubscription(userId, subscribed) {
+    // Empêcher les appels multiples
+    if (isTogglingSubscription) {
+        console.log('Toggle déjà en cours, ignoré');
+        return;
+    }
+    
+    isTogglingSubscription = true;
+    console.log(`Toggle subscription pour ${userId}: ${subscribed}`);
+    
+    // Trouver le toggle et le label pour mise à jour visuelle immédiate
+    const toggleInput = document.getElementById(`toggle-${userId}`);
+    const statusLabel = document.querySelector(`.subscription-status-${userId}`);
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ subscribed: subscribed })
+        });
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('Réponse non-JSON reçue:', text.substring(0, 200));
+            throw new Error(`Le serveur a retourné une réponse non-JSON (${response.status}).`);
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || `Erreur HTTP: ${response.status}`);
+        }
+
+        if (data.success) {
+            const statusText = subscribed ? 'activé' : 'désactivé';
+            showAlert(`Abonnement ${statusText} avec succès !`, 'success');
+            
+            // Mettre à jour le label sans recharger toute la page
+            if (statusLabel) {
+                statusLabel.textContent = subscribed ? '✓ Abonné' : '✗ Non abonné';
+                statusLabel.style.color = subscribed ? '#27ae60' : '#999';
+            }
+        } else {
+            showAlert('Erreur: ' + (data.message || 'Erreur inconnue'), 'error');
+            // Remettre le toggle à son état précédent
+            if (toggleInput) {
+                toggleInput.checked = !subscribed;
+            }
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+        showAlert('Erreur lors de la mise à jour: ' + error.message, 'error');
+        // Remettre le toggle à son état précédent
+        if (toggleInput) {
+            toggleInput.checked = !subscribed;
+        }
+    } finally {
+        // Réactiver après un court délai
+        setTimeout(() => {
+            isTogglingSubscription = false;
+        }, 500);
     }
 }
 
@@ -1501,6 +1590,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Exposer les fonctions globalement
 window.updateUserStatus = updateUserStatus;
+window.toggleSubscription = toggleSubscription;
 window.deleteUser = deleteUser;
 window.contactUser = contactUser;
 window.openStatModal = openStatModal;

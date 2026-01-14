@@ -178,7 +178,16 @@ router.post('/login', async (req, res) => {
         // 2. Si pas admin, vérifier dans la table utilisateurs
         const user = await User.findOne({ email: email.toLowerCase() });
 
-        if (!user || user.password !== password) {
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'Email ou mot de passe incorrect'
+            });
+        }
+
+        // Comparer le mot de passe avec bcrypt
+        const isPasswordValid = await user.comparePassword(password);
+        if (!isPasswordValid) {
             return res.status(401).json({
                 success: false,
                 message: 'Email ou mot de passe incorrect'

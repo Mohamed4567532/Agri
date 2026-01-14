@@ -184,20 +184,7 @@ function updateNavbar() {
 
     if (user) {
         // Utilisateur connecté
-        // Ne pas afficher le lien Accueil sur farmer.html et admin.html
-        const currentPage = window.location.pathname.split('/').pop() || window.location.href.split('/').pop();
-        const hideHomeLink = currentPage === 'farmer.html' || currentPage === 'admin.html';
-        
         let navLinks = '';
-        if (!hideHomeLink) {
-            navLinks = `<li><a href="index.html">
-                <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <polyline points="9 22 9 12 15 12 15 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></span>
-                Accueil
-            </a></li>`;
-        }
 
         // Liens spécifiques pour agriculteurs
         if (user.role === 'farmer') {
@@ -233,12 +220,12 @@ function updateNavbar() {
         if (user.role === 'vet') {
             navLinks += `
                 <li><a href="veterinarian.html">
-                    <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 17l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg></span>
-                    Mes Consultations
+                    <span class="nav-icon"><i class="fa-solid fa-house-medical"></i></span>
+                    Mon Espace
+                </a></li>
+                <li><a href="messages.html">
+                    <span class="nav-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
+                    Messages
                 </a></li>
             `;
         }
@@ -247,11 +234,12 @@ function updateNavbar() {
         if (user.role === 'consumer') {
             navLinks += `
                 <li><a href="consumer.html">
-                    <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg></span>
+                    <span class="nav-icon"><i class="fa-solid fa-store"></i></span>
                     Mon Espace
+                </a></li>
+                <li><a href="contact-vet.html">
+                    <span class="nav-icon"><i class="fa-solid fa-user-doctor"></i></span>
+                    Contacter Vétérinaire
                 </a></li>
             `;
         }
@@ -271,10 +259,7 @@ function updateNavbar() {
         // Lien vers les messages pour tous les utilisateurs
         navLinks += `
             <li><a href="messages.html">
-                <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <polyline points="22,6 12,13 2,6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></span>
+                <span class="nav-icon"><i class="fa-solid fa-comments"></i></span>
                 Mes Messages
             </a></li>
         `;
@@ -282,31 +267,21 @@ function updateNavbar() {
         // Lien vers les réclamations pour tous les utilisateurs
         navLinks += `
             <li><a href="reclamations.html">
-                <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <polyline points="22,6 12,13 2,6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></span>
+                <span class="nav-icon"><i class="fa-solid fa-file-circle-exclamation"></i></span>
                 Mes Réclamations
             </a></li>
         `;
 
         navLinks += `
             <li><a href="#" onclick="logout(); return false;">
-                <span class="nav-icon"><svg viewBox="0 0 24 24" width="18" height="18">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <polyline points="16 17 21 12 16 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg></span>
+                <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
                 Déconnexion
             </a></li>
             <li>
-                <a href="#" onclick="showUpdateProfileModal(); return false;" style="font-weight: 600; color: var(--primary-color); display: flex; align-items: center; gap: 8px; background: rgba(76, 175, 80, 0.1); border: 1px solid rgba(76, 175, 80, 0.3);" title="Changer la photo de profil">
+                <a href="#" onclick="showUpdateProfileModal(); return false;" class="profile-link" title="Changer la photo de profil">
                     ${user.image
-                ? `<img src="http://localhost:3000${user.image}" alt="${user.name}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(76, 175, 80, 0.3);">`
-                : `<span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg></span>`
+                ? `<img src="http://localhost:3000${user.image}" alt="${user.name}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(102, 126, 234, 0.3);">`
+                : `<span class="nav-icon"><i class="fa-solid fa-circle-user"></i></span>`
             }
                     <span>${user.name}</span>
                 </a>

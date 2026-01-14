@@ -17,7 +17,7 @@
                 <span>AgriSmart</span>
             </a>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="farmer.html">
+                <li><a href="farmer.html" class="active">
                         <span class="nav-icon"><svg viewBox="0 0 24 24">
                                 <path d="M12 2L2 7l10 5 10-5-10-5z" />
                                 <path d="M2 17l10 5 10-5" />
@@ -74,20 +74,6 @@
             </div>
         </section>
 
-        <section class="section">
-            <h2>Messages Reçus</h2>
-            <div class="table-container">
-                <div id="farmerMessages"></div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2>Actions Rapides</h2>
-            <div class="grid grid-2">
-                <button class="btn btn-secondary" onclick="showModal('appointmentModal')">Prendre rendez-vous avec un
-                    vétérinaire</button>
-            </div>
-        </section>
     </div>
 
     <!-- Modal Ajouter/Modifier Produit -->
@@ -187,30 +173,6 @@
     </div>
 
     <!-- Modal Rendez-vous -->
-    <div id="appointmentModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Prendre rendez-vous</h2>
-                <button class="close">&times;</button>
-            </div>
-            <form id="appointmentForm">
-                <div class="form-group">
-                    <label for="appointmentDate">Date</label>
-                    <input type="date" id="appointmentDate" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="appointmentTime">Heure</label>
-                    <input type="time" id="appointmentTime" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="appointmentReason">Raison</label>
-                    <textarea id="appointmentReason" class="form-control" required></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Prendre rendez-vous</button>
-            </form>
-        </div>
-    </div>
-
     <!-- Modal Détails Message et Réponse -->
     <div id="messageModal" class="modal">
         <div class="modal-content" style="max-width: 700px;">

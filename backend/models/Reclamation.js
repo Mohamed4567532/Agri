@@ -88,16 +88,36 @@ reclamationSchema.pre('save', async function(next) {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
-        const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-        this.numeroReference = `REC-${year}${month}${day}-${random}`;
+        const datePrefix = `${year}${month}${day}`;
         
-        // Vérifier l'unicité
-        const existing = await this.constructor.findOne({ numeroReference: this.numeroReference });
-        if (existing) {
-            // Si le numéro existe déjà, générer un nouveau
-            const newRandom = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            this.numeroReference = `REC-${year}${month}${day}-${newRandom}`;
-        }
+        // Générer un numéro unique avec vérification en boucle
+        let attempts = 0;
+        const maxAttempts = 100; // Limite de sécurité pour éviter les boucles infinies
+        
+        do {
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            this.numeroReference = `REC-${datePrefix}-${random}`;
+            
+            // Vérifier l'unicité
+            const existing = await this.constructor.findOne({ 
+                numeroReference: this.numeroReference,
+                _id: { $ne: this._id } // Exclure le document actuel lors de la mise à jour
+            });
+            
+            if (!existing) {
+                // Numéro unique trouvé
+                break;
+            }
+            
+            attempts++;
+            
+            // Si trop de tentatives, utiliser un timestamp pour garantir l'unicité
+            if (attempts >= maxAttempts) {
+                const timestamp = Date.now().toString().slice(-6); // 6 derniers chiffres du timestamp
+                this.numeroReference = `REC-${datePrefix}-${timestamp}`;
+                break;
+            }
+        } while (attempts < maxAttempts);
     }
     
     // Mettre à jour lastStatusUpdate si le statut change

@@ -159,15 +159,15 @@
 
     <!-- Modal Nouvelle Consultation -->
     <div id="consultationModal" class="modal">
-        <div class="modal-content" style="max-width: 700px; border-radius: 16px; overflow: hidden;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <div class="modal-content" style="max-width: 700px; max-height: 90vh; border-radius: 16px; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; padding: 0;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
                 <h2 style="margin: 0; display: flex; align-items: center; gap: 0.75rem; font-size: 1.5rem;">
                     <i class="fa-solid fa-stethoscope"></i>
                     Nouvelle Consultation
                 </h2>
                 <button class="close" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.75rem; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">&times;</button>
             </div>
-            <form id="consultationForm" enctype="multipart/form-data" style="padding: 2rem;">
+            <form id="consultationForm" enctype="multipart/form-data" style="padding: 2rem; flex: 1;">
                 <input type="hidden" id="selectedVetId" name="vetId">
 
                 <div class="form-group" style="margin-bottom: 1.5rem; padding: 1.25rem; background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(102, 187, 106, 0.05) 100%); border-radius: 12px; border-left: 4px solid #4CAF50;">

@@ -38,7 +38,7 @@
             transform: translateX(-50%);
             width: 80px;
             height: 3px;
-            background: linear-gradient(90deg, #4CAF50, #66BB6A);
+            background: linear-gradient(90deg, #667eea, #764ba2);
             border-radius: 2px;
         }
 
@@ -87,14 +87,14 @@
         }
 
         .tab-button:hover {
-            color: #4CAF50;
-            background: rgba(76, 175, 80, 0.05);
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
         }
 
         .tab-button.active {
-            color: #4CAF50;
-            border-bottom-color: #4CAF50;
-            background: rgba(76, 175, 80, 0.05);
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
         }
 
         .tab-button .badge {
@@ -146,8 +146,8 @@
         .filter-group select:focus,
         .filter-group input:focus {
             outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         /* Liste des messages */
@@ -162,7 +162,7 @@
             border-radius: 16px;
             padding: 1.5rem;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #667eea;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -170,12 +170,12 @@
 
         .message-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
         }
 
         .message-card.unread {
-            border-left-color: #4CAF50;
-            background: linear-gradient(135deg, #ffffff 0%, rgba(76, 175, 80, 0.02) 100%);
+            border-left-color: #667eea;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(102, 126, 234, 0.02) 100%);
         }
 
         .message-card.read {
@@ -233,7 +233,7 @@
             padding: 1rem;
             background: #f8f9fa;
             border-radius: 8px;
-            border-left: 3px solid #4CAF50;
+            border-left: 3px solid #764ba2;
         }
 
         .product-badge {
@@ -241,11 +241,11 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.4rem 0.75rem;
-            background: rgba(76, 175, 80, 0.1);
+            background: rgba(102, 126, 234, 0.1);
             border-radius: 8px;
             margin-top: 0.5rem;
             font-size: 0.85rem;
-            color: #4CAF50;
+            color: #667eea;
             font-weight: 600;
         }
 
@@ -299,6 +299,160 @@
                 align-items: stretch;
             }
         }
+
+        /* Consumer Page Specific Styles */
+        body.consumer-page .messages-container {
+            padding-top: 100px;
+        }
+
+        body.consumer-page .messages-header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+
+        body.consumer-page .messages-header::after {
+            display: none;
+        }
+
+        body.consumer-page .messages-header h1 {
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body.consumer-page .messages-header h1 i {
+            color: white;
+        }
+
+        body.consumer-page .messages-header p {
+            color: rgba(255, 255, 255, 0.9);
+            opacity: 1;
+        }
+
+        body.consumer-page .messages-tabs {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 0.5rem;
+            border: none;
+        }
+
+        body.consumer-page .messages-list {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        body.consumer-page .message-card {
+            border-left-color: #667eea;
+        }
+
+        body.consumer-page .message-card:hover {
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+        }
+
+        body.consumer-page .messages-filters {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+        }
+
+        /* ============================================
+           VET PAGE SPECIFIC STYLES - Emerald Theme
+           ============================================ */
+        body.vet-page .messages-container {
+            padding-top: 100px;
+        }
+
+        body.vet-page .messages-header {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 2.5rem;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+        }
+
+        body.vet-page .messages-header::after {
+            display: none;
+        }
+
+        body.vet-page .messages-header h1 {
+            color: white;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+        }
+
+        body.vet-page .messages-header h1 i {
+            color: #6ee7b7 !important;
+            text-shadow: 0 0 30px rgba(110, 231, 183, 0.5);
+        }
+
+        body.vet-page .messages-header p {
+            color: rgba(255, 255, 255, 0.95);
+            opacity: 1;
+        }
+
+        body.vet-page .messages-tabs {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            padding: 0.6rem;
+            border: none;
+            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.1);
+        }
+
+        body.vet-page .messages-tabs .tab-button.active {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        body.vet-page .messages-tabs .tab-button:hover:not(.active) {
+            color: #059669;
+            background: rgba(5, 150, 105, 0.08);
+        }
+
+        body.vet-page .messages-list {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 1.75rem;
+            box-shadow: 0 8px 30px rgba(5, 150, 105, 0.1);
+        }
+
+        body.vet-page .message-card {
+            border-left-color: #059669;
+            border-radius: 16px;
+        }
+
+        body.vet-page .message-card:hover {
+            box-shadow: 0 15px 45px rgba(5, 150, 105, 0.18);
+            border-color: #10b981;
+        }
+
+        body.vet-page .message-card.unread {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.04) 0%, rgba(16, 185, 129, 0.02) 100%);
+        }
+
+        body.vet-page .messages-filters {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.08);
+        }
+
+        body.vet-page .btn-primary {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        body.vet-page .btn-primary:hover {
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+        }
+
+        body.vet-page .message-badge {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        }
     </style>
 </head>
 
@@ -325,7 +479,7 @@
             <!-- Header -->
             <div class="messages-header">
                 <h1>
-                    <i class="fa-solid fa-envelope"></i>
+                    <i class="fa-solid fa-comments" style="color: #764ba2;"></i>
                     Mes Messages
                 </h1>
                 <p>Gérez tous vos messages envoyés et reçus</p>
@@ -375,7 +529,7 @@
     <!-- Modal Détails Message -->
     <div id="messageDetailsModal" class="modal" onclick="if(event.target === this) closeMessageModal();">
         <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation();">
-            <div class="modal-header" style="background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center;">
                 <h2 style="margin: 0; display: flex; align-items: center; gap: 0.75rem;">
                     <i class="fa-solid fa-envelope"></i>
                     Détails du Message
@@ -387,7 +541,7 @@
             </div>
             <div id="replySection" style="display: none; padding: 0 2rem 2rem 2rem; border-top: 2px solid #e0e0e0; margin-top: 1rem;">
                 <h3 style="margin: 1.5rem 0 1rem 0; color: #1a252f; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fa-solid fa-reply" style="color: #4CAF50;"></i>
+                    <i class="fa-solid fa-reply" style="color: #764ba2;"></i>
                     Répondre
                 </h3>
                 <form id="replyMessageForm" onsubmit="replyToMessageFromModal(event); return false;">
@@ -395,14 +549,14 @@
                     <input type="hidden" id="replySenderId">
                     <div class="form-group" style="margin-bottom: 1rem;">
                         <label for="replySubject" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1a252f;">Sujet *</label>
-                        <input type="text" id="replySubject" class="form-control" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1rem; transition: border-color 0.2s ease;" onfocus="this.style.borderColor='#4CAF50'; this.style.boxShadow='0 0 0 3px rgba(76, 175, 80, 0.1)'" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'">
+                        <input type="text" id="replySubject" class="form-control" required style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1rem; transition: border-color 0.2s ease;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'">
                     </div>
                     <div class="form-group" style="margin-bottom: 1rem;">
                         <label for="replyContent" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #1a252f;">Votre réponse *</label>
-                        <textarea id="replyContent" class="form-control" required rows="5" placeholder="Tapez votre réponse ici..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1rem; resize: vertical; transition: border-color 0.2s ease; font-family: inherit;" onfocus="this.style.borderColor='#4CAF50'; this.style.boxShadow='0 0 0 3px rgba(76, 175, 80, 0.1)'" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"></textarea>
+                        <textarea id="replyContent" class="form-control" required rows="5" placeholder="Tapez votre réponse ici..." style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1rem; resize: vertical; transition: border-color 0.2s ease; font-family: inherit;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"></textarea>
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.75rem; border-radius: 8px; background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); border: none; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        <button type="submit" class="btn btn-primary" style="flex: 1; padding: 0.75rem; border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; cursor: pointer; font-weight: 600; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                             <i class="fa-solid fa-paper-plane"></i> Envoyer la réponse
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="closeMessageModal()" style="padding: 0.75rem 1.5rem; border-radius: 8px; background: #f0f0f0; border: none; color: #666; cursor: pointer; font-weight: 500; transition: all 0.2s ease;" onmouseover="this.style.background='#e0e0e0'" onmouseout="this.style.background='#f0f0f0'">
@@ -418,6 +572,29 @@
     <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/messages.js"></script>
+    <script>
+        // Appliquer le style selon le rôle de l'utilisateur
+        function applyUserStyle() {
+            const user = getCurrentUser();
+            console.log('User detected:', user);
+            if (user && user.role === 'consumer') {
+                console.log('Applying consumer style to messages page...');
+                document.body.classList.remove('farmer-no-bg');
+                document.body.classList.add('consumer-page');
+            } else if (user && user.role === 'vet') {
+                console.log('Applying vet style to messages page...');
+                document.body.classList.remove('farmer-no-bg');
+                document.body.classList.add('vet-page');
+            }
+            console.log('Body classes:', document.body.className);
+        }
+        
+        // Appliquer immédiatement
+        applyUserStyle();
+        
+        // Et aussi au chargement du DOM
+        document.addEventListener('DOMContentLoaded', applyUserStyle);
+    </script>
 </body>
 
 </html>

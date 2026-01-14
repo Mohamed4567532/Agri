@@ -2075,3 +2075,1720 @@ tbody tr:hover {
         padding: 3rem 1.5rem 1.5rem;
     }
 }
+
+/* ============================================
+   MODERN PRODUCTS & BENEFITS SECTIONS
+   ============================================ */
+
+/* Products Section - Style moderne avec glassmorphism */
+.products-section {
+    position: relative;
+    padding: 6rem 2.5rem;
+    margin: 5rem 0;
+    border-radius: 36px;
+    overflow: hidden;
+    background: linear-gradient(135deg, 
+        rgba(14, 31, 47, 0.95) 0%, 
+        rgba(15, 63, 70, 0.95) 50%, 
+        rgba(14, 47, 79, 0.95) 100%);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.products-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(124, 243, 214, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+    z-index: 0;
+}
+
+.products-section::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(120, 180, 255, 0.1) 0%, transparent 70%);
+    animation: rotate 25s linear infinite reverse;
+    z-index: 0;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.products-section .section-title {
+    position: relative;
+    z-index: 2;
+    color: #7cf3d6;
+    text-shadow: 0 0 20px rgba(124, 243, 214, 0.5);
+}
+
+.products-section .grid {
+    position: relative;
+    z-index: 2;
+}
+
+/* Modern Product Cards */
+.product-card-modern {
+    background: rgba(30, 60, 80, 0.6);
+    border: 2px solid rgba(124, 243, 214, 0.3);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.product-card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(124, 243, 214, 0.1), 
+        transparent);
+    transition: left 0.6s;
+}
+
+.product-card-modern:hover::before {
+    left: 100%;
+}
+
+.product-card-modern:hover {
+    transform: translateY(-12px) scale(1.02);
+    border-color: rgba(124, 243, 214, 0.6);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.4),
+        0 0 40px rgba(124, 243, 214, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: rgba(40, 80, 100, 0.7);
+}
+
+.product-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, 
+        rgba(124, 243, 214, 0.3) 0%, 
+        rgba(120, 180, 255, 0.3) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(124, 243, 214, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.product-icon-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, 
+        rgba(124, 243, 214, 0.6), 
+        rgba(120, 180, 255, 0.6));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.product-card-modern:hover .product-icon-wrapper::before {
+    opacity: 1;
+}
+
+.product-icon-wrapper i {
+    font-size: 2.5rem;
+    color: #7cf3d6;
+    z-index: 1;
+    filter: drop-shadow(0 0 10px rgba(124, 243, 214, 0.5));
+    transition: all 0.4s ease;
+}
+
+.product-card-modern:hover .product-icon-wrapper {
+    transform: rotate(5deg) scale(1.1);
+    box-shadow: 0 15px 40px rgba(124, 243, 214, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.product-card-modern:hover .product-icon-wrapper i {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 15px rgba(124, 243, 214, 0.8));
+}
+
+.product-card-modern .card-title {
+    color: #e8f7ff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(124, 243, 214, 0.3);
+}
+
+.product-card-modern .card-text {
+    color: #d0e7f3;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+/* Modern Product List */
+.product-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.product-list li {
+    margin: 0;
+    padding: 0;
+}
+
+.product-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(124, 243, 214, 0.15);
+    border: 1px solid rgba(124, 243, 214, 0.3);
+    border-radius: 12px;
+    color: #7cf3d6;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+}
+
+.product-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(124, 243, 214, 0.3), 
+        transparent);
+    transition: left 0.5s;
+}
+
+.product-badge:hover::before {
+    left: 100%;
+}
+
+.product-badge:hover {
+    transform: translateY(-3px) scale(1.05);
+    background: rgba(124, 243, 214, 0.25);
+    border-color: rgba(124, 243, 214, 0.5);
+    box-shadow: 0 8px 25px rgba(124, 243, 214, 0.3),
+        0 0 20px rgba(124, 243, 214, 0.2);
+    color: #ffffff;
+}
+
+/* Benefits Section - Style moderne */
+.benefits-section {
+    position: relative;
+    padding: 6rem 2.5rem;
+    margin: 5rem 0;
+    border-radius: 36px;
+    overflow: hidden;
+}
+
+.benefits-section .section-title {
+    color: #7cf3d6;
+    text-shadow: 0 0 20px rgba(124, 243, 214, 0.5);
+}
+
+/* Modern Benefits Card */
+.benefits-card-modern {
+    background: linear-gradient(135deg, 
+        rgba(30, 60, 80, 0.7) 0%, 
+        rgba(20, 50, 70, 0.6) 100%);
+    border: 2px solid rgba(124, 243, 214, 0.3);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    padding: 3rem;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.benefits-card-modern::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, 
+        rgba(124, 243, 214, 0.1) 0%, 
+        transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.benefits-card-modern:hover {
+    transform: translateY(-8px);
+    border-color: rgba(124, 243, 214, 0.5);
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.4),
+        0 0 50px rgba(124, 243, 214, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.benefits-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.benefits-icon-wrapper {
+    width: 90px;
+    height: 90px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, 
+        rgba(124, 243, 214, 0.3) 0%, 
+        rgba(120, 180, 255, 0.3) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 35px rgba(124, 243, 214, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.benefits-icon-wrapper i {
+    font-size: 2.8rem;
+    color: #7cf3d6;
+    filter: drop-shadow(0 0 15px rgba(124, 243, 214, 0.6));
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.benefits-card-modern:hover .benefits-icon-wrapper {
+    transform: rotate(-5deg) scale(1.1);
+    box-shadow: 0 18px 45px rgba(124, 243, 214, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.benefits-card-modern .card-title {
+    color: #e8f7ff;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 15px rgba(124, 243, 214, 0.4);
+    position: relative;
+    z-index: 1;
+}
+
+.benefits-card-modern .card-text {
+    color: #d0e7f3;
+    font-size: 1.1rem;
+    line-height: 1.9;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Modern Benefits List */
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.benefits-list li {
+    margin: 0;
+    padding: 0;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    background: rgba(124, 243, 214, 0.1);
+    border: 1px solid rgba(124, 243, 214, 0.25);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+}
+
+.benefit-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(124, 243, 214, 0.2), 
+        transparent);
+    transition: left 0.6s;
+}
+
+.benefit-item:hover::before {
+    left: 100%;
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px) translateX(5px);
+    background: rgba(124, 243, 214, 0.2);
+    border-color: rgba(124, 243, 214, 0.5);
+    box-shadow: 0 10px 30px rgba(124, 243, 214, 0.3),
+        0 0 20px rgba(124, 243, 214, 0.2);
+}
+
+.benefit-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, 
+        rgba(124, 243, 214, 0.3) 0%, 
+        rgba(120, 180, 255, 0.3) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(124, 243, 214, 0.3);
+    transition: all 0.4s ease;
+}
+
+.benefit-item:hover .benefit-icon {
+    transform: rotate(10deg) scale(1.15);
+    box-shadow: 0 8px 25px rgba(124, 243, 214, 0.4);
+}
+
+.benefit-icon i {
+    font-size: 1.5rem;
+    color: #7cf3d6;
+    filter: drop-shadow(0 0 8px rgba(124, 243, 214, 0.5));
+    transition: all 0.4s ease;
+}
+
+.benefit-item:hover .benefit-icon i {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 12px rgba(124, 243, 214, 0.8));
+}
+
+.benefit-item span {
+    color: #e8f7ff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    flex: 1;
+    transition: color 0.3s ease;
+}
+
+.benefit-item:hover span {
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(124, 243, 214, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .products-section,
+    .benefits-section {
+        padding: 4rem 1.5rem;
+        margin: 3rem 0;
+    }
+
+    .product-card-modern,
+    .benefits-card-modern {
+        padding: 2rem 1.5rem;
+    }
+
+    .product-icon-wrapper,
+    .benefits-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+
+    .product-icon-wrapper i {
+        font-size: 2rem;
+    }
+
+    .benefits-icon-wrapper i {
+        font-size: 2.2rem;
+    }
+
+    .benefits-list {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card-header,
+    .benefits-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+}
+
+/* ============================================
+   CONSUMER PAGE - Modern Design
+   ============================================ */
+
+body.consumer-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+body.consumer-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.15) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+body.consumer-page .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Consumer Navbar - Fixed Top */
+body.consumer-page .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 2rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+body.consumer-page .nav-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: auto;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+body.consumer-page .logo {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.consumer-page .logo img {
+    width: 45px;
+    height: 45px;
+}
+
+body.consumer-page .logo span {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.consumer-page .nav-menu {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+}
+
+body.consumer-page .nav-menu li {
+    list-style: none;
+}
+
+body.consumer-page .nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: 12px;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+body.consumer-page .nav-menu a:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+    border-color: rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+}
+
+body.consumer-page .nav-menu a.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+body.consumer-page .nav-menu .nav-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body.consumer-page .nav-menu .nav-icon i {
+    font-size: 1.1rem;
+    color: #764ba2;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .nav-menu .nav-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: #764ba2;
+    fill: none;
+    stroke-width: 2;
+}
+
+body.consumer-page .nav-menu a:hover .nav-icon i {
+    color: #667eea;
+    transform: scale(1.15);
+}
+
+body.consumer-page .nav-menu a:hover .nav-icon svg {
+    stroke: #667eea;
+}
+
+body.consumer-page .nav-menu a.active .nav-icon i {
+    color: white;
+}
+
+body.consumer-page .nav-menu a.active .nav-icon svg {
+    stroke: white;
+}
+
+/* Profile link styling for consumer */
+body.consumer-page .nav-menu .profile-link {
+    font-weight: 600;
+    color: #764ba2 !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    border: 2px solid rgba(102, 126, 234, 0.3) !important;
+}
+
+body.consumer-page .nav-menu .profile-link:hover {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+    border-color: #667eea !important;
+}
+
+/* Consumer Container */
+body.consumer-page .container {
+    padding-top: 100px;
+    padding-bottom: 3rem;
+    margin-left: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Consumer Section Title */
+body.consumer-page .section-title {
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Consumer Section */
+body.consumer-page .section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+body.consumer-page .section h2 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body.consumer-page .section h2 i {
+    color: #764ba2;
+    font-size: 1.3rem;
+}
+
+body.consumer-page .page-header i {
+    color: white;
+}
+
+/* Consumer Cards */
+body.consumer-page .card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .card:hover {
+    border-color: #667eea;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+}
+
+/* Consumer Buttons */
+body.consumer-page .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+body.consumer-page .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+body.consumer-page .btn-secondary {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border: 2px solid #667eea;
+    border-radius: 12px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .btn-secondary:hover {
+    background: #667eea;
+    color: white;
+}
+
+/* Consumer Search Bar */
+body.consumer-page .search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+body.consumer-page .search-bar input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .search-bar input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* Consumer Product Grid */
+body.consumer-page .grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+body.consumer-page .grid-3 {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+/* Consumer Modal */
+body.consumer-page .modal-content {
+    border-radius: 24px;
+    border: none;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+}
+
+body.consumer-page .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 24px 24px 0 0;
+    padding: 1.5rem;
+}
+
+body.consumer-page .modal-header h2 {
+    color: white;
+    margin: 0;
+}
+
+body.consumer-page .modal-header .close {
+    color: white;
+    opacity: 0.8;
+}
+
+body.consumer-page .modal-header .close:hover {
+    opacity: 1;
+}
+
+/* Consumer Form */
+body.consumer-page .form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .form-control:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+/* Consumer Page Header */
+body.consumer-page .page-header {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 24px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+body.consumer-page .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.consumer-page .page-header p {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+/* Vet Card Style for Consumer */
+body.consumer-page .vet-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .vet-card:hover {
+    border-color: #667eea;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+}
+
+body.consumer-page .vet-avatar {
+    border-color: #667eea;
+}
+
+body.consumer-page .vet-avatar-placeholder {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body.consumer-page .vet-badge {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+}
+
+body.consumer-page .btn-contact-vet {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+body.consumer-page .btn-contact-vet:hover {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+}
+
+/* Consumer Responsive */
+@media (max-width: 992px) {
+    body.consumer-page .navbar {
+        padding: 0.5rem 1rem;
+    }
+    
+    body.consumer-page .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        display: none;
+    }
+    
+    body.consumer-page .nav-menu.active {
+        display: flex;
+    }
+    
+    body.consumer-page .nav-menu a {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    body.consumer-page .hamburger {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    body.consumer-page .container {
+        padding: 80px 1rem 2rem;
+    }
+    
+    body.consumer-page .section-title {
+        font-size: 1.8rem;
+    }
+    
+    body.consumer-page .page-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    body.consumer-page .section {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+}
+
+/* ============================================
+   CONSUMER - Messages & Reclamations Pages
+   ============================================ */
+
+/* Messages Container for Consumer */
+body.consumer-page .messages-container {
+    padding-top: 100px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+body.consumer-page .messages-header {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+body.consumer-page .messages-header::after {
+    background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+}
+
+body.consumer-page .messages-header h1 {
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.consumer-page .messages-header p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.consumer-page .messages-tabs {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 0.5rem;
+}
+
+body.consumer-page .messages-tabs button {
+    background: transparent;
+    color: #667eea;
+}
+
+body.consumer-page .messages-tabs button.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+body.consumer-page .messages-filters,
+body.consumer-page .messages-list {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+body.consumer-page .message-card {
+    background: white;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .message-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+}
+
+body.consumer-page .message-card.unread {
+    border-left: 4px solid #667eea;
+}
+
+body.consumer-page .message-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Reclamations Container for Consumer */
+body.consumer-page .reclamations-container {
+    padding-top: 100px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+body.consumer-page .reclamations-header {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+body.consumer-page .reclamations-header::after {
+    background: linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+}
+
+body.consumer-page .reclamations-header h1 {
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.consumer-page .reclamations-header p {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.consumer-page .reclamations-actions button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+body.consumer-page .reclamations-actions button:hover {
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
+}
+
+body.consumer-page .reclamations-list {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+body.consumer-page .reclamation-card {
+    background: white;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+body.consumer-page .reclamation-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+}
+
+body.consumer-page .reclamation-priority.haute,
+body.consumer-page .reclamation-priority.urgente {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+body.consumer-page .reclamation-status {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    color: #667eea;
+}
+
+/* ============================================
+   VET PAGE - Modern Emerald/Teal Theme
+   ============================================ */
+
+:root {
+    --vet-primary: #059669;
+    --vet-secondary: #10b981;
+    --vet-accent: #34d399;
+    --vet-dark: #047857;
+    --vet-light: #6ee7b7;
+    --vet-bg-gradient: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+}
+
+body.vet-page {
+    background: var(--vet-bg-gradient);
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding-top: 80px;
+    overflow-x: hidden;
+}
+
+body.vet-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 10% 90%, rgba(52, 211, 153, 0.4) 0%, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(5, 150, 105, 0.4) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.2) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: vetBgPulse 15s ease-in-out infinite;
+}
+
+@keyframes vetBgPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+body.vet-page .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Vet Navbar - Fixed Top Glassmorphism */
+body.vet-page .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px rgba(5, 150, 105, 0.15);
+    z-index: 1000;
+    padding: 0.8rem 2rem;
+    transition: all 0.3s ease;
+}
+
+body.vet-page .navbar:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+body.vet-page .nav-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+body.vet-page .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.vet-page .logo span {
+    background: linear-gradient(135deg, var(--vet-dark) 0%, var(--vet-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+body.vet-page .nav-menu {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    padding: 0;
+}
+
+body.vet-page .nav-menu a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.3rem;
+    border-radius: 14px;
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+body.vet-page .nav-menu a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+body.vet-page .nav-menu a.active {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--vet-primary);
+    box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3);
+}
+
+body.vet-page .nav-menu .nav-icon i {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s ease;
+}
+
+body.vet-page .nav-menu a:hover .nav-icon i {
+    color: white;
+    transform: scale(1.1);
+}
+
+body.vet-page .nav-menu a.active .nav-icon i {
+    color: var(--vet-primary);
+}
+
+/* Vet Page Header - Modern Glass Design */
+body.vet-page .page-header {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 28px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+body.vet-page .page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, 
+        transparent 30%, 
+        rgba(255,255,255,0.1) 50%, 
+        transparent 70%);
+    animation: headerShine 8s linear infinite;
+}
+
+@keyframes headerShine {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+body.vet-page .page-header h1 {
+    font-size: 2.8rem;
+    margin-bottom: 0.75rem;
+    color: white;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+
+body.vet-page .page-header h1 i {
+    color: var(--vet-light);
+    margin-right: 0.75rem;
+    text-shadow: 0 0 30px rgba(110, 231, 183, 0.5);
+}
+
+body.vet-page .page-header p {
+    opacity: 0.95;
+    font-size: 1.15rem;
+    position: relative;
+    z-index: 1;
+    font-weight: 400;
+}
+
+/* Vet Stats Grid - Modern Cards */
+body.vet-page .vet-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.75rem;
+    margin-bottom: 2.5rem;
+}
+
+body.vet-page .vet-stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 10px 40px rgba(5, 150, 105, 0.12);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+body.vet-page .vet-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--vet-bg-gradient);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+body.vet-page .vet-stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(5, 150, 105, 0.2);
+    border-color: var(--vet-light);
+}
+
+body.vet-page .vet-stat-card:hover::before {
+    opacity: 1;
+}
+
+body.vet-page .vet-stat-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: white;
+    position: relative;
+    flex-shrink: 0;
+}
+
+body.vet-page .vet-stat-icon::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 23px;
+    background: inherit;
+    opacity: 0.3;
+    filter: blur(10px);
+    z-index: -1;
+}
+
+body.vet-page .vet-stat-icon.pending {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+body.vet-page .vet-stat-icon.completed {
+    background: linear-gradient(135deg, var(--vet-primary) 0%, var(--vet-accent) 100%);
+}
+
+body.vet-page .vet-stat-icon.messages {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+body.vet-page .vet-stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+body.vet-page .vet-stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1a252f;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+body.vet-page .vet-stat-label {
+    font-size: 0.95rem;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Vet Section - Glass Design */
+body.vet-page .section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 28px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 40px rgba(5, 150, 105, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+body.vet-page .section:hover {
+    box-shadow: 0 15px 50px rgba(5, 150, 105, 0.18);
+}
+
+body.vet-page .section h2 {
+    color: #1a252f;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+body.vet-page .section h2 i {
+    color: var(--vet-primary);
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, var(--vet-primary) 0%, var(--vet-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.vet-page .section p {
+    color: #666 !important;
+}
+
+/* Vet Buttons - Emerald Theme */
+body.vet-page .btn-primary {
+    background: linear-gradient(135deg, var(--vet-primary) 0%, var(--vet-secondary) 100%);
+    border: none;
+    color: white;
+    padding: 0.85rem 1.75rem;
+    border-radius: 14px;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+body.vet-page .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+body.vet-page .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(5, 150, 105, 0.45);
+}
+
+body.vet-page .btn-primary:hover::before {
+    left: 100%;
+}
+
+body.vet-page .btn-secondary {
+    background: rgba(5, 150, 105, 0.1);
+    border: 2px solid var(--vet-secondary);
+    color: var(--vet-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+body.vet-page .btn-secondary:hover {
+    background: var(--vet-secondary);
+    color: white;
+}
+
+/* Vet Table Styling - Modern */
+body.vet-page .table {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+body.vet-page .table thead {
+    background: linear-gradient(135deg, var(--vet-primary) 0%, var(--vet-secondary) 100%);
+}
+
+body.vet-page .table thead th {
+    color: white;
+    font-weight: 600;
+    padding: 1.15rem;
+    border: none;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+body.vet-page .table thead th i {
+    margin-right: 0.5rem;
+    opacity: 0.9;
+}
+
+body.vet-page .table tbody tr {
+    transition: all 0.2s ease;
+}
+
+body.vet-page .table tbody tr:hover {
+    background: rgba(5, 150, 105, 0.06);
+}
+
+body.vet-page .table tbody td {
+    padding: 1.15rem;
+    border-bottom: 1px solid #f5f5f5;
+    vertical-align: middle;
+}
+
+body.vet-page .table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Vet Cards - Modern Glass */
+body.vet-page .card {
+    background: white;
+    border-radius: 24px;
+    padding: 1.75rem;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.vet-page .card:hover {
+    border-color: var(--vet-light);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(5, 150, 105, 0.18);
+}
+
+/* Vet Modal - Modern Design */
+body.vet-page .modal-content {
+    border-radius: 28px;
+    border: none;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+
+body.vet-page .modal-header {
+    background: linear-gradient(135deg, var(--vet-primary) 0%, var(--vet-secondary) 100%);
+    color: white;
+    border-radius: 0;
+    padding: 1.75rem 2rem;
+}
+
+body.vet-page .modal-header h2 {
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+body.vet-page .modal-header .close {
+    color: white;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+body.vet-page .modal-header .close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+/* Vet Badge - Modern Style */
+body.vet-page .badge {
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+body.vet-page .badge-warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(251, 191, 36, 0.15) 100%);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+body.vet-page .badge-success {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.12) 0%, rgba(52, 211, 153, 0.12) 100%);
+    color: var(--vet-dark);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+}
+
+body.vet-page .badge-info {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%);
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+body.vet-page .badge-danger {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12) 0%, rgba(248, 113, 113, 0.12) 100%);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Vet Responsive */
+@media (max-width: 992px) {
+    body.vet-page .navbar {
+        padding: 0.6rem 1.25rem;
+    }
+    
+    body.vet-page .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        background: linear-gradient(135deg, rgba(5, 150, 105, 0.98) 0%, rgba(16, 185, 129, 0.98) 100%);
+        backdrop-filter: blur(20px);
+        padding: 1.5rem;
+        display: none;
+        box-shadow: 0 15px 40px rgba(5, 150, 105, 0.25);
+        border-bottom-left-radius: 24px;
+        border-bottom-right-radius: 24px;
+        gap: 0.5rem;
+    }
+    
+    body.vet-page .nav-menu.active {
+        display: flex;
+    }
+    
+    body.vet-page .nav-menu a {
+        width: 100%;
+        justify-content: flex-start;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+    }
+
+    body.vet-page .nav-menu a:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+    
+    body.vet-page .hamburger {
+        display: flex;
+    }
+
+    body.vet-page .hamburger span {
+        background: white;
+    }
+}
+
+@media (max-width: 768px) {
+    body.vet-page .container {
+        padding: 90px 1rem 2rem;
+    }
+    
+    body.vet-page .page-header {
+        padding: 2rem 1.5rem;
+        border-radius: 20px;
+    }
+    
+    body.vet-page .page-header h1 {
+        font-size: 1.9rem;
+    }
+
+    body.vet-page .page-header h1 i {
+        display: block;
+        margin-bottom: 0.5rem;
+        margin-right: 0;
+    }
+    
+    body.vet-page .section {
+        padding: 1.75rem;
+        border-radius: 20px;
+    }
+    
+    body.vet-page .vet-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    body.vet-page .vet-stat-card {
+        padding: 1.25rem;
+    }
+
+    body.vet-page .vet-stat-number {
+        font-size: 2rem;
+    }
+
+    body.vet-page .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    body.vet-page .table {
+        min-width: 600px;
+    }
+}

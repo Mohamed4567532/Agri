@@ -60,7 +60,7 @@ const updateUserHandler = async (req, res) => {
         console.log(`📥 ${req.method} /api/users/${req.params.id}`);
         console.log('   Body:', req.body);
 
-        const { name, email, role, status, suspensionEndDate, suspensionReason } = req.body;
+        const { name, email, role, status, suspensionEndDate, suspensionReason, subscribed } = req.body;
 
         const updateData = {};
         if (name) updateData.name = name;
@@ -69,7 +69,10 @@ const updateUserHandler = async (req, res) => {
         if (status) updateData.status = status;
         if (suspensionEndDate !== undefined) updateData.suspensionEndDate = suspensionEndDate;
         if (suspensionReason !== undefined) updateData.suspensionReason = suspensionReason;
+        if (subscribed !== undefined) updateData.subscribed = subscribed;
         if (req.file) updateData.image = `/uploads/users/${req.file.filename}`;
+
+        console.log('   📝 UpdateData:', JSON.stringify(updateData));
 
         const user = await User.findByIdAndUpdate(
             req.params.id,
@@ -85,6 +88,7 @@ const updateUserHandler = async (req, res) => {
         }
 
         console.log('   ✅ Utilisateur mis à jour:', user._id);
+        console.log('   📊 Subscribed après update:', user.subscribed);
         res.json({
             success: true,
             message: 'Utilisateur mis à jour',

@@ -70,6 +70,12 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    /* 🌾 Abonnement fermier (subscription) */
+    subscribed: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

@@ -254,14 +254,19 @@ router.post('/', async (req, res) => {
 // PUT /api/reclamations/:id - Mettre à jour une réclamation
 router.put('/:id', async (req, res) => {
     try {
-        const { statut, reponse, resolvedBy, priorite, notesInternes, fichiers } = req.body;
+        const { sujet, description, type, statut, reponse, resolvedBy, priorite, notesInternes, fichiers } = req.body;
         
         const reclamation = await Reclamation.findById(req.params.id);
         if (!reclamation) {
             return res.status(404).json({ message: 'Réclamation non trouvée' });
         }
         
-        // Mettre à jour les champs de base
+        // Mettre à jour les champs modifiables par l'utilisateur
+        if (sujet !== undefined) reclamation.sujet = sujet.trim();
+        if (description !== undefined) reclamation.description = description.trim();
+        if (type !== undefined) reclamation.type = type;
+        
+        // Mettre à jour les champs admin
         if (statut) {
             reclamation.statut = statut;
             reclamation.lastStatusUpdate = new Date();

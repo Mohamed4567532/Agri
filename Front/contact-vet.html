@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacter un Vétérinaire - AgriSmart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .vet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .vet-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .vet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .vet-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .vet-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #764ba2;
+        }
+
+        .vet-avatar-placeholder {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .vet-info h3 {
+            margin: 0 0 0.25rem 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+
+        .vet-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .vet-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            color: #764ba2;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .vet-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-contact-vet {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-contact-vet:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .no-vets {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .no-vets i {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+    </style>
+</head>
+
+<body class="consumer-page">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/img/logo.PNG" alt="AgriSmart Logo">
+                <span>AgriSmart</span>
+            </a>
+            <ul class="nav-menu" id="navMenu">
+                <!-- Dynamically filled by auth.js -->
+            </ul>
+
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fa-solid fa-hand-holding-medical"></i> Contacter un Vétérinaire</h1>
+            <p>Posez vos questions à nos vétérinaires certifiés</p>
+        </div>
+
+        <section class="section">
+            <h2><i class="fa-solid fa-user-nurse"></i> Vétérinaires Disponibles</h2>
+            <p style="color: #666; margin-bottom: 1rem;">
+                Sélectionnez un vétérinaire pour lui envoyer un message ou poser une question.
+            </p>
+            <div class="vet-grid" id="vetsContainer">
+                <p style="text-align: center;">Chargement des vétérinaires...</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Contacter Vétérinaire -->
+    <div id="contactVetModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-paper-plane"></i> Envoyer un message</h2>
+                <button class="close" onclick="closeModal('contactVetModal')">&times;</button>
+            </div>
+            <div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                <p style="margin: 0;"><strong>Vétérinaire:</strong> <span id="selectedVetName"></span></p>
+            </div>
+            <form id="contactVetForm" onsubmit="sendMessageToVet(event); return false;">
+                <input type="hidden" id="selectedVetId">
+                <div class="form-group">
+                    <label for="vetMessageSubject">Sujet *</label>
+                    <input type="text" id="vetMessageSubject" class="form-control" required
+                        placeholder="Ex: Question sur la santé de mon animal">
+                </div>
+                <div class="form-group">
+                    <label for="vetMessageContent">Votre message *</label>
+                    <textarea id="vetMessageContent" class="form-control" required rows="5"
+                        placeholder="Décrivez votre question ou préoccupation en détail..."></textarea>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                        <i class="fa-solid fa-paper-plane"></i> Envoyer
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('contactVetModal')">
+                        Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // Charger les vétérinaires au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVeterinarians();
+        });
+
+        // Charger la liste des vétérinaires
+        async function loadVeterinarians() {
+            const container = document.getElementById('vetsContainer');
+            
+            try {
+                const response = await apiGetUsers();
+                const users = response.users || response;
+                
+                // Filtrer uniquement les vétérinaires acceptés
+                const vets = users.filter(u => u.role === 'vet' && u.status === 'accepted');
+                
+                if (vets.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-vets">
+                            <i class="fa-solid fa-user-doctor"></i>
+                            <h3>Aucun vétérinaire disponible</h3>
+                            <p>Il n'y a pas de vétérinaires disponibles pour le moment.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = vets.map(vet => `
+                    <div class="vet-card">
+                        <div class="vet-header">
+                            ${vet.image 
+                                ? `<img src="http://localhost:3000${vet.image}" alt="${vet.name}" class="vet-avatar">`
+                                : `<div class="vet-avatar-placeholder"><i class="fa-solid fa-user-doctor"></i></div>`
+                            }
+                            <div class="vet-info">
+                                <h3>${vet.name}</h3>
+                                <p><i class="fa-solid fa-envelope"></i> ${vet.email}</p>
+                                ${vet.phone ? `<p><i class="fa-solid fa-phone"></i> ${vet.phone}</p>` : ''}
+                            </div>
+                        </div>
+                        <span class="vet-badge"><i class="fa-solid fa-check-circle"></i> Vétérinaire Certifié</span>
+                        <div class="vet-actions">
+                            <button class="btn-contact-vet" onclick="openContactVetModal('${vet._id}', '${vet.name}')">
+                                <i class="fa-solid fa-message"></i> Contacter
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                container.innerHTML = `
+                    <div class="no-vets">
+                        <i class="fa-solid fa-exclamation-triangle"></i>
+                        <h3>Erreur de chargement</h3>
+                        <p>Impossible de charger la liste des vétérinaires.</p>
+                        <button class="btn btn-primary" onclick="loadVeterinarians()">Réessayer</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Ouvrir le modal pour contacter un vétérinaire
+        function openContactVetModal(vetId, vetName) {
+            document.getElementById('selectedVetId').value = vetId;
+            document.getElementById('selectedVetName').textContent = vetName;
+            document.getElementById('vetMessageSubject').value = '';
+            document.getElementById('vetMessageContent').value = '';
+            
+            const modal = document.getElementById('contactVetModal');
+            modal.style.display = 'flex';
+            modal.classList.add('active');
+        }
+
+        // Envoyer le message au vétérinaire
+        async function sendMessageToVet(event) {
+            event.preventDefault();
+            
+            const user = getCurrentUser();
+            if (!user) {
+                showAlert('Vous devez être connecté pour envoyer un message.', 'error');
+                return;
+            }
+
+            const vetId = document.getElementById('selectedVetId').value;
+            const subject = document.getElementById('vetMessageSubject').value;
+            const message = document.getElementById('vetMessageContent').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-Role': user.role,
+                        'X-User-Id': user.id
+                    },
+                    body: JSON.stringify({
+                        senderId: user.id,
+                        receiverId: vetId,
+                        subject: subject,
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Message envoyé avec succès ! Le vétérinaire vous répondra bientôt.', 'success');
+                    closeModal('contactVetModal');
+                } else {
+                    showAlert('Erreur: ' + (data.message || 'Impossible d\'envoyer le message'), 'error');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showAlert('Erreur lors de l\'envoi du message: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

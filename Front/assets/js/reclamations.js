@@ -106,7 +106,7 @@ function displayReclamations() {
                             </div>
                         ` : ''}
                         <h3 class="reclamation-title" style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fa-solid fa-file-lines" style="color: #4CAF50; font-size: 1.2rem;"></i>
+                            <i class="fa-solid fa-file-lines" style="color: #667eea; font-size: 1.2rem;"></i>
                             ${reclamation.sujet}
                         </h3>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem;">
@@ -140,12 +140,12 @@ function displayReclamations() {
                 ${reclamation.fichiers && reclamation.fichiers.length > 0 ? `
                     <div class="reclamation-fichiers" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08);">
                         <strong style="color: #1a252f; font-size: 0.875rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fa-solid fa-paperclip" style="color: #42A5F5;"></i>
+                            <i class="fa-solid fa-paperclip" style="color: #667eea;"></i>
                             Fichiers joints (${reclamation.fichiers.length})
                         </strong>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
                             ${reclamation.fichiers.map(fichier => `
-                                <a href="${fichier.chemin}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border: 1px solid rgba(66, 165, 245, 0.2); border-radius: 10px; text-decoration: none; color: #42A5F5; font-size: 0.875rem; font-weight: 500; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%)'; this.style.borderColor='#4CAF50'; this.style.color='#4CAF50'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(76, 175, 80, 0.15)'" onmouseout="this.style.background='linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)'; this.style.borderColor='rgba(66, 165, 245, 0.2)'; this.style.color='#42A5F5'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.05)'">
+                                <a href="${fichier.chemin}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1rem; background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%); border: 1px solid rgba(102, 126, 234, 0.2); border-radius: 10px; text-decoration: none; color: #667eea; font-size: 0.875rem; font-weight: 500; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.05);" onmouseover="this.style.background='linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)'; this.style.borderColor='#667eea'; this.style.color='#764ba2'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.2)'" onmouseout="this.style.background='linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)'; this.style.borderColor='rgba(102, 126, 234, 0.2)'; this.style.color='#667eea'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(0,0,0,0.05)'">
                                     <i class="fa-solid fa-file" style="font-size: 1rem;"></i>
                                     <span>${fichier.nom || 'Fichier'}</span>
                                     <i class="fa-solid fa-external-link" style="font-size: 0.7rem; opacity: 0.7;"></i>
@@ -155,18 +155,18 @@ function displayReclamations() {
                     </div>
                 ` : ''}
                 ${reclamation.reponse ? `
-                    <div class="reclamation-reponse" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #66BB6A;">
-                        <h4 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: #4CAF50;">
+                    <div class="reclamation-reponse" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid #764ba2;">
+                        <h4 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; color: #764ba2;">
                             <i class="fa-solid fa-user-shield" style="font-size: 1.1rem;"></i>
                             Réponse de l'administrateur
                         </h4>
                         <div style="display: flex; align-items: start; gap: 0.75rem;">
-                            <i class="fa-solid fa-message" style="color: #66BB6A; margin-top: 0.25rem;"></i>
+                            <i class="fa-solid fa-message" style="color: #667eea; margin-top: 0.25rem;"></i>
                             <p style="flex: 1; margin: 0; color: #555; line-height: 1.7;">${reclamation.reponse}</p>
                         </div>
                         ${reclamation.resolvedAt ? `
-                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(102, 187, 106, 0.2); display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #999;">
-                                <i class="fa-solid fa-check-circle" style="color: #66BB6A;"></i>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(102, 126, 234, 0.2); display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: #999;">
+                                <i class="fa-solid fa-check-circle" style="color: #667eea;"></i>
                                 <span>Résolu le ${new Date(reclamation.resolvedAt).toLocaleDateString('fr-FR', {
             day: 'numeric',
             month: 'long',
@@ -176,6 +176,20 @@ function displayReclamations() {
         })}</span>
                             </div>
                         ` : ''}
+                    </div>
+                ` : ''}
+                
+                <!-- Actions: Modifier et Supprimer (uniquement si non résolue) -->
+                ${reclamation.statut !== 'resolue' && reclamation.statut !== 'fermee' ? `
+                    <div class="reclamation-actions" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.08); display: flex; gap: 1rem; justify-content: flex-end;">
+                        <button onclick="openEditReclamationModal('${reclamation._id}')" class="btn-action btn-edit" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            Modifier
+                        </button>
+                        <button onclick="deleteReclamation('${reclamation._id}')" class="btn-action btn-delete" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);">
+                            <i class="fa-solid fa-trash-can"></i>
+                            Supprimer
+                        </button>
                     </div>
                 ` : ''}
             </div>
@@ -499,9 +513,161 @@ async function createReclamation(e) {
     }
 }
 
+// Supprimer une réclamation
+async function deleteReclamation(reclamationId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ? Cette action est irréversible.')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${RECLAMATIONS_API_BASE_URL}/reclamations/${reclamationId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de la suppression');
+        }
+
+        console.log('✅ Réclamation supprimée:', reclamationId);
+        
+        if (typeof showAlert === 'function') {
+            showAlert('Réclamation supprimée avec succès !', 'success');
+        } else {
+            alert('Réclamation supprimée avec succès !');
+        }
+
+        // Recharger la liste
+        await loadReclamations();
+    } catch (error) {
+        console.error('❌ Erreur lors de la suppression:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('Erreur: ' + error.message, 'error');
+        } else {
+            alert('Erreur: ' + error.message);
+        }
+    }
+}
+
+// Ouvrir le modal d'édition
+function openEditReclamationModal(reclamationId) {
+    console.log('📝 Ouverture du modal d\'édition pour:', reclamationId);
+    
+    // Trouver la réclamation
+    const reclamation = allReclamations.find(r => r._id === reclamationId);
+    if (!reclamation) {
+        console.error('❌ Réclamation non trouvée:', reclamationId);
+        alert('Réclamation non trouvée');
+        return;
+    }
+
+    // Remplir le formulaire d'édition
+    document.getElementById('editReclamationId').value = reclamation._id;
+    document.getElementById('editReclamationSujet').value = reclamation.sujet;
+    document.getElementById('editReclamationDescription').value = reclamation.description;
+    document.getElementById('editReclamationType').value = reclamation.type || 'autre';
+
+    // Afficher le modal
+    const modal = document.getElementById('editReclamationModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        modal.style.opacity = '1';
+        modal.classList.add('active');
+        console.log('✅ Modal d\'édition ouvert');
+    }
+}
+
+// Fermer le modal d'édition
+function closeEditReclamationModal() {
+    const modal = document.getElementById('editReclamationModal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.style.visibility = 'hidden';
+        modal.style.opacity = '0';
+        modal.classList.remove('active');
+        console.log('✅ Modal d\'édition fermé');
+    }
+}
+
+// Mettre à jour une réclamation
+async function updateReclamation(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    const reclamationId = document.getElementById('editReclamationId').value;
+    const sujet = document.getElementById('editReclamationSujet').value.trim();
+    const description = document.getElementById('editReclamationDescription').value.trim();
+    const type = document.getElementById('editReclamationType').value;
+
+    if (!sujet || !description) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+    }
+
+    const submitBtn = document.querySelector('#editReclamationForm button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mise à jour...';
+    }
+
+    try {
+        // Pour modifier sujet/description, on doit d'abord récupérer la réclamation actuelle
+        // puis envoyer les nouvelles données
+        const response = await fetch(`${RECLAMATIONS_API_BASE_URL}/reclamations/${reclamationId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sujet: sujet,
+                description: description,
+                type: type
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de la mise à jour');
+        }
+
+        console.log('✅ Réclamation mise à jour:', reclamationId);
+        
+        if (typeof showAlert === 'function') {
+            showAlert('Réclamation mise à jour avec succès !', 'success');
+        } else {
+            alert('Réclamation mise à jour avec succès !');
+        }
+
+        closeEditReclamationModal();
+        await loadReclamations();
+    } catch (error) {
+        console.error('❌ Erreur lors de la mise à jour:', error);
+        if (typeof showAlert === 'function') {
+            showAlert('Erreur: ' + error.message, 'error');
+        } else {
+            alert('Erreur: ' + error.message);
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Enregistrer';
+        }
+    }
+}
+
 // Exposer les fonctions globalement
 window.openNewReclamationModal = openNewReclamationModal;
 window.closeNewReclamationModal = closeNewReclamationModal;
+window.deleteReclamation = deleteReclamation;
+window.openEditReclamationModal = openEditReclamationModal;
+window.closeEditReclamationModal = closeEditReclamationModal;
+window.updateReclamation = updateReclamation;
 
 // Fonction de fermeture d'urgence (si tout le reste échoue)
 window.forceCloseReclamationModal = function () {
