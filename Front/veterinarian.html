@@ -41,116 +41,142 @@
             <p>Gérez vos consultations et accompagnez les agriculteurs dans le soin de leurs animaux</p>
         </div>
 
-        <!-- Stats rapides -->
-        <div class="vet-stats-grid">
-            <div class="vet-stat-card">
-                <div class="vet-stat-icon pending">
+        <!-- Navigation par onglets -->
+        <div class="vet-tabs-container">
+            <div class="vet-tabs">
+                <button class="vet-tab active" data-tab="pending" onclick="switchVetTab('pending')">
                     <i class="fa-solid fa-hourglass-half"></i>
-                </div>
-                <div class="vet-stat-info">
-                    <span class="vet-stat-number" id="pendingCount">0</span>
-                    <span class="vet-stat-label">En attente</span>
-                </div>
-            </div>
-            <div class="vet-stat-card">
-                <div class="vet-stat-icon completed">
+                    <span class="tab-text">Consultations</span>
+                    <span class="tab-badge" id="pendingCount">0</span>
+                </button>
+                <button class="vet-tab" data-tab="completed" onclick="switchVetTab('completed')">
                     <i class="fa-solid fa-clipboard-check"></i>
-                </div>
-                <div class="vet-stat-info">
-                    <span class="vet-stat-number" id="completedCount">0</span>
-                    <span class="vet-stat-label">Traitées</span>
-                </div>
-            </div>
-            <div class="vet-stat-card">
-                <div class="vet-stat-icon messages">
+                    <span class="tab-text">Traitées</span>
+                    <span class="tab-badge" id="completedCount">0</span>
+                </button>
+                <button class="vet-tab" data-tab="messages" onclick="switchVetTab('messages')">
                     <i class="fa-solid fa-comment-medical"></i>
-                </div>
-                <div class="vet-stat-info">
-                    <span class="vet-stat-number" id="messagesCount">0</span>
-                    <span class="vet-stat-label">Messages</span>
-                </div>
+                    <span class="tab-text">Messages</span>
+                    <span class="tab-badge" id="messagesCount">0</span>
+                </button>
+                <button class="vet-tab" data-tab="reclamations" onclick="switchVetTab('reclamations')">
+                    <i class="fa-solid fa-file-circle-exclamation"></i>
+                    <span class="tab-text">Réclamations</span>
+                    <span class="tab-badge" id="reclamationsCount">0</span>
+                </button>
+                <div class="vet-tab-indicator"></div>
             </div>
         </div>
 
-        <section class="section">
-            <h2><i class="fa-solid fa-bell-concierge"></i> Consultations en Attente</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">
-                Consultations nécessitant votre attention médicale
-            </p>
-            <div class="table-container">
-                <div id="pendingConsultations"></div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2><i class="fa-solid fa-square-check"></i> Consultations Traitées</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">
-                Historique des consultations terminées avec succès
-            </p>
-            <div class="table-container">
-                <div id="completedConsultations"></div>
-            </div>
-        </section>
-
-        <section class="section">
-            <h2><i class="fa-solid fa-envelope-open-text"></i> Messages Reçus</h2>
-            <p style="color: #666; margin-bottom: 1.5rem;">
-                Messages des agriculteurs et consommateurs
-            </p>
-            <div class="table-container">
-                <div id="vetMessages">
-                    <p style="text-align: center; color: var(--vet-primary);">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Chargement des messages...
-                    </p>
+        <!-- Conteneur des panneaux avec transitions -->
+        <div class="vet-panels-wrapper">
+            <!-- Panel: Consultations en attente -->
+            <section class="vet-panel active" id="panel-pending">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-bell-concierge"></i> Consultations en Attente</h2>
+                    <p>Consultations nécessitant votre attention médicale</p>
                 </div>
-            </div>
-        </section>
+                <div class="table-container">
+                    <div id="pendingConsultations"></div>
+                </div>
+            </section>
+
+            <!-- Panel: Consultations traitées -->
+            <section class="vet-panel" id="panel-completed">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-square-check"></i> Consultations Traitées</h2>
+                    <p>Historique des consultations terminées avec succès</p>
+                </div>
+                <div class="table-container">
+                    <div id="completedConsultations"></div>
+                </div>
+            </section>
+
+            <!-- Panel: Messages -->
+            <section class="vet-panel" id="panel-messages">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-envelope-open-text"></i> Messages Reçus</h2>
+                    <p>Messages des agriculteurs et consommateurs</p>
+                </div>
+                <div class="table-container">
+                    <div id="vetMessages">
+                        <p style="text-align: center; color: var(--vet-primary);">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Chargement des messages...
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Panel: Réclamations -->
+            <section class="vet-panel" id="panel-reclamations">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-file-circle-exclamation"></i> Mes Réclamations</h2>
+                    <p>Gérez vos réclamations et suivez leur statut</p>
+                </div>
+                <div class="table-container">
+                    <div id="vetReclamations">
+                        <p style="text-align: center; color: var(--vet-primary);">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Chargement des réclamations...
+                        </p>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <button class="btn btn-primary" onclick="openNewReclamationModalVet()" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-plus"></i>
+                        Nouvelle Réclamation
+                    </button>
+                </div>
+            </section>
+        </div>
     </div>
 
     <!-- Modal Réponse Consultation -->
     <div id="consultationModal" class="modal">
-        <div class="modal-content" style="max-width: 680px; border-radius: 28px; overflow: hidden;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 1.75rem 2rem; margin: -1.5rem -1.5rem 1.5rem -1.5rem;">
+        <div class="modal-content" style="max-width: 680px; max-height: 90vh; border-radius: 28px; overflow: hidden; display: flex; flex-direction: column;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 1.75rem 2rem; margin: -1.5rem -1.5rem 0 -1.5rem; flex-shrink: 0;">
                 <h2 style="margin: 0; display: flex; align-items: center; gap: 0.85rem; font-weight: 700;">
                     <i class="fa-solid fa-notes-medical"></i>
                     Répondre à la consultation
                 </h2>
                 <button class="close" style="color: white; opacity: 0.8; background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='rotate(90deg)'; this.style.opacity='1'" onmouseout="this.style.transform='rotate(0)'; this.style.opacity='0.8'">&times;</button>
             </div>
-            <div id="consultationDetails"
-                style="margin-bottom: 1.75rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%); border-radius: 16px; border-left: 4px solid #059669;"></div>
-            <form id="responseForm">
-                <input type="hidden" id="consultationId">
-                <div class="form-group" style="margin-bottom: 1.75rem;">
-                    <label for="vetResponse" style="display: flex; align-items: center; gap: 0.6rem; color: #1a252f; font-weight: 600; margin-bottom: 0.85rem; font-size: 1rem;">
-                        <i class="fa-solid fa-file-medical" style="color: #059669;"></i>
-                        Votre diagnostic / réponse
-                    </label>
-                    <textarea id="vetResponse" class="form-control" required rows="5"
-                        placeholder="Entrez votre diagnostic détaillé et vos recommandations médicales..."
-                        style="padding: 1.15rem; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; font-family: inherit; resize: vertical;"
-                        onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.12)'"
-                        onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"></textarea>
-                </div>
-                <div class="form-group" style="margin-bottom: 2rem;">
-                    <label for="consultationStatus" style="display: flex; align-items: center; gap: 0.6rem; color: #1a252f; font-weight: 600; margin-bottom: 0.85rem; font-size: 1rem;">
-                        <i class="fa-solid fa-clipboard-list" style="color: #059669;"></i>
-                        Statut de la consultation
-                    </label>
-                    <select id="consultationStatus" class="form-control" required
-                        style="padding: 1.15rem; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; cursor: pointer; font-family: inherit;">
-                        <option value="en_cours">🔄 En cours de traitement</option>
-                        <option value="terminée">✅ Terminée</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary" 
-                    style="width: 100%; padding: 1.15rem; border-radius: 14px; font-weight: 700; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35); transition: all 0.3s ease; font-size: 1.05rem;"
-                    onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 30px rgba(5, 150, 105, 0.45)'"
-                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(5, 150, 105, 0.35)'">
-                    <i class="fa-solid fa-paper-plane"></i>
-                    Envoyer la réponse
-                </button>
-            </form>
+            <!-- Contenu scrollable -->
+            <div class="modal-body-scroll" style="flex: 1; overflow-y: auto; padding: 1.5rem; padding-top: 0;">
+                <div id="consultationDetails"
+                    style="margin-bottom: 1.75rem; margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%); border-radius: 16px; border-left: 4px solid #059669;"></div>
+                <form id="responseForm">
+                    <input type="hidden" id="consultationId">
+                    <div class="form-group" style="margin-bottom: 1.75rem;">
+                        <label for="vetResponse" style="display: flex; align-items: center; gap: 0.6rem; color: #1a252f; font-weight: 600; margin-bottom: 0.85rem; font-size: 1rem;">
+                            <i class="fa-solid fa-file-medical" style="color: #059669;"></i>
+                            Votre diagnostic / réponse
+                        </label>
+                        <textarea id="vetResponse" class="form-control" required rows="5"
+                            placeholder="Entrez votre diagnostic détaillé et vos recommandations médicales..."
+                            style="padding: 1.15rem; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; font-family: inherit; resize: vertical;"
+                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.12)'"
+                            onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"></textarea>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label for="consultationStatus" style="display: flex; align-items: center; gap: 0.6rem; color: #1a252f; font-weight: 600; margin-bottom: 0.85rem; font-size: 1rem;">
+                            <i class="fa-solid fa-clipboard-list" style="color: #059669;"></i>
+                            Statut de la consultation
+                        </label>
+                        <select id="consultationStatus" class="form-control" required
+                            style="padding: 1.15rem; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; cursor: pointer; font-family: inherit;">
+                            <option value="en_cours">🔄 En cours de traitement</option>
+                            <option value="terminée">✅ Terminée</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" 
+                        style="width: 100%; padding: 1.15rem; border-radius: 14px; font-weight: 700; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35); transition: all 0.3s ease; font-size: 1.05rem;"
+                        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 30px rgba(5, 150, 105, 0.45)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(5, 150, 105, 0.35)'">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Envoyer la réponse
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 

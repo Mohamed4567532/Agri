@@ -216,16 +216,20 @@ function updateNavbar() {
             `;
         }
 
-        // Liens spécifiques pour vétérinaires
+        // Liens spécifiques pour vétérinaires (tout intégré sans rechargement)
         if (user.role === 'vet') {
             navLinks += `
-                <li><a href="veterinarian.html">
-                    <span class="nav-icon"><i class="fa-solid fa-house-medical"></i></span>
-                    Mon Espace
+                <li><a href="veterinarian.html#pending" onclick="return handleVetNav('pending')">
+                    <span class="nav-icon"><i class="fa-solid fa-stethoscope"></i></span>
+                    Consultations
                 </a></li>
-                <li><a href="messages.html">
+                <li><a href="veterinarian.html#messages" onclick="return handleVetNav('messages')">
                     <span class="nav-icon"><i class="fa-solid fa-envelope-open-text"></i></span>
                     Messages
+                </a></li>
+                <li><a href="veterinarian.html#reclamations" onclick="return handleVetNav('reclamations')">
+                    <span class="nav-icon"><i class="fa-solid fa-file-circle-exclamation"></i></span>
+                    Réclamations
                 </a></li>
             `;
         }
@@ -256,21 +260,22 @@ function updateNavbar() {
             `;
         }
 
-        // Lien vers les messages pour tous les utilisateurs
-        navLinks += `
-            <li><a href="messages.html">
-                <span class="nav-icon"><i class="fa-solid fa-comments"></i></span>
-                Mes Messages
-            </a></li>
-        `;
+        // Lien vers les messages et réclamations (sauf vétérinaires qui ont tout intégré)
+        if (user.role !== 'vet') {
+            navLinks += `
+                <li><a href="messages.html">
+                    <span class="nav-icon"><i class="fa-solid fa-comments"></i></span>
+                    Mes Messages
+                </a></li>
+            `;
 
-        // Lien vers les réclamations pour tous les utilisateurs
-        navLinks += `
-            <li><a href="reclamations.html">
-                <span class="nav-icon"><i class="fa-solid fa-file-circle-exclamation"></i></span>
-                Mes Réclamations
-            </a></li>
-        `;
+            navLinks += `
+                <li><a href="reclamations.html">
+                    <span class="nav-icon"><i class="fa-solid fa-file-circle-exclamation"></i></span>
+                    Mes Réclamations
+                </a></li>
+            `;
+        }
 
         navLinks += `
             <li><a href="#" onclick="logout(); return false;">
@@ -420,4 +425,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Gestion de la navigation vétérinaire sans rechargement
+function handleVetNav(tab) {
+    // Vérifier si on est déjà sur la page vétérinaire
+    const isOnVetPage = window.location.pathname.includes('veterinarian') || 
+                        document.querySelector('.vet-tabs');
+    
+    if (isOnVetPage && typeof switchVetTab === 'function') {
+        // On est sur la page vétérinaire, basculer vers l'onglet sans recharger
+        switchVetTab(tab);
+        return false; // Empêcher la navigation par défaut
+    }
+    
+    // Sinon, laisser le lien naviguer normalement
+    return true;
+}
 
