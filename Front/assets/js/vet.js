@@ -9,7 +9,13 @@ let messagesCount = 0;
 let reclamationsCount = 0;
 
 // Onglet actif
-let currentTab = 'pending';
+let currentTab = 'consultations';
+
+// Filtre consultations actif
+let currentFilter = 'pending';
+
+// Cache des consultations
+let allConsultations = [];
 
 // Initialisation de la page vétérinaire
 document.addEventListener('DOMContentLoaded', async function () {
@@ -39,8 +45,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Charger les données en parallèle
     await Promise.all([
-        loadPendingConsultations(),
-        loadCompletedConsultations(),
+        loadAllConsultations(),
         loadVetMessages(),
         loadVetReclamations()
     ]);
@@ -63,8 +68,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Gestion du hash dans l'URL pour navigation directe
     if (window.location.hash) {
         const tab = window.location.hash.replace('#', '');
-        if (['pending', 'completed', 'messages', 'reclamations'].includes(tab)) {
+        if (['consultations', 'messages', 'reclamations'].includes(tab)) {
             switchVetTab(tab, false);
+        } else if (tab === 'pending' || tab === 'completed') {
+            // Rediriger vers consultations avec le bon filtre
+            switchVetTab('consultations', false);
+            filterConsultations(tab);
         }
     }
 });
@@ -141,6 +150,16 @@ function updateStatsDisplay() {
     const completedEl = document.getElementById('completedCount');
     const messagesEl = document.getElementById('messagesCount');
     const reclamationsEl = document.getElementById('reclamationsCount');
+    const totalConsultationsEl = document.getElementById('totalConsultationsCount');
+    
+    // Total consultations en attente pour le badge principal
+    if (totalConsultationsEl) {
+        totalConsultationsEl.textContent = pendingCount;
+        totalConsultationsEl.classList.remove('pulse');
+        void totalConsultationsEl.offsetWidth;
+        totalConsultationsEl.classList.add('pulse');
+        totalConsultationsEl.style.display = pendingCount > 0 ? 'flex' : 'none';
+    }
 
     if (pendingEl) {
         pendingEl.textContent = pendingCount;
@@ -856,8 +875,138 @@ function closeVideoModal() {
     }
 }
 
+
+// Charger toutes les consultations
+async function loadAllConsultations() {
+    try {
+        const user = getCurrentUser();
+        const response = await fetch(`http://localhost:3000/api/consultations?vetId=${user.id}`);
+
+        if (!response.ok) throw new Error('Erreur lors du chargement');
+
+        allConsultations = await response.json();
+        
+        // Compter les consultations
+        const pending = allConsultations.filter(c => c.status === 'en_attente' || c.status === 'en_cours');
+        const completed = allConsultations.filter(c => c.status === 'terminée' || c.status === 'annulée');
+        
+        pendingCount = pending.length;
+        completedCount = completed.length;
+        
+        // Afficher selon le filtre actuel
+        displayConsultations(currentFilter);
+        
+    } catch (error) {
+        console.error('Erreur:', error);
+        const container = document.getElementById('consultationsList');
+        if (container) container.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #e74c3c;">
+                <i class="fa-solid fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                <p>Erreur lors du chargement des consultations.</p>
+            </div>
+        `;
+    }
+}
+
+// Filtrer les consultations (En attente / Traitées)
+function filterConsultations(filter) {
+    currentFilter = filter;
+    
+    // Mettre à jour les boutons de filtre
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+            btn.classList.add('active');
+            btn.style.background = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
+            btn.style.color = 'white';
+        } else {
+            btn.classList.remove('active');
+            btn.style.background = 'transparent';
+            btn.style.color = '#059669';
+        }
+    });
+    
+    displayConsultations(filter);
+}
+
+// Afficher les consultations filtrées
+function displayConsultations(filter) {
+    const container = document.getElementById('consultationsList');
+    if (!container) return;
+    
+    let consultations;
+    if (filter === 'pending') {
+        consultations = allConsultations.filter(c => c.status === 'en_attente' || c.status === 'en_cours');
+    } else {
+        consultations = allConsultations.filter(c => c.status === 'terminée' || c.status === 'annulée');
+    }
+    
+    if (consultations.length === 0) {
+        const emptyMessage = filter === 'pending' 
+            ? { icon: 'fa-clipboard-check', title: 'Aucune consultation en attente', subtitle: 'Vous êtes à jour ! 🎉' }
+            : { icon: 'fa-folder-open', title: 'Aucune consultation traitée', subtitle: "L'historique apparaîtra ici" };
+        
+        container.innerHTML = `
+            <div style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.06) 0%, rgba(16, 185, 129, 0.04) 100%); border-radius: 20px; border: 2px dashed rgba(5, 150, 105, 0.25);">
+                <i class="fa-solid ${emptyMessage.icon}" style="font-size: 3.5rem; color: #059669; margin-bottom: 1rem; opacity: 0.7;"></i>
+                <p style="color: #1a252f; font-size: 1.15rem; margin: 0; font-weight: 600;">${emptyMessage.title}</p>
+                <p style="color: #666; font-size: 0.95rem; margin-top: 0.5rem;">${emptyMessage.subtitle}</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const isPending = filter === 'pending';
+    
+    container.innerHTML = `
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><i class="fa-solid fa-calendar"></i> Date</th>
+                    <th><i class="fa-solid fa-user"></i> Agriculteur</th>
+                    <th><i class="fa-solid fa-paw"></i> Moutons</th>
+                    <th><i class="fa-solid fa-file-lines"></i> Description</th>
+                    <th><i class="fa-solid fa-video"></i> Vidéo</th>
+                    <th><i class="fa-solid fa-circle-info"></i> Statut</th>
+                    ${isPending ? '<th><i class="fa-solid fa-gear"></i> Actions</th>' : '<th><i class="fa-solid fa-comment-medical"></i> Réponse</th>'}
+                </tr>
+            </thead>
+            <tbody>
+                ${consultations.map(c => `
+                    <tr>
+                        <td>${formatDate(c.createdAt)}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-user-tie" style="color: #059669;"></i>
+                                ${c.farmerId?.name || 'Inconnu'}
+                            </div>
+                        </td>
+                        <td>
+                            <span style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.12) 0%, rgba(16, 185, 129, 0.08) 100%); padding: 0.4rem 0.9rem; border-radius: 20px; font-weight: 600; color: #059669;">
+                                ${c.sheepIds?.length || 0} mouton(s)
+                            </span>
+                        </td>
+                        <td>${c.description.substring(0, 50)}...</td>
+                        <td>${c.video ? `<button onclick="openVideoModal('http://localhost:3000${c.video}')" style="color: #059669; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; font-weight: 500; font-size: inherit;"><i class="fa-solid fa-play-circle"></i> Voir</button>` : '<span style="color: #999;">Aucune</span>'}</td>
+                        <td><span class="badge badge-${c.status === 'en_attente' ? 'warning' : c.status === 'en_cours' ? 'info' : c.status === 'terminée' ? 'success' : 'danger'}">${getStatusLabel(c.status)}</span></td>
+                        ${isPending 
+                            ? `<td>
+                                <button class="btn btn-sm btn-primary" onclick="openConsultation('${c._id}')" style="display: flex; align-items: center; gap: 0.3rem;">
+                                    <i class="fa-solid fa-reply"></i> Répondre
+                                </button>
+                            </td>`
+                            : `<td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.vetResponse ? c.vetResponse.substring(0, 50) + '...' : '<span style="color: #999;">N/A</span>'}</td>`
+                        }
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
 // Exposer les fonctions globalement
 window.openConsultation = openConsultation;
+window.filterConsultations = filterConsultations;
+window.loadAllConsultations = loadAllConsultations;
 window.viewVetMessage = viewVetMessage;
 window.loadVetMessages = loadVetMessages;
 window.loadVetReclamations = loadVetReclamations;

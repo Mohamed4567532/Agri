@@ -41,54 +41,38 @@
             <p>Gérez vos consultations et accompagnez les agriculteurs dans le soin de leurs animaux</p>
         </div>
 
-        <!-- Navigation par onglets -->
+        <!-- Navigation par onglets (3 onglets seulement) -->
         <div class="vet-tabs-container">
             <div class="vet-tabs">
-                <button class="vet-tab active" data-tab="pending" onclick="switchVetTab('pending')">
-                    <i class="fa-solid fa-hourglass-half"></i>
-                    <span class="tab-text">Consultations</span>
-                    <span class="tab-badge" id="pendingCount">0</span>
-                </button>
-                <button class="vet-tab" data-tab="completed" onclick="switchVetTab('completed')">
-                    <i class="fa-solid fa-clipboard-check"></i>
-                    <span class="tab-text">Traitées</span>
-                    <span class="tab-badge" id="completedCount">0</span>
-                </button>
-                <button class="vet-tab" data-tab="messages" onclick="switchVetTab('messages')">
-                    <i class="fa-solid fa-comment-medical"></i>
-                    <span class="tab-text">Messages</span>
-                    <span class="tab-badge" id="messagesCount">0</span>
-                </button>
-                <button class="vet-tab" data-tab="reclamations" onclick="switchVetTab('reclamations')">
-                    <i class="fa-solid fa-file-circle-exclamation"></i>
-                    <span class="tab-text">Réclamations</span>
-                    <span class="tab-badge" id="reclamationsCount">0</span>
-                </button>
-                <div class="vet-tab-indicator"></div>
+                 <div class="vet-tab-indicator"></div>
             </div>
         </div>
 
         <!-- Conteneur des panneaux avec transitions -->
         <div class="vet-panels-wrapper">
-            <!-- Panel: Consultations en attente -->
-            <section class="vet-panel active" id="panel-pending">
-                <div class="panel-header">
-                    <h2><i class="fa-solid fa-bell-concierge"></i> Consultations en Attente</h2>
-                    <p>Consultations nécessitant votre attention médicale</p>
+            <!-- Panel: Consultations (avec filtre) -->
+            <section class="vet-panel active" id="panel-consultations">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h2><i class="fa-solid fa-stethoscope"></i> Consultations</h2>
+                        <p>Gérez toutes vos consultations vétérinaires</p>
+                    </div>
+                    <!-- Filtre En attente / Traitées -->
+                    <div class="consultation-filter" style="display: flex; gap: 0.5rem; background: rgba(5, 150, 105, 0.08); padding: 0.4rem; border-radius: 12px;">
+                        <button class="filter-btn active" data-filter="pending" onclick="filterConsultations('pending')" style="padding: 0.6rem 1.2rem; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                            En attente
+                            <span id="pendingCount" style="background: rgba(255,255,255,0.25); padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.8rem;">0</span>
+                        </button>
+                        <button class="filter-btn" data-filter="completed" onclick="filterConsultations('completed')" style="padding: 0.6rem 1.2rem; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; background: transparent; color: #059669; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            Traitées
+                            <span id="completedCount" style="background: rgba(5, 150, 105, 0.15); padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.8rem;">0</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="table-container">
-                    <div id="pendingConsultations"></div>
-                </div>
-            </section>
-
-            <!-- Panel: Consultations traitées -->
-            <section class="vet-panel" id="panel-completed">
-                <div class="panel-header">
-                    <h2><i class="fa-solid fa-square-check"></i> Consultations Traitées</h2>
-                    <p>Historique des consultations terminées avec succès</p>
-                </div>
-                <div class="table-container">
-                    <div id="completedConsultations"></div>
+                    <div id="consultationsList"></div>
                 </div>
             </section>
 

@@ -219,7 +219,7 @@ function updateNavbar() {
         // Liens spécifiques pour vétérinaires (tout intégré sans rechargement)
         if (user.role === 'vet') {
             navLinks += `
-                <li><a href="veterinarian.html#pending" onclick="return handleVetNav('pending')">
+                <li><a href="veterinarian.html#consultations" onclick="return handleVetNav('consultations')">
                     <span class="nav-icon"><i class="fa-solid fa-stethoscope"></i></span>
                     Consultations
                 </a></li>
@@ -441,4 +441,3 @@ function handleVetNav(tab) {
     // Sinon, laisser le lien naviguer normalement
     return true;
 }
-
