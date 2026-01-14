@@ -7,548 +7,7 @@
     <title>Mes Réclamations - AgriSmart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        /* ============================================
-           MODERNISATION PAGE RÉCLAMATIONS - 2025
-           Design élégant, clean et professionnel
-           ============================================ */
-
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-        body.farmer-no-bg {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-
-        /* Container principal */
-        .reclamations-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        /* Header moderne */
-        .reclamations-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding-bottom: 1.5rem;
-            position: relative;
-        }
-
-        .reclamations-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 2px;
-        }
-
-        .reclamations-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1a252f;
-            margin: 0 0 0.75rem 0;
-            letter-spacing: -0.5px;
-        }
-
-        .reclamations-header p {
-            color: #666;
-            font-size: 1rem;
-            opacity: 0.7;
-            margin: 0;
-        }
-
-        /* Bouton Nouvelle Réclamation moderne */
-        .reclamations-actions {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 3rem;
-        }
-
-        #newReclamationBtn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 0.875rem 2rem;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.35);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            pointer-events: auto !important;
-            z-index: 9999 !important;
-            position: relative !important;
-        }
-
-        #newReclamationBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.45);
-            background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
-        }
-
-        #newReclamationBtn:active {
-            transform: translateY(0);
-        }
-
-        #newReclamationBtn::before {
-            content: '\f067';
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            font-size: 1.1rem;
-        }
-
-        /* Cartes de réclamation modernisées */
-        .reclamations-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .reclamation-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 1.75rem;
-            margin: 0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            border-left: 4px solid #667eea;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .reclamation-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: currentColor;
-            transition: width 0.3s ease;
-        }
-
-        .reclamation-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Couleurs selon statut */
-        .reclamation-card.en_attente {
-            border-left-color: #FFA726;
-        }
-
-        .reclamation-card.en_attente::before {
-            background: #FFA726;
-        }
-
-        .reclamation-card.en_cours {
-            border-left-color: #42A5F5;
-        }
-
-        .reclamation-card.en_cours::before {
-            background: #42A5F5;
-        }
-
-        .reclamation-card.resolue {
-            border-left-color: #66BB6A;
-        }
-
-        .reclamation-card.resolue::before {
-            background: #66BB6A;
-        }
-
-        .reclamation-card.fermee {
-            border-left-color: #90A4AE;
-        }
-
-        .reclamation-card.fermee::before {
-            background: #90A4AE;
-        }
-
-        /* Header de carte */
-        .reclamation-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            gap: 1rem;
-        }
-
-        .reclamation-title {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: #1a252f;
-            margin: 0 0 0.5rem 0;
-            line-height: 1.4;
-        }
-
-        .reclamation-meta {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            font-size: 0.875rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-
-        .reclamation-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        /* Badges modernes */
-        .badge-modern {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.4rem 0.875rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
-        }
-
-        .badge-status {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        .badge-status.en_attente {
-            background: rgba(255, 167, 38, 0.1);
-            color: #FF9800;
-        }
-
-        .badge-status.en_cours {
-            background: rgba(66, 165, 245, 0.1);
-            color: #2196F3;
-        }
-
-        .badge-status.resolue {
-            background: rgba(102, 187, 106, 0.1);
-            color: #66BB6A;
-        }
-
-        .badge-status.fermee {
-            background: rgba(144, 164, 174, 0.1);
-            color: #78909C;
-        }
-
-        .badge-priority {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        .badge-priority.low {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        .badge-priority.normal {
-            background: rgba(255, 167, 38, 0.1);
-            color: #FF9800;
-        }
-
-        .badge-priority.high {
-            background: rgba(255, 152, 0, 0.1);
-            color: #FF6F00;
-        }
-
-        .badge-priority.urgent {
-            background: rgba(244, 67, 54, 0.1);
-            color: #F44336;
-        }
-
-        .badge-type {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-        }
-
-        /* Description */
-        .reclamation-description {
-            color: #555;
-            line-height: 1.7;
-            margin: 1rem 0;
-            font-size: 0.95rem;
-        }
-
-        /* Réponse */
-        .reclamation-reponse {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            padding: 1.25rem;
-            border-radius: 12px;
-            margin-top: 1.25rem;
-            border-left: 3px solid #764ba2;
-        }
-
-        .reclamation-reponse h4 {
-            margin: 0 0 0.75rem 0;
-            color: #764ba2;
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .reclamation-reponse p {
-            margin: 0;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        /* Fichiers */
-        .reclamation-fichiers {
-            margin-top: 1.25rem;
-            padding-top: 1.25rem;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .reclamation-fichiers a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 8px;
-            text-decoration: none;
-            color: #667eea;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .reclamation-fichiers a:hover {
-            background: rgba(102, 126, 234, 0.2);
-            color: #764ba2;
-            transform: translateX(2px);
-        }
-
-        /* Amélioration des interactions */
-        .form-control:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: #e8e8e8;
-            border-color: #d0d0d0;
-        }
-
-        .close:hover {
-            background: #f5f5f5;
-            color: #666;
-        }
-
-        /* Animation d'apparition des cartes */
-        .reclamation-card {
-            animation: fadeInUp 0.4s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .reclamations-header h1 {
-                font-size: 2rem;
-            }
-
-            .reclamation-card {
-                padding: 1.25rem;
-            }
-
-            .reclamation-header {
-                flex-direction: column;
-            }
-
-            .reclamation-meta {
-                font-size: 0.8rem;
-            }
-
-            .reclamations-actions {
-                margin-bottom: 2rem;
-            }
-
-            #newReclamationBtn {
-                width: 100%;
-                max-width: 100%;
-            }
-        }
-
-        /* États de priorité (texte) */
-        .priority-low {
-            color: #667eea;
-        }
-
-        .priority-normal {
-            color: #FF9800;
-        }
-
-        .priority-high {
-            color: #FF6F00;
-        }
-
-        .priority-urgent {
-            color: #F44336;
-            font-weight: 600;
-        }
-
-        /* Card container */
-        .card {
-            position: relative;
-            z-index: 1;
-        }
-
-        .card * {
-            pointer-events: auto !important;
-        }
-
-        /* Consumer Page Specific Styles */
-        body.consumer-page .reclamations-container {
-            padding-top: 100px;
-        }
-
-        body.consumer-page .reclamations-header {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 2rem;
-            border-radius: 20px;
-            margin-bottom: 2rem;
-        }
-
-        body.consumer-page .reclamations-header::after {
-            display: none;
-        }
-
-        body.consumer-page .reclamations-header h1 {
-            color: white;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        body.consumer-page .reclamations-header h1 i {
-            color: white !important;
-        }
-
-        body.consumer-page .reclamations-header p {
-            color: rgba(255, 255, 255, 0.9);
-            opacity: 1;
-        }
-
-        body.consumer-page .reclamations-list {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 1.5rem;
-        }
-
-        body.consumer-page .reclamation-card {
-            border-left-color: #667eea;
-        }
-
-        body.consumer-page .reclamation-card:hover {
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
-        }
-
-        /* ============================================
-           VET PAGE SPECIFIC STYLES - Emerald Theme
-           ============================================ */
-        body.vet-page .reclamations-container {
-            padding-top: 100px;
-        }
-
-        body.vet-page .reclamations-header {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 2.5rem;
-            border-radius: 24px;
-            margin-bottom: 2rem;
-        }
-
-        body.vet-page .reclamations-header::after {
-            display: none;
-        }
-
-        body.vet-page .reclamations-header h1 {
-            color: white;
-            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
-            font-weight: 700;
-        }
-
-        body.vet-page .reclamations-header h1 i {
-            color: #6ee7b7 !important;
-            text-shadow: 0 0 30px rgba(110, 231, 183, 0.5);
-        }
-
-        body.vet-page .reclamations-header p {
-            color: rgba(255, 255, 255, 0.95);
-            opacity: 1;
-        }
-
-        body.vet-page .reclamations-list {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 24px;
-            padding: 1.75rem;
-            box-shadow: 0 8px 30px rgba(5, 150, 105, 0.1);
-        }
-
-        body.vet-page .reclamation-card {
-            border-left-color: #059669;
-            border-radius: 16px;
-        }
-
-        body.vet-page .reclamation-card:hover {
-            box-shadow: 0 15px 45px rgba(5, 150, 105, 0.18);
-            border-color: #10b981;
-        }
-
-        body.vet-page .btn-primary,
-        body.vet-page .reclamations-actions button {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-        }
-
-        body.vet-page .btn-primary:hover,
-        body.vet-page .reclamations-actions button:hover {
-            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
-        }
-
-        body.vet-page .reclamation-priority.haute,
-        body.vet-page .reclamation-priority.urgente {
-            background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-        }
-
-        body.vet-page .reclamation-status {
-            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.08) 100%);
-            color: #059669;
-        }
-
-        body.vet-page .reclamation-status.resolue {
-            background: linear-gradient(135deg, rgba(5, 150, 105, 0.15) 0%, rgba(52, 211, 153, 0.1) 100%);
-            color: #047857;
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/reclamations.css">
 </head>
 
 <body class="farmer-no-bg">
@@ -590,7 +49,7 @@
         <div class="reclamations-container">
             <!-- Header moderne -->
             <div class="reclamations-header">
-                <h1><i class="fa-solid fa-file-circle-exclamation" style="color: #764ba2;"></i> Mes Réclamations</h1>
+                <h1><i class="fa-solid fa-file-circle-exclamation"></i> Mes Réclamations</h1>
                 <p>Créez une nouvelle réclamation ou consultez le statut de vos réclamations existantes</p>
             </div>
 
@@ -604,56 +63,46 @@
 
             <!-- Liste des réclamations -->
             <div id="reclamationsList" class="reclamations-list">
-                <p style="text-align: center; color: #666; padding: 2rem;">Chargement de vos réclamations...</p>
+                <p class="reclamations-loading">Chargement de vos réclamations...</p>
             </div>
         </div>
     </div>
 
     <!-- Modal Nouvelle Réclamation -->
     <div id="newReclamationModal" class="modal" onclick="if(event.target === this) closeNewReclamationModal();">
-        <div class="modal-content" style="max-width: 600px; border-radius: 16px;" onclick="event.stopPropagation();">
-            <div class="modal-header"
-                style="border-bottom: 1px solid #e0e0e0; padding-bottom: 1rem; margin-bottom: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: -1.5rem -1.5rem 1.5rem -1.5rem; padding: 1.5rem; border-radius: 16px 16px 0 0;">
-                <h2 style="color: white; font-size: 1.5rem; font-weight: 600; margin: 0;"><i class="fa-solid fa-plus-circle"></i> Nouvelle Réclamation</h2>
-                <button class="close" id="closeReclamationModal" onclick="closeNewReclamationModal(); return false;"
-                    style="cursor: pointer; font-size: 1.75rem; background: none; border: none; color: white; opacity: 0.8; transition: opacity 0.2s; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">&times;</button>
+        <div class="modal-content reclamation-modal-content" onclick="event.stopPropagation();">
+            <div class="modal-header reclamation-modal-header">
+                <h2><i class="fa-solid fa-plus-circle"></i> Nouvelle Réclamation</h2>
+                <button class="close reclamation-modal-close" id="closeReclamationModal" onclick="closeNewReclamationModal(); return false;">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="newReclamationForm"
                     onsubmit="event.preventDefault(); createReclamation(event); return false;">
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label
-                            style="display: block; margin-bottom: 0.5rem; color: #1a252f; font-weight: 500; font-size: 0.95rem;">Sujet
-                            *</label>
-                        <input type="text" id="reclamationSujet" class="form-control" required
-                            placeholder="Ex: Problème avec un produit"
-                            style="padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s;">
+                    <div class="form-group reclamation-form-group">
+                        <label class="reclamation-form-label">Sujet *</label>
+                        <input type="text" id="reclamationSujet" class="form-control reclamation-form-input" required
+                            placeholder="Ex: Problème avec un produit">
                     </div>
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label
-                            style="display: block; margin-bottom: 0.5rem; color: #1a252f; font-weight: 500; font-size: 0.95rem;">Type</label>
-                        <select id="reclamationType" class="form-control"
-                            style="padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s;">
+                    <div class="form-group reclamation-form-group">
+                        <label class="reclamation-form-label">Type</label>
+                        <select id="reclamationType" class="form-control reclamation-form-select">
                             <option value="technique">Technique</option>
                             <option value="produit">Produit</option>
                             <option value="service">Service</option>
                             <option value="autre">Autre</option>
                         </select>
                     </div>
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label
-                            style="display: block; margin-bottom: 0.5rem; color: #1a252f; font-weight: 500; font-size: 0.95rem;">Description
-                            *</label>
-                        <textarea id="reclamationDescription" class="form-control" required rows="5"
-                            placeholder="Décrivez votre réclamation en détail..."
-                            style="padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; resize: vertical;"></textarea>
+                    <div class="form-group reclamation-form-group">
+                        <label class="reclamation-form-label">Description *</label>
+                        <textarea id="reclamationDescription" class="form-control reclamation-form-textarea" required rows="5"
+                            placeholder="Décrivez votre réclamation en détail..."></textarea>
                     </div>
-                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                        <button type="submit" id="submitReclamationBtn" class="btn btn-primary"
-                            style="flex: 1; padding: 0.875rem; border-radius: 12px; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; transition: all 0.3s; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);"><i class="fa-solid fa-paper-plane"></i> Envoyer</button>
-                        <button type="button" class="btn btn-secondary" id="cancelReclamationBtn"
-                            onclick="closeNewReclamationModal(); return false;"
-                            style="flex: 1; padding: 0.875rem; border-radius: 12px; font-weight: 500; background: #f5f5f5; color: #666; border: 2px solid #e0e0e0; transition: all 0.2s;">Annuler</button>
+                    <div class="reclamation-form-actions">
+                        <button type="submit" id="submitReclamationBtn" class="btn btn-primary reclamation-btn-submit">
+                            <i class="fa-solid fa-paper-plane"></i> Envoyer
+                        </button>
+                        <button type="button" class="btn btn-secondary reclamation-btn-cancel" id="cancelReclamationBtn"
+                            onclick="closeNewReclamationModal(); return false;">Annuler</button>
                     </div>
                 </form>
             </div>
@@ -661,46 +110,39 @@
     </div>
 
     <!-- Modal Modifier Réclamation -->
-    <div id="editReclamationModal" class="modal" onclick="if(event.target === this) closeEditReclamationModal();" style="display: none;">
-        <div class="modal-content" style="max-width: 600px; border-radius: 16px;" onclick="event.stopPropagation();">
-            <div class="modal-header"
-                style="border-bottom: 1px solid #e0e0e0; padding-bottom: 1rem; margin-bottom: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: -1.5rem -1.5rem 1.5rem -1.5rem; padding: 1.5rem; border-radius: 16px 16px 0 0;">
-                <h2 style="color: white; font-size: 1.5rem; font-weight: 600; margin: 0;"><i class="fa-solid fa-pen-to-square"></i> Modifier la Réclamation</h2>
-                <button class="close" onclick="closeEditReclamationModal(); return false;"
-                    style="cursor: pointer; font-size: 1.75rem; background: none; border: none; color: white; opacity: 0.8; transition: opacity 0.2s; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px;">&times;</button>
+    <div id="editReclamationModal" class="modal" onclick="if(event.target === this) closeEditReclamationModal();">
+        <div class="modal-content reclamation-modal-content" onclick="event.stopPropagation();">
+            <div class="modal-header reclamation-modal-header">
+                <h2><i class="fa-solid fa-pen-to-square"></i> Modifier la Réclamation</h2>
+                <button class="close reclamation-modal-close" onclick="closeEditReclamationModal(); return false;">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="editReclamationForm" onsubmit="event.preventDefault(); updateReclamation(event); return false;">
                     <input type="hidden" id="editReclamationId">
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #1a252f; font-weight: 500; font-size: 0.95rem;">Sujet *</label>
-                        <input type="text" id="editReclamationSujet" class="form-control" required
-                            placeholder="Ex: Problème avec un produit"
-                            style="padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; width: 100%;">
+                    <div class="form-group reclamation-form-group">
+                        <label class="reclamation-form-label">Sujet *</label>
+                        <input type="text" id="editReclamationSujet" class="form-control reclamation-form-input" required
+                            placeholder="Ex: Problème avec un produit">
                     </div>
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #1a252f; font-weight: 500; font-size: 0.95rem;">Type</label>
-                        <select id="editReclamationType" class="form-control"
-                            style="padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; width: 100%;">
+                    <div class="form-group reclamation-form-group">
+                        <label class="reclamation-form-label">Type</label>
+                        <select id="editReclamationType" class="form-control reclamation-form-select">
                             <option value="technique">Technique</option>
                             <option value="produit">Produit</option>
                             <option value="service">Service</option>
                             <option value="autre">Autre</option>
                         </select>
                     </div>
-                    <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: #1a252f; font-weight: 500; font-size: 0.95rem;">Description *</label>
-                        <textarea id="editReclamationDescription" class="form-control" required rows="5"
-                            placeholder="Décrivez votre réclamation en détail..."
-                            style="padding: 0.875rem; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s; resize: vertical; width: 100%;"></textarea>
+                    <div class="form-group reclamation-form-group">
+                        <label class="reclamation-form-label">Description *</label>
+                        <textarea id="editReclamationDescription" class="form-control reclamation-form-textarea" required rows="5"
+                            placeholder="Décrivez votre réclamation en détail..."></textarea>
                     </div>
-                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                        <button type="submit" class="btn btn-primary"
-                            style="flex: 1; padding: 0.875rem; border-radius: 12px; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; transition: all 0.3s; color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <div class="reclamation-form-actions">
+                        <button type="submit" class="btn btn-primary reclamation-btn-submit">
                             <i class="fa-solid fa-save"></i> Enregistrer
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="closeEditReclamationModal(); return false;"
-                            style="flex: 1; padding: 0.875rem; border-radius: 12px; font-weight: 500; background: #f5f5f5; color: #666; border: 2px solid #e0e0e0; transition: all 0.2s;">Annuler</button>
+                        <button type="button" class="btn btn-secondary reclamation-btn-cancel" onclick="closeEditReclamationModal(); return false;">Annuler</button>
                     </div>
                 </form>
             </div>
@@ -722,13 +164,6 @@
             const modal = document.getElementById('newReclamationModal');
             if (modal) {
                 modal.style.display = 'flex';
-                modal.style.position = 'fixed';
-                modal.style.top = '0';
-                modal.style.left = '0';
-                modal.style.width = '100%';
-                modal.style.height = '100%';
-                modal.style.zIndex = '2000';
-                modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
                 modal.classList.add('active');
                 console.log('Modal ouvert directement');
             } else {
@@ -745,14 +180,6 @@
             const btn = document.getElementById('newReclamationBtn');
             if (btn) {
                 console.log('✅ Bouton trouvé dans le DOM');
-                console.log('Bouton styles:', window.getComputedStyle(btn));
-
-                // Forcer le bouton à être cliquable
-                btn.style.pointerEvents = 'auto';
-                btn.style.cursor = 'pointer';
-                btn.style.zIndex = '9999';
-                btn.disabled = false;
-                btn.readOnly = false;
 
                 // Ajouter plusieurs event listeners
                 btn.onclick = function (e) {
@@ -769,10 +196,6 @@
                     openModalDirect();
                 }, true);
 
-                btn.addEventListener('mousedown', function (e) {
-                    console.log('MOUSEDOWN détecté!');
-                });
-
                 console.log('✅ Event listeners ajoutés au bouton');
             } else {
                 console.error('❌ Bouton non trouvé dans le DOM');
@@ -786,18 +209,6 @@
                 console.error('❌ Modal non trouvé dans le DOM');
             }
         });
-
-        // Aussi essayer immédiatement
-        setTimeout(function () {
-            const btn = document.getElementById('newReclamationBtn');
-            if (btn) {
-                console.log('✅ Bouton trouvé après timeout');
-                btn.onclick = function () {
-                    console.log('CLIC VIA TIMEOUT');
-                    openModalDirect();
-                };
-            }
-        }, 1000);
 
         // Appliquer le style selon le rôle de l'utilisateur
         function applyUserStyle() {

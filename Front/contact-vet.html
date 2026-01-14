@@ -7,119 +7,7 @@
     <title>Contacter un Vétérinaire - AgriSmart</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .vet-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .vet-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .vet-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
-            border-color: #667eea;
-        }
-
-        .vet-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .vet-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #764ba2;
-        }
-
-        .vet-avatar-placeholder {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.8rem;
-        }
-
-        .vet-info h3 {
-            margin: 0 0 0.25rem 0;
-            color: #2c3e50;
-            font-size: 1.2rem;
-        }
-
-        .vet-info p {
-            margin: 0;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .vet-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
-            color: #764ba2;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .vet-actions {
-            margin-top: 1rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-contact-vet {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-contact-vet:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-        }
-
-        .no-vets {
-            text-align: center;
-            padding: 3rem;
-            color: #666;
-        }
-
-        .no-vets i {
-            font-size: 4rem;
-            color: #ddd;
-            margin-bottom: 1rem;
-        }
-
-    </style>
+    <link rel="stylesheet" href="assets/css/contact-vet.css">
 </head>
 
 <body class="consumer-page">
@@ -149,7 +37,7 @@
 
         <section class="section">
             <h2><i class="fa-solid fa-user-nurse"></i> Vétérinaires Disponibles</h2>
-            <p style="color: #666; margin-bottom: 1rem;">
+            <p class="text-muted-hint">
                 Sélectionnez un vétérinaire pour lui envoyer un message ou poser une question.
             </p>
             <div class="vet-grid" id="vetsContainer">
@@ -160,13 +48,13 @@
 
     <!-- Modal Contacter Vétérinaire -->
     <div id="contactVetModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-content contact-vet-modal-content">
             <div class="modal-header">
                 <h2><i class="fa-solid fa-paper-plane"></i> Envoyer un message</h2>
                 <button class="close" onclick="closeModal('contactVetModal')">&times;</button>
             </div>
-            <div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-                <p style="margin: 0;"><strong>Vétérinaire:</strong> <span id="selectedVetName"></span></p>
+            <div class="contact-vet-info-box">
+                <p><strong>Vétérinaire:</strong> <span id="selectedVetName"></span></p>
             </div>
             <form id="contactVetForm" onsubmit="sendMessageToVet(event); return false;">
                 <input type="hidden" id="selectedVetId">
@@ -180,8 +68,8 @@
                     <textarea id="vetMessageContent" class="form-control" required rows="5"
                         placeholder="Décrivez votre question ou préoccupation en détail..."></textarea>
                 </div>
-                <div style="display: flex; gap: 0.5rem;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1;">
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fa-solid fa-paper-plane"></i> Envoyer
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="closeModal('contactVetModal')">

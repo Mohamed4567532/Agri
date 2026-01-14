@@ -197,7 +197,12 @@ function updateStatsDisplay() {
 async function loadPendingConsultations() {
     try {
         const user = getCurrentUser();
-        const response = await fetch(`http://localhost:3000/api/consultations?vetId=${user.id}`);
+        const userId = user?.id || user?._id;
+        if (!userId) {
+            console.error('ID utilisateur non trouvé');
+            return;
+        }
+        const response = await fetch(`http://localhost:3000/api/consultations?vetId=${userId}`);
 
         if (!response.ok) throw new Error('Erreur lors du chargement');
 
@@ -278,7 +283,12 @@ async function loadPendingConsultations() {
 async function loadCompletedConsultations() {
     try {
         const user = getCurrentUser();
-        const response = await fetch(`http://localhost:3000/api/consultations?vetId=${user.id}`);
+        const userId = user?.id || user?._id;
+        if (!userId) {
+            console.error('ID utilisateur non trouvé');
+            return;
+        }
+        const response = await fetch(`http://localhost:3000/api/consultations?vetId=${userId}`);
 
         if (!response.ok) throw new Error('Erreur lors du chargement');
 
@@ -436,16 +446,17 @@ function getStatusLabel(status) {
 async function loadVetMessages() {
     try {
         const user = getCurrentUser();
-        if (!user || !user.id) {
+        const userId = user?.id || user?._id;
+        if (!user || !userId) {
             console.error('❌ Utilisateur non connecté');
             return;
         }
 
-        console.log('📥 Chargement des messages pour le vétérinaire:', user.id);
+        console.log('📥 Chargement des messages pour le vétérinaire:', userId);
 
         // Utiliser le paramètre type=received pour ne récupérer que les messages reçus
         const apiUrl = (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) ? API_BASE_URL : 'http://localhost:3000/api';
-        const response = await fetch(`${apiUrl}/messages?userId=${user.id}&type=received`, {
+        const response = await fetch(`${apiUrl}/messages?userId=${userId}&type=received`, {
             headers: getHeaders()
         });
 
@@ -462,8 +473,8 @@ async function loadVetMessages() {
         const receivedMessages = messages.filter(m => {
             if (!m.receiverId) return false;
             const receiverId = m.receiverId._id || m.receiverId.id || m.receiverId;
-            const userId = user.id;
-            return String(receiverId) === String(userId);
+            const currentUserId = user.id || user._id;
+            return String(receiverId) === String(currentUserId);
         });
 
         console.log(`✅ ${receivedMessages.length} messages reçus après filtrage`);
@@ -594,15 +605,16 @@ async function viewVetMessage(messageId) {
 async function loadVetReclamations() {
     try {
         const user = getCurrentUser();
-        if (!user || !user.id) {
+        const userId = user?.id || user?._id;
+        if (!user || !userId) {
             console.error('❌ Utilisateur non connecté');
             return;
         }
 
-        console.log('📥 Chargement des réclamations pour le vétérinaire:', user.id);
+        console.log('📥 Chargement des réclamations pour le vétérinaire:', userId);
 
         const apiUrl = (typeof API_BASE_URL !== 'undefined' && API_BASE_URL) ? API_BASE_URL : 'http://localhost:3000/api';
-        const response = await fetch(`${apiUrl}/reclamations?userId=${user.id}&role=${user.role}`);
+        const response = await fetch(`${apiUrl}/reclamations?userId=${userId}&role=${user.role}`);
 
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des réclamations');
@@ -770,7 +782,8 @@ async function submitVetReclamation(e) {
     e.preventDefault();
     
     const user = getCurrentUser();
-    if (!user) {
+    const userId = user?.id || user?._id;
+    if (!user || !userId) {
         showAlert('Veuillez vous connecter', 'error');
         return;
     }
@@ -795,7 +808,7 @@ async function submitVetReclamation(e) {
                 sujet,
                 type,
                 description,
-                createdBy: user.id
+                createdBy: userId
             })
         });
 
@@ -880,7 +893,15 @@ function closeVideoModal() {
 async function loadAllConsultations() {
     try {
         const user = getCurrentUser();
-        const response = await fetch(`http://localhost:3000/api/consultations?vetId=${user.id}`);
+        
+        // Vérifier que l'utilisateur et son ID existent
+        if (!user || (!user.id && !user._id)) {
+            console.error('Utilisateur non trouvé ou ID manquant');
+            return;
+        }
+        
+        const userId = user.id || user._id;
+        const response = await fetch(`http://localhost:3000/api/consultations?vetId=${userId}`);
 
         if (!response.ok) throw new Error('Erreur lors du chargement');
 
@@ -912,16 +933,12 @@ async function loadAllConsultations() {
 function filterConsultations(filter) {
     currentFilter = filter;
     
-    // Mettre à jour les boutons de filtre
+    // Mettre à jour les boutons de filtre (utilisation des classes CSS)
     document.querySelectorAll('.filter-btn').forEach(btn => {
         if (btn.dataset.filter === filter) {
             btn.classList.add('active');
-            btn.style.background = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
-            btn.style.color = 'white';
         } else {
             btn.classList.remove('active');
-            btn.style.background = 'transparent';
-            btn.style.color = '#059669';
         }
     });
     
@@ -946,10 +963,10 @@ function displayConsultations(filter) {
             : { icon: 'fa-folder-open', title: 'Aucune consultation traitée', subtitle: "L'historique apparaîtra ici" };
         
         container.innerHTML = `
-            <div style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.06) 0%, rgba(16, 185, 129, 0.04) 100%); border-radius: 20px; border: 2px dashed rgba(5, 150, 105, 0.25);">
-                <i class="fa-solid ${emptyMessage.icon}" style="font-size: 3.5rem; color: #059669; margin-bottom: 1rem; opacity: 0.7;"></i>
-                <p style="color: #1a252f; font-size: 1.15rem; margin: 0; font-weight: 600;">${emptyMessage.title}</p>
-                <p style="color: #666; font-size: 0.95rem; margin-top: 0.5rem;">${emptyMessage.subtitle}</p>
+            <div class="empty-state">
+                <i class="fa-solid ${emptyMessage.icon}"></i>
+                <p class="empty-title">${emptyMessage.title}</p>
+                <p class="empty-subtitle">${emptyMessage.subtitle}</p>
             </div>
         `;
         return;
@@ -975,26 +992,26 @@ function displayConsultations(filter) {
                     <tr>
                         <td>${formatDate(c.createdAt)}</td>
                         <td>
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fa-solid fa-user-tie" style="color: #059669;"></i>
+                            <div class="cell-farmer">
+                                <i class="fa-solid fa-user-tie"></i>
                                 ${c.farmerId?.name || 'Inconnu'}
                             </div>
                         </td>
                         <td>
-                            <span style="background: linear-gradient(135deg, rgba(5, 150, 105, 0.12) 0%, rgba(16, 185, 129, 0.08) 100%); padding: 0.4rem 0.9rem; border-radius: 20px; font-weight: 600; color: #059669;">
+                            <span class="cell-sheep-count">
                                 ${c.sheepIds?.length || 0} mouton(s)
                             </span>
                         </td>
                         <td>${c.description.substring(0, 50)}...</td>
-                        <td>${c.video ? `<button onclick="openVideoModal('http://localhost:3000${c.video}')" style="color: #059669; background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; font-weight: 500; font-size: inherit;"><i class="fa-solid fa-play-circle"></i> Voir</button>` : '<span style="color: #999;">Aucune</span>'}</td>
+                        <td>${c.video ? `<button class="btn-video" onclick="openVideoModal('http://localhost:3000${c.video}')"><i class="fa-solid fa-play-circle"></i> Voir</button>` : '<span class="text-muted">Aucune</span>'}</td>
                         <td><span class="badge badge-${c.status === 'en_attente' ? 'warning' : c.status === 'en_cours' ? 'info' : c.status === 'terminée' ? 'success' : 'danger'}">${getStatusLabel(c.status)}</span></td>
                         ${isPending 
                             ? `<td>
-                                <button class="btn btn-sm btn-primary" onclick="openConsultation('${c._id}')" style="display: flex; align-items: center; gap: 0.3rem;">
+                                <button class="btn btn-sm btn-primary btn-respond" onclick="openConsultation('${c._id}')">
                                     <i class="fa-solid fa-reply"></i> Répondre
                                 </button>
                             </td>`
-                            : `<td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.vetResponse ? c.vetResponse.substring(0, 50) + '...' : '<span style="color: #999;">N/A</span>'}</td>`
+                            : `<td class="cell-response">${c.vetResponse ? c.vetResponse.substring(0, 50) + '...' : '<span class="text-muted">N/A</span>'}</td>`
                         }
                     </tr>
                 `).join('')}

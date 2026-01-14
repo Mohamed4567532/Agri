@@ -1,0 +1,601 @@
+/* ============================================
+   MODULE MES MESSAGES - Interface Moderne
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body.farmer-no-bg {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.messages-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.messages-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    position: relative;
+}
+
+.messages-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.messages-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a252f;
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.messages-header h1 i {
+    color: #764ba2;
+}
+
+.messages-header p {
+    color: #666;
+    font-size: 1rem;
+    opacity: 0.7;
+    margin: 0;
+}
+
+/* Onglets */
+.messages-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0;
+}
+
+.tab-button {
+    padding: 1rem 2rem;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #666;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: inherit;
+}
+
+.tab-button:hover {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.tab-button.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.tab-button .badge {
+    background: #e74c3c;
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-left: 0.5rem;
+}
+
+/* Filtres */
+.messages-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.messages-filters .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.messages-filters .filter-group label {
+    font-weight: 500;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.messages-filters .filter-group select,
+.messages-filters .filter-group input {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease;
+}
+
+.messages-filters .filter-group select:focus,
+.messages-filters .filter-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Liste des messages */
+.messages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.message-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #667eea;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.message-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+}
+
+.message-card.unread {
+    border-left-color: #667eea;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(102, 126, 234, 0.02) 100%);
+}
+
+.message-card.read {
+    border-left-color: #90A4AE;
+    opacity: 0.9;
+}
+
+.message-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.message-card-info {
+    flex: 1;
+}
+
+.message-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1a252f;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.message-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.message-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.message-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.message-preview {
+    color: #555;
+    line-height: 1.6;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 3px solid #764ba2;
+}
+
+.product-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 8px;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.messages-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.messages-empty-state .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: #ccc;
+}
+
+.messages-empty-state h3 {
+    color: #1a252f;
+    margin-bottom: 0.5rem;
+}
+
+.messages-empty-state p {
+    color: #666;
+    margin: 0;
+}
+
+/* ============================================
+   Modal Messages
+   ============================================ */
+
+.message-modal-content {
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.message-modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.message-modal-header h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.message-modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.75rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.message-modal-body {
+    padding: 2rem;
+}
+
+/* Reply Section */
+.reply-section {
+    padding: 0 2rem 2rem 2rem;
+    border-top: 2px solid #e0e0e0;
+    margin-top: 1rem;
+}
+
+.reply-section h3 {
+    margin: 1.5rem 0 1rem 0;
+    color: #1a252f;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reply-section h3 i {
+    color: #764ba2;
+}
+
+.reply-form-group {
+    margin-bottom: 1rem;
+}
+
+.reply-form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #1a252f;
+}
+
+.reply-form-input,
+.reply-form-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    font-family: inherit;
+}
+
+.reply-form-textarea {
+    resize: vertical;
+}
+
+.reply-form-input:focus,
+.reply-form-textarea:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    outline: none;
+}
+
+.reply-form-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.reply-btn-submit {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.reply-btn-submit:hover {
+    transform: scale(1.02);
+}
+
+.reply-btn-cancel {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    background: #f0f0f0;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.reply-btn-cancel:hover {
+    background: #e0e0e0;
+}
+
+/* ============================================
+   Consumer Page Specific Styles
+   ============================================ */
+
+body.consumer-page .messages-container {
+    padding-top: 100px;
+}
+
+body.consumer-page .messages-header {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+}
+
+body.consumer-page .messages-header::after {
+    display: none;
+}
+
+body.consumer-page .messages-header h1 {
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.consumer-page .messages-header h1 i {
+    color: white;
+}
+
+body.consumer-page .messages-header p {
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 1;
+}
+
+body.consumer-page .messages-tabs {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 0.5rem;
+    border: none;
+}
+
+body.consumer-page .messages-list {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+body.consumer-page .message-card {
+    border-left-color: #667eea;
+}
+
+body.consumer-page .message-card:hover {
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+}
+
+body.consumer-page .messages-filters {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+}
+
+/* ============================================
+   Vet Page Specific Styles - Emerald Theme
+   ============================================ */
+
+body.vet-page .messages-container {
+    padding-top: 100px;
+}
+
+body.vet-page .messages-header {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 2.5rem;
+    border-radius: 24px;
+    margin-bottom: 2rem;
+}
+
+body.vet-page .messages-header::after {
+    display: none;
+}
+
+body.vet-page .messages-header h1 {
+    color: white;
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+    font-weight: 700;
+}
+
+body.vet-page .messages-header h1 i {
+    color: #6ee7b7 !important;
+    text-shadow: 0 0 30px rgba(110, 231, 183, 0.5);
+}
+
+body.vet-page .messages-header p {
+    color: rgba(255, 255, 255, 0.95);
+    opacity: 1;
+}
+
+body.vet-page .messages-tabs {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 18px;
+    padding: 0.6rem;
+    border: none;
+    box-shadow: 0 4px 20px rgba(5, 150, 105, 0.1);
+}
+
+body.vet-page .messages-tabs .tab-button.active {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+body.vet-page .messages-tabs .tab-button:hover:not(.active) {
+    color: #059669;
+    background: rgba(5, 150, 105, 0.08);
+}
+
+body.vet-page .messages-list {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 24px;
+    padding: 1.75rem;
+    box-shadow: 0 8px 30px rgba(5, 150, 105, 0.1);
+}
+
+body.vet-page .message-card {
+    border-left-color: #059669;
+    border-radius: 16px;
+}
+
+body.vet-page .message-card:hover {
+    box-shadow: 0 15px 45px rgba(5, 150, 105, 0.18);
+    border-color: #10b981;
+}
+
+body.vet-page .message-card.unread {
+    border-left-color: #10b981;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.04) 0%, rgba(16, 185, 129, 0.02) 100%);
+}
+
+body.vet-page .messages-filters {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(5, 150, 105, 0.08);
+}
+
+body.vet-page .btn-primary {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+body.vet-page .btn-primary:hover {
+    box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+}
+
+body.vet-page .message-badge {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    .messages-header h1 {
+        font-size: 2rem;
+    }
+
+    .messages-tabs {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .tab-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .messages-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .messages-filters .filter-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

@@ -64,7 +64,7 @@
         <h1 class="section-title">Espace Fermier</h1>
 
         <section class="section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div class="section-header">
                 <h2>Mes Produits</h2>
                 <button class="btn btn-primary" onclick="openAddProductModal()"><i class="fa-solid fa-plus"></i> Ajouter
                     un produit</button>
@@ -95,7 +95,7 @@
                 </div>
 
                 <!-- Champs pour MOUTON -->
-                <div id="sheepFields" style="display: none;">
+                <div id="sheepFields" class="hidden-fields">
                     <div class="form-group">
                         <label for="sheepPrice">Prix (TND)</label>
                         <input type="number" id="sheepPrice" name="price" class="form-control" step="0.01" min="0">
@@ -111,16 +111,16 @@
                             Possède un certificat médical
                         </label>
                     </div>
-                    <div class="form-group" id="certificateUploadDiv" style="display: none;">
+                    <div class="form-group hidden-fields" id="certificateUploadDiv">
                         <label for="certificatePDF">Certificat médical (PDF)</label>
                         <input type="file" id="certificatePDF" name="medicalCertificatePDF" class="form-control"
                             accept=".pdf">
-                        <small style="color: #666;">Format: PDF (Max 5MB)</small>
+                        <small class="form-hint">Format: PDF (Max 5MB)</small>
                     </div>
                 </div>
 
                 <!-- Champs pour HUILE -->
-                <div id="oilFields" style="display: none;">
+                <div id="oilFields" class="hidden-fields">
                     <div class="form-group">
                         <label for="oilType">Type d'huile</label>
                         <select id="oilType" name="oilType" class="form-control">
@@ -145,10 +145,10 @@
                 <div class="form-group">
                     <label for="productImage">Image du produit</label>
                     <input type="file" id="productImage" name="image" class="form-control" accept="image/*">
-                    <small style="color: #666;">Format: JPG, PNG, GIF (Max 5MB)</small>
+                    <small class="form-hint">Format: JPG, PNG, GIF (Max 5MB)</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Enregistrer</button>
+                <button type="submit" class="btn btn-primary btn-block">Enregistrer</button>
             </form>
         </div>
     </div>
@@ -167,15 +167,14 @@
                     <label for="vetNotes">Notes / Raison de l'analyse</label>
                     <textarea id="vetNotes" class="form-control" required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Envoyer</button>
+                <button type="submit" class="btn btn-primary btn-block">Envoyer</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal Rendez-vous -->
     <!-- Modal Détails Message et Réponse -->
     <div id="messageModal" class="modal">
-        <div class="modal-content" style="max-width: 700px;">
+        <div class="modal-content modal-large">
             <div class="modal-header">
                 <h2>💬 Détails du Message</h2>
                 <button class="close" onclick="closeModal('messageModal')">&times;</button>
@@ -185,9 +184,9 @@
                     <!-- Les détails du message seront chargés ici -->
                 </div>
 
-                <hr style="margin: 1.5rem 0;">
+                <hr class="modal-divider">
 
-                <h3 style="margin-bottom: 1rem;">Répondre</h3>
+                <h3 class="reply-title">Répondre</h3>
                 <form id="replyMessageForm" onsubmit="replyToMessage(event); return false;">
                     <input type="hidden" id="replyMessageId">
                     <input type="hidden" id="replySenderId">
@@ -200,8 +199,8 @@
                         <textarea id="replyContent" class="form-control" required rows="5"
                             placeholder="Tapez votre réponse ici..."></textarea>
                     </div>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button type="submit" class="btn btn-primary" style="flex: 1;">📤 Envoyer la réponse</button>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">📤 Envoyer la réponse</button>
                         <button type="button" class="btn btn-secondary"
                             onclick="closeModal('messageModal')">Annuler</button>
                     </div>

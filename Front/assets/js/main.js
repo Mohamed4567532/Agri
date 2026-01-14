@@ -35,12 +35,27 @@ async function checkServerConnection() {
 // Obtenir l'utilisateur actuel
 function getCurrentUser() {
     const userStr = localStorage.getItem('currentUser');
-    return userStr ? JSON.parse(userStr) : null;
+    if (!userStr) return null;
+    
+    const user = JSON.parse(userStr);
+    // Normaliser l'ID pour s'assurer que 'id' est toujours défini
+    if (user._id && !user.id) {
+        user.id = user._id;
+    } else if (user.id && !user._id) {
+        user._id = user.id;
+    }
+    return user;
 }
 
 // Définir l'utilisateur actuel
 function setCurrentUser(user) {
     if (user) {
+        // Normaliser l'ID pour s'assurer que 'id' est toujours défini
+        if (user._id && !user.id) {
+            user.id = user._id;
+        } else if (user.id && !user._id) {
+            user._id = user.id;
+        }
         localStorage.setItem('currentUser', JSON.stringify(user));
     } else {
         localStorage.removeItem('currentUser');

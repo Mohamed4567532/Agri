@@ -8,11 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body.vet-page {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-    </style>
 </head>
 
 <body class="vet-page">
@@ -41,10 +36,12 @@
             <p>Gérez vos consultations et accompagnez les agriculteurs dans le soin de leurs animaux</p>
         </div>
 
-        <!-- Navigation par onglets (3 onglets seulement) -->
+        <!-- Navigation par onglets -->
         <div class="vet-tabs-container">
             <div class="vet-tabs">
-                 <div class="vet-tab-indicator"></div>
+               
+               
+                <div class="vet-tab-indicator"></div>
             </div>
         </div>
 
@@ -52,22 +49,22 @@
         <div class="vet-panels-wrapper">
             <!-- Panel: Consultations (avec filtre) -->
             <section class="vet-panel active" id="panel-consultations">
-                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div class="panel-header panel-header-flex">
                     <div>
                         <h2><i class="fa-solid fa-stethoscope"></i> Consultations</h2>
                         <p>Gérez toutes vos consultations vétérinaires</p>
                     </div>
                     <!-- Filtre En attente / Traitées -->
-                    <div class="consultation-filter" style="display: flex; gap: 0.5rem; background: rgba(5, 150, 105, 0.08); padding: 0.4rem; border-radius: 12px;">
-                        <button class="filter-btn active" data-filter="pending" onclick="filterConsultations('pending')" style="padding: 0.6rem 1.2rem; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; display: flex; align-items: center; gap: 0.4rem;">
+                    <div class="consultation-filter">
+                        <button class="filter-btn active" data-filter="pending" onclick="filterConsultations('pending')">
                             <i class="fa-solid fa-hourglass-half"></i>
                             En attente
-                            <span id="pendingCount" style="background: rgba(255,255,255,0.25); padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.8rem;">0</span>
+                            <span class="filter-count" id="pendingCount">0</span>
                         </button>
-                        <button class="filter-btn" data-filter="completed" onclick="filterConsultations('completed')" style="padding: 0.6rem 1.2rem; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; background: transparent; color: #059669; display: flex; align-items: center; gap: 0.4rem;">
+                        <button class="filter-btn" data-filter="completed" onclick="filterConsultations('completed')">
                             <i class="fa-solid fa-clipboard-check"></i>
                             Traitées
-                            <span id="completedCount" style="background: rgba(5, 150, 105, 0.15); padding: 0.15rem 0.5rem; border-radius: 8px; font-size: 0.8rem;">0</span>
+                            <span class="filter-count" id="completedCount">0</span>
                         </button>
                     </div>
                 </div>
@@ -84,7 +81,7 @@
                 </div>
                 <div class="table-container">
                     <div id="vetMessages">
-                        <p style="text-align: center; color: var(--vet-primary);">
+                        <p class="loading-message">
                             <i class="fa-solid fa-spinner fa-spin"></i> Chargement des messages...
                         </p>
                     </div>
@@ -99,13 +96,13 @@
                 </div>
                 <div class="table-container">
                     <div id="vetReclamations">
-                        <p style="text-align: center; color: var(--vet-primary);">
+                        <p class="loading-message">
                             <i class="fa-solid fa-spinner fa-spin"></i> Chargement des réclamations...
                         </p>
                     </div>
                 </div>
-                <div style="margin-top: 1.5rem;">
-                    <button class="btn btn-primary" onclick="openNewReclamationModalVet()" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                <div>
+                    <button class="btn btn-primary btn-new-reclamation" onclick="openNewReclamationModalVet()">
                         <i class="fa-solid fa-plus"></i>
                         Nouvelle Réclamation
                     </button>
@@ -116,46 +113,38 @@
 
     <!-- Modal Réponse Consultation -->
     <div id="consultationModal" class="modal">
-        <div class="modal-content" style="max-width: 680px; max-height: 90vh; border-radius: 28px; overflow: hidden; display: flex; flex-direction: column;">
-            <div class="modal-header" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 1.75rem 2rem; margin: -1.5rem -1.5rem 0 -1.5rem; flex-shrink: 0;">
-                <h2 style="margin: 0; display: flex; align-items: center; gap: 0.85rem; font-weight: 700;">
+        <div class="modal-content consultation-modal-content">
+            <div class="consultation-modal-header">
+                <h2>
                     <i class="fa-solid fa-notes-medical"></i>
                     Répondre à la consultation
                 </h2>
-                <button class="close" style="color: white; opacity: 0.8; background: none; border: none; font-size: 1.5rem; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='rotate(90deg)'; this.style.opacity='1'" onmouseout="this.style.transform='rotate(0)'; this.style.opacity='0.8'">&times;</button>
+                <button class="consultation-modal-close close">&times;</button>
             </div>
             <!-- Contenu scrollable -->
-            <div class="modal-body-scroll" style="flex: 1; overflow-y: auto; padding: 1.5rem; padding-top: 0;">
-                <div id="consultationDetails"
-                    style="margin-bottom: 1.75rem; margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%); border-radius: 16px; border-left: 4px solid #059669;"></div>
+            <div class="modal-body-scroll">
+                <div id="consultationDetails" class="consultation-details"></div>
                 <form id="responseForm">
                     <input type="hidden" id="consultationId">
-                    <div class="form-group" style="margin-bottom: 1.75rem;">
-                        <label for="vetResponse" style="display: flex; align-items: center; gap: 0.6rem; color: #1a252f; font-weight: 600; margin-bottom: 0.85rem; font-size: 1rem;">
-                            <i class="fa-solid fa-file-medical" style="color: #059669;"></i>
+                    <div class="form-group">
+                        <label for="vetResponse" class="form-label">
+                            <i class="fa-solid fa-file-medical"></i>
                             Votre diagnostic / réponse
                         </label>
-                        <textarea id="vetResponse" class="form-control" required rows="5"
-                            placeholder="Entrez votre diagnostic détaillé et vos recommandations médicales..."
-                            style="padding: 1.15rem; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; font-family: inherit; resize: vertical;"
-                            onfocus="this.style.borderColor='#10b981'; this.style.boxShadow='0 0 0 4px rgba(16, 185, 129, 0.12)'"
-                            onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none'"></textarea>
+                        <textarea id="vetResponse" class="form-control vet-textarea" required rows="5"
+                            placeholder="Entrez votre diagnostic détaillé et vos recommandations médicales..."></textarea>
                     </div>
-                    <div class="form-group" style="margin-bottom: 2rem;">
-                        <label for="consultationStatus" style="display: flex; align-items: center; gap: 0.6rem; color: #1a252f; font-weight: 600; margin-bottom: 0.85rem; font-size: 1rem;">
-                            <i class="fa-solid fa-clipboard-list" style="color: #059669;"></i>
+                    <div class="form-group">
+                        <label for="consultationStatus" class="form-label">
+                            <i class="fa-solid fa-clipboard-list"></i>
                             Statut de la consultation
                         </label>
-                        <select id="consultationStatus" class="form-control" required
-                            style="padding: 1.15rem; border: 2px solid #e0e0e0; border-radius: 14px; font-size: 1rem; transition: all 0.3s ease; cursor: pointer; font-family: inherit;">
+                        <select id="consultationStatus" class="form-control vet-select" required>
                             <option value="en_cours">🔄 En cours de traitement</option>
                             <option value="terminée">✅ Terminée</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary" 
-                        style="width: 100%; padding: 1.15rem; border-radius: 14px; font-weight: 700; background: linear-gradient(135deg, #059669 0%, #10b981 100%); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; box-shadow: 0 6px 20px rgba(5, 150, 105, 0.35); transition: all 0.3s ease; font-size: 1.05rem;"
-                        onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 30px rgba(5, 150, 105, 0.45)'"
-                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(5, 150, 105, 0.35)'">
+                    <button type="submit" class="btn btn-primary btn-submit-response">
                         <i class="fa-solid fa-paper-plane"></i>
                         Envoyer la réponse
                     </button>

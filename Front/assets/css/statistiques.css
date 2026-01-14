@@ -1,0 +1,46 @@
+/* ============================================
+   MODULE STATISTIQUES - Interface Moderne
+   ============================================ */
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.no-stats {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+}
+
+.no-stats .icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+/* Stats page header description */
+.stats-page-description {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+}

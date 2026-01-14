@@ -1,0 +1,351 @@
+/* ============================================
+   MODULE CONSULTATION - Interface Moderne
+   ============================================ */
+
+/* Badges */
+.consultation-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.consultation-badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.consultation-badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.consultation-badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.consultation-badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.consultation-badge-secondary {
+    background: #e9ecef;
+    color: #6c757d;
+}
+
+/* Modal Animation */
+#consultationDetailsModal .modal-content {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Grille des vétérinaires */
+#vetsList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Section Header */
+.consultation-section-header {
+    margin-bottom: 2rem;
+}
+
+.consultation-section-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #1a252f;
+    margin-bottom: 0.5rem;
+}
+
+.consultation-section-header h2 i {
+    color: #4CAF50;
+    font-size: 1.5rem;
+}
+
+.consultation-section-header p {
+    color: #666;
+    margin: 0;
+}
+
+/* ============================================
+   Modal Consultation
+   ============================================ */
+
+.consultation-modal-content {
+    max-width: 700px;
+    max-height: 90vh;
+    border-radius: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.consultation-modal-header {
+    background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.consultation-modal-header h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+}
+
+.consultation-modal-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.75rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.consultation-modal-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.consultation-form {
+    padding: 2rem;
+    flex: 1;
+}
+
+/* Vet Info Box */
+.vet-info-box {
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(102, 187, 106, 0.05) 100%);
+    border-radius: 12px;
+    border-left: 4px solid #4CAF50;
+}
+
+.vet-info-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+
+.vet-info-label i {
+    color: #4CAF50;
+}
+
+.vet-info-name {
+    font-weight: 700;
+    color: #1a252f;
+    font-size: 1.1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.vet-info-name i {
+    color: #4CAF50;
+}
+
+/* Form Groups */
+.consultation-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.consultation-form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #1a252f;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.consultation-form-label i {
+    color: #4CAF50;
+}
+
+.consultation-form-label i.video-icon {
+    color: #42A5F5;
+}
+
+/* Sheep Selection */
+.sheep-selection-box {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 2px solid #e0e0e0;
+    padding: 1rem;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: border-color 0.2s ease;
+}
+
+.sheep-selection-box:focus-within {
+    border-color: #4CAF50;
+}
+
+.sheep-selection-hint {
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.sheep-selection-hint i {
+    font-size: 0.8rem;
+}
+
+/* Textarea */
+.consultation-textarea {
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    resize: vertical;
+    font-family: inherit;
+    width: 100%;
+}
+
+.consultation-textarea:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+    outline: none;
+}
+
+/* Video Input */
+.consultation-video-input {
+    padding: 0.875rem;
+    border: 2px dashed #e0e0e0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    cursor: pointer;
+}
+
+.consultation-video-input:focus {
+    border-color: #42A5F5;
+    box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.1);
+    outline: none;
+}
+
+.video-hint {
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.video-hint i {
+    font-size: 0.8rem;
+}
+
+/* Form Actions */
+.consultation-form-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.consultation-btn-submit {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+    font-family: inherit;
+}
+
+.consultation-btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.35);
+}
+
+.consultation-btn-cancel {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    background: #f5f5f5;
+    color: #666;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.consultation-btn-cancel:hover {
+    background: #e8e8e8;
+}
+
+/* Details Modal */
+.consultation-details-modal {
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.consultation-details-body {
+    padding: 1.5rem;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+    #vetsList {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    #vetsList {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

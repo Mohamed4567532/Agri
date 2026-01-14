@@ -9,8 +9,13 @@ router.get('/', async (req, res) => {
         const { farmerId, vetId } = req.query;
         
         let query = {};
-        if (farmerId) query.farmerId = farmerId;
-        if (vetId) query.vetId = vetId;
+        // Vérifier que les IDs sont valides (non "undefined" string)
+        if (farmerId && farmerId !== 'undefined' && farmerId !== 'null') {
+            query.farmerId = farmerId;
+        }
+        if (vetId && vetId !== 'undefined' && vetId !== 'null') {
+            query.vetId = vetId;
+        }
         
         const consultations = await Consultation.find(query)
             .populate('farmerId', 'name username email')

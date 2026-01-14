@@ -1,0 +1,137 @@
+/* ============================================
+   MODULE AUTH - Login & Register
+   ============================================ */
+
+.auth-message {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    display: none;
+    text-align: center;
+    font-weight: 500;
+}
+
+.auth-message.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+}
+
+.auth-message.error {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.auth-message.warning {
+    background: linear-gradient(135deg, #fff3cd, #ffeeba);
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.auth-message.success {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.auth-message.info {
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.auth-message .icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-message .title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+.auth-message .details {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.login-card h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.demo-accounts {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+}
+
+.demo-accounts h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.demo-accounts p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0.3rem 0;
+}
+
+/* Auth page container */
+.auth-container {
+    max-width: 450px;
+    margin: 3rem auto;
+}
+
+.auth-container-wide {
+    max-width: 500px;
+    margin: 3rem auto;
+}
+
+/* Register link */
+.auth-register-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #666;
+}
+
+.auth-register-link a {
+    color: #27ae60;
+    font-weight: 600;
+}
+
+/* Login link */
+.auth-login-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+/* Login button full width */
+.auth-btn-submit {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+}
